@@ -708,6 +708,29 @@
   </div>
 </section>
 
+<section class="delivery-check-section" id="delivery-check" style="padding:36px 0; background:var(--cream-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line);">
+  <div class="wrap">
+    <h2 style="font-size:1.3rem; font-weight:600; margin:0;">📍 کیا ہم آپ کے علاقے میں ڈیلیوری کرتے ہیں؟</h2>
+    <p style="margin-top:8px; color:var(--ink-soft); font-size:0.92rem; max-width:56ch;">اپنا علاقہ لکھیں تاکہ لاہور میں دوا کی ڈیلیوری کی دستیابی معلوم ہو۔</p>
+
+    <div style="margin-top:18px; max-width:480px; position:relative;">
+      <div style="display:flex; gap:10px;">
+        <div style="position:relative; flex:1;">
+          <input id="area-input" type="text" autocomplete="off" placeholder="e.g. Garden Town" style="width:100%; padding:11px 13px; border:1px solid var(--line); border-radius:3px; background:#fff; font-family:'Jameel Noori Nastaleeq','Noto Nastaliq Urdu',serif; font-size:0.96rem; color:var(--ink); box-sizing:border-box;">
+          <div id="area-suggestions" style="display:none; position:absolute; top:100%; right:0; left:0; background:#fff; border:1px solid var(--line); border-top:none; max-height:220px; overflow-y:auto; z-index:20; box-shadow:0 8px 20px rgba(0,0,0,0.08);"></div>
+        </div>
+        <button id="check-delivery-btn" class="btn btn-primary" style="border:none; cursor:pointer; padding:11px 18px; font-size:0.9rem; white-space:nowrap;">ڈیلیوری چیک کریں</button>
+      </div>
+
+      <div style="margin-top:10px;">
+        <a id="direct-whatsapp-ask" href="#" target="_blank" rel="noopener" style="font-size:0.86rem; color:var(--terracotta); text-decoration:underline;">واٹس ایپ پر ڈیلیوری ایریا خود کنفرم کر لیں</a>
+      </div>
+
+      <div id="delivery-result" style="display:none; margin-top:16px; padding:16px 18px; border-radius:3px; font-size:0.95rem;"></div>
+    </div>
+  </div>
+</section>
+
 <div class="trust">
   <div class="wrap">
     <span class="item">صرف DRAP رجسٹرڈ مصنوعات</span>
@@ -921,6 +944,121 @@
 </footer>
 
 <a class="float-wa" href="https://wa.me/923218861265" target="_blank" rel="noopener">واٹس ایپ کریں</a>
+
+<script>
+(function(){
+  // ===== ADMIN CONFIG: add/remove delivery areas here =====
+  // Each entry: { name: "Area Name", enabled: true/false, fee: "Rs. X" (optional), eta: "text" (optional) }
+  // Leave fee/eta blank (omit the key) if not configured — they simply won't be shown.
+  var DELIVERY_AREAS = [
+    { name: "Walton", enabled: true },
+    { name: "Kot Lakhpat", enabled: true },
+    { name: "Model Town", enabled: true },
+    { name: "Garden Town", enabled: true },
+    { name: "Township", enabled: true },
+    { name: "Lahore Cantt", enabled: true },
+    { name: "Ferozepur Road", enabled: true },
+    { name: "Gulberg", enabled: true }
+  ];
+  // ===== END ADMIN CONFIG =====
+
+  var WA_NUMBER = '923218861265';
+
+  function track(eventName, params){
+    if(typeof gtag === 'function'){
+      gtag('event', eventName, params || {});
+    }
+  }
+
+  var input = document.getElementById('area-input');
+  var suggestBox = document.getElementById('area-suggestions');
+  var checkBtn = document.getElementById('check-delivery-btn');
+  var resultBox = document.getElementById('delivery-result');
+  var directWaLink = document.getElementById('direct-whatsapp-ask');
+
+  directWaLink.addEventListener('click', function(){
+    var area = input.value.trim();
+    var msg = area
+      ? ('Assalam o Alaikum, mujhe pochna hai kya aap ' + area + ' mein delivery karte hain?')
+      : 'Assalam o Alaikum, mujhe pochna hai kya aap mere ilaqe mein delivery karte hain?';
+    directWaLink.href = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg);
+    track('delivery_direct_whatsapp_clicked', { area: area || '(not specified)' });
+  });
+
+  input.addEventListener('input', function(){
+    var q = input.value.trim().toLowerCase();
+    if(q.length < 1){ suggestBox.style.display = 'none'; return; }
+    var matches = DELIVERY_AREAS.filter(function(a){
+      return a.enabled && a.name.toLowerCase().indexOf(q) !== -1;
+    }).slice(0, 6);
+    if(matches.length === 0){ suggestBox.style.display = 'none'; return; }
+    suggestBox.innerHTML = matches.map(function(a){
+      return '<div class="area-suggestion-item" data-name="' + a.name + '" style="padding:10px 13px; border-top:1px solid var(--line); cursor:pointer; font-size:0.9rem;">' + a.name + '</div>';
+    }).join('');
+    suggestBox.style.display = 'block';
+    suggestBox.querySelectorAll('.area-suggestion-item').forEach(function(el){
+      el.addEventListener('click', function(){
+        input.value = el.getAttribute('data-name');
+        suggestBox.style.display = 'none';
+      });
+      el.addEventListener('mouseenter', function(){ el.style.background = 'var(--cream-2)'; });
+      el.addEventListener('mouseleave', function(){ el.style.background = '#fff'; });
+    });
+  });
+
+  document.addEventListener('click', function(e){
+    if(!suggestBox.contains(e.target) && e.target !== input){ suggestBox.style.display = 'none'; }
+  });
+
+  function findArea(query){
+    var norm = query.trim().toLowerCase();
+    if(!norm) return null;
+    // exact match first
+    var exact = DELIVERY_AREAS.find(function(a){ return a.name.toLowerCase() === norm; });
+    if(exact) return exact;
+    // partial/contains match
+    var partial = DELIVERY_AREAS.find(function(a){ return a.name.toLowerCase().indexOf(norm) !== -1 || norm.indexOf(a.name.toLowerCase()) !== -1; });
+    return partial || null;
+  }
+
+  checkBtn.addEventListener('click', function(){
+    var rawArea = input.value.trim();
+    if(!rawArea){ return; }
+    suggestBox.style.display = 'none';
+    track('delivery_area_checked', { area: rawArea });
+
+    var match = findArea(rawArea);
+    var displayArea = match ? match.name : rawArea;
+
+    if(match && match.enabled){
+      track('delivery_area_covered', { area: displayArea });
+      var extras = '';
+      if(match.fee){ extras += '<div style="margin-top:6px;">ڈیلیوری چارجز: ' + match.fee + '</div>'; }
+      if(match.eta){ extras += '<div style="margin-top:4px;">تخمینی وقت: ' + match.eta + '</div>'; }
+      var waMsg = 'Assalam o Alaikum, mujhe Faizal Pharmacy se dawa mangwani hai. Mera ilaqa ' + displayArea + ' hai. Delivery ki availability bata dein.';
+      resultBox.style.cssText = 'display:block; margin-top:16px; padding:16px 18px; border-radius:3px; font-size:0.95rem; background:#E9F0EC; border:1px solid rgba(31,61,51,0.25);';
+      resultBox.innerHTML =
+        '<div style="font-weight:600; color:var(--green-deep);">✓ جی ہاں، ہم ' + displayArea + ' میں ڈیلیوری کرتے ہیں</div>' +
+        '<div style="margin-top:6px; color:var(--ink-soft);">گھر تک ڈیلیوری دستیاب ہے۔</div>' +
+        extras +
+        '<a class="btn btn-primary" target="_blank" rel="noopener" style="margin-top:12px; display:inline-block; text-decoration:none;" href="https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(waMsg) + '" id="delivery-wa-btn">واٹس ایپ پر آرڈر کریں</a>';
+      document.getElementById('delivery-wa-btn').addEventListener('click', function(){
+        track('delivery_whatsapp_clicked', { area: displayArea });
+      });
+    } else {
+      track('delivery_area_not_covered', { area: displayArea });
+      var reqMsg = 'Assalam o Alaikum, mujhe ' + displayArea + ' mein delivery chahiye. Please bataein kya ye mumkin hai.';
+      resultBox.style.cssText = 'display:block; margin-top:16px; padding:16px 18px; border-radius:3px; font-size:0.95rem; background:#F5E9E6; border:1px solid rgba(168,64,47,0.25);';
+      resultBox.innerHTML =
+        '<div style="font-weight:600; color:var(--terracotta);">معذرت، ہم ابھی ' + displayArea + ' میں ڈیلیوری نہیں کرتے۔</div>' +
+        '<a class="btn btn-outline" target="_blank" rel="noopener" style="margin-top:12px; display:inline-block; text-decoration:none; border-color:var(--terracotta); color:var(--terracotta);" href="https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(reqMsg) + '" id="delivery-request-btn">یہ علاقہ درخواست کریں</a>';
+      document.getElementById('delivery-request-btn').addEventListener('click', function(){
+        track('delivery_area_request_clicked', { area: displayArea });
+      });
+    }
+  });
+})();
+</script>
 
 </body>
 </html>

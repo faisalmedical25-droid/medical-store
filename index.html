@@ -552,7 +552,7 @@
     <div style="margin-top:36px; max-width:600px;">
       <div style="position:relative;">
         <label for="med-search" style="display:block; font-size:0.9rem; color:var(--ink-soft); margin-bottom:6px;">دوا کا نام لکھیں</label>
-        <input id="med-search" type="text" autocomplete="off" placeholder="مثال: پیناڈول" style="width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:3px; background:#fff; font-family:'Jameel Noori Nastaleeq','Noto Nastaliq Urdu',serif; font-size:1rem; color:var(--ink); box-sizing:border-box;">
+        <input id="med-search" type="text" autocomplete="off" placeholder="e.g. Panadol" style="width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:3px; background:#fff; font-family:'Jameel Noori Nastaleeq','Noto Nastaliq Urdu',serif; font-size:1rem; color:var(--ink); box-sizing:border-box;">
         <div id="search-results" style="display:none; position:absolute; top:100%; right:0; left:0; background:#fff; border:1px solid var(--line); border-top:none; max-height:280px; overflow-y:auto; z-index:20; box-shadow:0 8px 20px rgba(0,0,0,0.08);"></div>
       </div>
 
@@ -651,8 +651,25 @@
       });
     });
 
-    var lines = cart.map(function(item){ return item.name + ' x' + item.qty; }).join(', ');
-    var msg = 'Assalam o Alaikum, mujhe ye order chahiye: ' + lines + '. Takhmini total: Rs. ' + total + '. Delivery ke liye rabta karein.';
+    function cleanName(name){
+      // Remove pack-size tokens like 30S, 20S, 100S and normalize to sentence case
+      var cleaned = name.replace(/\b\d+\s*S\b/gi, '').replace(/\s{2,}/g, ' ').trim();
+      cleaned = cleaned.toLowerCase();
+      cleaned = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+      return cleaned;
+    }
+    function unitSuffix(originalName){
+      var upper = originalName.toUpperCase();
+      if(/\bTAB\b/.test(upper)) return 'Tab';
+      if(/\bSYP\b/.test(upper)) return 'Syp';
+      if(/\bINJ\b/.test(upper)) return 'Inj';
+      return '';
+    }
+    var lines = cart.map(function(item){
+      var suffix = unitSuffix(item.name);
+      return cleanName(item.name) + ' ' + item.qty + (suffix ? ' ' + suffix : '');
+    }).join('\n');
+    var msg = 'Mujhe ye Medicine Chahiye.\n' + lines + '\n\nTotal: Rs. ' + total + '\nDelivery ke liye rabta karein';
     document.getElementById('whatsapp-order-btn').href = 'https://wa.me/923218861265?text=' + encodeURIComponent(msg);
   }
 

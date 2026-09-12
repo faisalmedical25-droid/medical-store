@@ -1059,6 +1059,147 @@
   });
 })();
 </script>
+<!-- ===== FLOATING TOOLS DOCK + PRESCRIPTION READER (START) ===== -->
+<style>
+.rx-dock{position:fixed;left:14px;bottom:14px;z-index:60;display:flex;flex-direction:column;gap:8px;}
+.rx-dock-btn{display:flex;align-items:center;gap:8px;border:none;cursor:pointer;background:var(--green-deep,#1F3D33);color:var(--cream,#F2ECDF);padding:10px 16px;border-radius:30px;font-family:inherit;font-size:.9rem;box-shadow:0 6px 18px rgba(31,61,51,.28);}
+.rx-dock-btn:hover{background:var(--green-deep-2,#16302A);}
+.rx-dock-btn.rx-main{background:var(--brass,#B8862E);color:var(--green-deep-2,#16302A);animation:rxPulse 2s infinite;}
+@keyframes rxPulse{0%{box-shadow:0 0 0 0 rgba(184,134,46,.5);}70%{box-shadow:0 0 0 12px rgba(184,134,46,0);}100%{box-shadow:0 0 0 0 rgba(184,134,46,0);}}
+.rx-overlay{position:fixed;inset:0;background:rgba(22,48,42,.6);display:none;align-items:center;justify-content:center;padding:14px;z-index:70;}
+.rx-overlay.rx-open{display:flex;}
+.rx-modal{background:var(--cream,#F2ECDF);width:100%;max-width:600px;max-height:92vh;overflow-y:auto;border-radius:6px;padding:22px;position:relative;}
+.rx-close{position:absolute;top:10px;left:10px;border:none;background:var(--green-deep,#1F3D33);color:var(--cream,#F2ECDF);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px;line-height:1;}
+.rx-modal h3{margin:0 0 6px;color:var(--green-deep,#1F3D33);}
+.rx-sub{margin:0 0 14px;color:var(--ink-soft,#4A4A42);font-size:.92rem;}
+.rx-drop{display:block;border:2px dashed var(--green-deep,#1F3D33);border-radius:6px;background:#fff;padding:18px;text-align:center;cursor:pointer;font-size:.95rem;}
+.rx-drop input{display:none;}
+.rx-preview{max-width:100%;max-height:220px;margin:10px auto 0;display:none;object-fit:contain;border:1px solid var(--line,#ddd);border-radius:4px;}
+.rx-read{width:100%;margin-top:12px;padding:12px;border:none;border-radius:4px;background:var(--brass,#B8862E);color:var(--green-deep-2,#16302A);font-family:inherit;font-size:1rem;font-weight:600;cursor:pointer;}
+.rx-read:disabled{background:#999;cursor:not-allowed;}
+.rx-result{display:none;margin-top:12px;background:#fff;border:1px solid var(--line,#ddd);border-radius:4px;padding:12px;white-space:pre-wrap;font-family:Arial,Helvetica,sans-serif;direction:ltr;text-align:left;font-size:.92rem;line-height:1.7;max-height:300px;overflow-y:auto;}
+.rx-wa{display:none;width:100%;margin-top:10px;padding:12px;border:none;border-radius:4px;background:#25D366;color:#fff;font-family:inherit;font-size:1rem;font-weight:600;cursor:pointer;}
+.rx-note{margin:10px 0 0;font-size:.8rem;color:var(--ink-soft,#4A4A42);}
+@media (max-width:600px){.rx-dock-btn{font-size:.8rem;padding:9px 12px;}}
+</style>
 
+<!-- Floating Tools Dock -->
+<div class="rx-dock">
+  <button type="button" class="rx-dock-btn rx-main" id="dockRx">📄 نسخہ ریڈر</button>
+  <button type="button" class="rx-dock-btn" id="dockBill">🧾 بل بنائیں</button>
+  <button type="button" class="rx-dock-btn" id="dockDelivery">🚚 ڈیلیوری چیک</button>
+</div>
+
+<!-- Prescription Reader Popup -->
+<div class="rx-overlay" id="rxOverlay">
+  <div class="rx-modal">
+    <button type="button" class="rx-close" id="rxClose">×</button>
+    <h3>📄 نسخہ ریڈر — دوا کا نام، خوراک اور مدت</h3>
+    <p class="rx-sub">نسخے کی صاف تصویر اپ لوڈ کریں — ہر دوا کا نام، ملی گرام، کھانے کا طریقہ اور کتنے دن چلانی ہے، سادہ زبان میں ملے گا۔</p>
+    <label class="rx-drop" for="rxFileInput">📷 نسخے کی تصویر اپ لوڈ کریں (JPG / PNG)<input type="file" id="rxFileInput" accept="image/*"></label>
+    <img id="rxPreview" class="rx-preview" alt="Prescription preview">
+    <button type="button" class="rx-read" id="rxRead">🔍 نسخہ پڑھیں</button>
+    <div id="rxResult" class="rx-result"></div>
+    <button type="button" class="rx-wa" id="rxWa">📱 نتیجہ واٹس ایپ پر بھیجیں / آرڈر کریں</button>
+    <p class="rx-note">⚠️ یہ AI مدد ہے۔ دوا استعمال کرنے سے پہلے فارماسسٹ یا ڈاکٹر سے تصدیق ضرور کریں۔</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  var RX_KEY = "YOUR_GEMINI_API_KEY";   // <-- AQ.Ab8RN6K4FXWhslNZDlzahMXhnHlF_roGXnHokrTTJytAzRMQ_A
+  var WA = "923218861265";
+
+  var overlay = document.getElementById('rxOverlay');
+  function openRx(){ overlay.classList.add('rx-open'); }
+  function closeRx(){ overlay.classList.remove('rx-open'); }
+
+  document.getElementById('dockRx').addEventListener('click', openRx);
+  document.getElementById('rxClose').addEventListener('click', closeRx);
+  overlay.addEventListener('click', function(e){ if(e.target === overlay) closeRx(); });
+
+  var navRx = document.getElementById('navRx');
+  if(navRx){ navRx.addEventListener('click', function(e){ e.preventDefault(); openRx(); }); }
+
+  document.getElementById('dockBill').addEventListener('click', function(){
+    var el = document.getElementById('estimate');
+    if(el) el.scrollIntoView({behavior:'smooth'});
+  });
+  document.getElementById('dockDelivery').addEventListener('click', function(){
+    var els = document.querySelectorAll('p,h2,h3');
+    for(var i=0;i<els.length;i++){
+      if(els[i].textContent.indexOf('علاقہ لکھیں') > -1){
+        els[i].scrollIntoView({behavior:'smooth', block:'center'});
+        return;
+      }
+    }
+    var c = document.getElementById('contact');
+    if(c) c.scrollIntoView({behavior:'smooth'});
+  });
+
+  var fileInput = document.getElementById('rxFileInput');
+  var preview = document.getElementById('rxPreview');
+  var readBtn = document.getElementById('rxRead');
+  var result = document.getElementById('rxResult');
+  var waBtn = document.getElementById('rxWa');
+
+  fileInput.addEventListener('change', function(){
+    var f = this.files[0]; if(!f) return;
+    var r = new FileReader();
+    r.onload = function(e){
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+      result.style.display = 'none';
+      waBtn.style.display = 'none';
+    };
+    r.readAsDataURL(f);
+  });
+
+  readBtn.addEventListener('click', async function(){
+    if(!preview.src || preview.style.display === 'none'){
+      alert('Pehle prescription ki photo upload karein.');
+      return;
+    }
+    readBtn.disabled = true;
+    readBtn.textContent = '⏳ پڑھا جا رہا ہے...';
+    result.style.display = 'none';
+    waBtn.style.display = 'none';
+
+    var b64 = preview.src.split(',')[1];
+    var mime = (preview.src.match(/data:(.*?);/) || ['','image/jpeg'])[1];
+
+    var PROMPT = "You are an experienced pharmacist in Pakistan. Read this prescription photo carefully.\nFor EVERY medicine written on it, reply in this exact simple format:\n\n1) Medicine name: (generic name, plus brand name if visible)\n   Strength: e.g. 500 mg\n   How to take: e.g. 1 tablet, 2 times a day (morning and evening), after food\n   How many days: e.g. 5 days\n   Notes: (if any)\n\nRules:\n- Use very simple English only.\n- If any word is not clear, write: UNCLEAR - confirm with pharmacist. Never guess.\n- If the photo is not a prescription or is unreadable, say so clearly.\n- At the end write: Please confirm with your pharmacist before using any medicine.";
+
+    try{
+      var res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + RX_KEY, {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({contents:[{parts:[
+          {text: PROMPT},
+          {inline_data:{mime_type: mime, data: b64}}
+        ]}]})
+      });
+      var d = await res.json();
+      if(d.error) throw new Error(d.error.message);
+      var txt = d.candidates[0].content.parts.map(function(p){ return p.text || ''; }).join('');
+      result.textContent = txt;
+      result.style.display = 'block';
+      waBtn.style.display = 'block';
+    }catch(e){
+      result.textContent = '❌ Masla: ' + e.message + '\nDobara koshish karein, ya photo WhatsApp par bhej dein.';
+      result.style.display = 'block';
+    }finally{
+      readBtn.disabled = false;
+      readBtn.textContent = '🔍 نسخہ پڑھیں';
+    }
+  });
+
+  waBtn.addEventListener('click', function(){
+    var msg = 'Assalam o Alaikum! Maine website par Prescription Reader use kiya, result ye hai:\n\n' + result.textContent + '\n\nPlease price aur availability confirm karein.';
+    window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(msg), '_blank');
+  });
+})();
+</script>
+<!-- ===== FLOATING TOOLS DOCK + PRESCRIPTION READER (END) ===== -->
 </body>
 </html>

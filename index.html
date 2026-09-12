@@ -1171,9 +1171,9 @@ var RX_KEY = "AQ.Ab8RN6L_qh-dIsog6_NFeHaSn5274AK3GCgoRDguV-viVv5SZQ";
     var PROMPT = "You are an experienced pharmacist in Pakistan. Read this prescription photo carefully.\nFor EVERY medicine written on it, reply in this exact simple format:\n\n1) Medicine name: (generic name, plus brand name if visible)\n   Strength: e.g. 500 mg\n   How to take: e.g. 1 tablet, 2 times a day (morning and evening), after food\n   How many days: e.g. 5 days\n   Notes: (if any)\n\nRules:\n- Use very simple English only.\n- If any word is not clear, write: UNCLEAR - confirm with pharmacist. Never guess.\n- If the photo is not a prescription or is unreadable, say so clearly.\n- At the end write: Please confirm with your pharmacist before using any medicine.";
 
     try{
-      var res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + RX_KEY, {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
+      var res = await     fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent", {
+      method: "POST",
+      headers: {"Content-Type":"application/json","x-goog-api-key": RX_KEY},
         body: JSON.stringify({contents:[{parts:[
           {text: PROMPT},
           {inline_data:{mime_type: mime, data: b64}}

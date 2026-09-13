@@ -588,35 +588,33 @@
   </div>
 </header>
 <!-- ============================================== -->
-<!-- FIXED AI PRESCRIPTION READER TOOL - START -->
+<!-- CLOUDFLARE SECURED PRESCRIPTION READER - START -->
 <!-- ============================================== -->
-<section id="prescription-reader-section" style="padding: 35px 0; background: #ffffff;">
-  <div style="max-width: 900px; margin: 0 auto; padding: 0 20px;">
+<section id="prescription-reader-section" style="padding: 35px 0; background: #ffffff; font-family: 'Segoe UI', Tahoma, sans-serif;">
+  <div style="max-width: 800px; margin: 0 auto; padding: 0 20px;">
 
     <!-- Tool Header -->
     <div style="text-align: center; margin-bottom: 25px;">
       <div style="display: inline-flex; align-items: center; justify-content: center; width: 60px; height: 60px; background: linear-gradient(135deg, #4CAF50, #2E7D32); border-radius: 16px; margin-bottom: 12px; box-shadow: 0 6px 18px rgba(76,175,80,0.25);">
         <svg width="30" height="32" viewBox="0 0 24 24" fill="white"><path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zM12 6a1 1 0 011 1v2h2a1 1 0 010 2h-2v2a1 1 0 01-2 0v-2H9a1 1 0 010-2h2V7a1 1 0 011-1zm-4 10h8a1 1 0 010 2H8a1 1 0 010-2z"/></svg>
       </div>
-      <h2 style="font-family: 'Segoe UI', Tahoma, sans-serif; font-size: 24px; font-weight: 700; color: #2E7D32; margin: 0 0 6px 0;">AI Prescription Reader</h2>
-      <p style="font-family: 'Segoe UI', Tahoma, sans-serif; font-size: 14px; color: #555; max-width: 600px; margin: 0 auto; line-height: 1.5;">Prescription ya Bill ki photo upload karein, AI parh kar dawaiyan bataye ga.</p>
+      <h2 style="font-size: 24px; font-weight: 700; color: #2E7D32; margin: 0 0 6px 0;">AI Prescription Reader</h2>
+      <p style="font-size: 14px; color: #555; max-width: 600px; margin: 0 auto; line-height: 1.5;">Prescription ya Bill ki photo upload karein, AI parh kar dawaiyan bataye ga.</p>
     </div>
 
     <!-- Upload Card -->
     <div id="rxUploadCard" style="background: #fff; border-radius: 14px; border: 1px solid #e0e0e0; box-shadow: 0 4px 15px rgba(0,0,0,0.05); padding: 20px; margin-bottom: 20px;">
       
-      <div id="rxUploadZone" onclick="document.getElementById('rxFileInput').click();" style="border: 2px dashed #81C784; border-radius: 12px; padding: 30px 20px; text-align: center; cursor: pointer; background: #fafffe;"
-        onmouseover="this.style.borderColor='#4CAF50'; this.style.background='#f0fff0';"
-        onmouseout="this.style.borderColor='#81C784'; this.style.background='#fafffe';">
+      <div id="rxUploadZone" onclick="document.getElementById('rxFileInput').click();" style="border: 2px dashed #81C784; border-radius: 12px; padding: 30px 20px; text-align: center; cursor: pointer; background: #fafffe;">
         <input type="file" id="rxFileInput" accept="image/*" style="display:none;" onchange="if(this.files.length) rxHandleFile(this.files[0]);">
         <div style="font-size: 36px; margin-bottom: 8px;">📷</div>
-        <p style="font-family:'Segoe UI',sans-serif;font-size:15px;font-weight:600;color:#333;margin:0 0 4px;">Prescription / Bill Upload Karein</p>
-        <p style="font-family:'Segoe UI',sans-serif;font-size:12px;color:#777;margin:0;">Click karein ya file yahan drop karein</p>
+        <p style="font-size:15px; font-weight:600; color:#333; margin:0 0 4px;">Photo Upload Karein</p>
+        <p style="font-size:12px; color:#777; margin:0;">Click karein ya file yahan drop karein</p>
       </div>
 
       <!-- Mobile Camera Button -->
       <div style="margin-top: 10px;">
-        <button type="button" onclick="document.getElementById('rxCameraInput').click();" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border:1px solid #4CAF50;border-radius:10px;background:#f0fff0;cursor:pointer;font-family:'Segoe UI',sans-serif;font-size:14px;font-weight:600;color:#2E7D32;">
+        <button type="button" onclick="document.getElementById('rxCameraInput').click();" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px; padding:12px; border:1px solid #4CAF50; border-radius:10px; background:#f0fff0; cursor:pointer; font-size:14px; font-weight:600; color:#2E7D32;">
           📸 Camera Se Photo Lein
         </button>
         <input type="file" id="rxCameraInput" accept="image/*" capture="environment" style="display:none;" onchange="if(this.files.length) rxHandleFile(this.files[0]);">
@@ -626,10 +624,10 @@
       <div id="rxPreviewArea" style="display:none; margin-top:15px;">
         <img id="rxPreviewImg" src="" alt="Prescription" style="width:100%; max-height:350px; object-fit:contain; border-radius:10px; border:1px solid #ddd;">
         <div style="display:flex; gap:10px; margin-top:12px;">
-          <button type="button" id="rxAnalyzeBtn" onclick="rxAnalyze();" style="flex:1;padding:13px;border:none;border-radius:10px;background:linear-gradient(135deg,#4CAF50,#2E7D32);color:#fff;font-family:'Segoe UI',sans-serif;font-size:15px;font-weight:600;cursor:pointer;">
+          <button type="button" id="rxAnalyzeBtn" onclick="rxAnalyze();" style="flex:1; padding:13px; border:none; border-radius:10px; background:linear-gradient(135deg,#4CAF50,#2E7D32); color:#fff; font-size:15px; font-weight:600; cursor:pointer;">
             🔍 Parhein (Analyze)
           </button>
-          <button type="button" onclick="rxClearImage();" style="padding:13px 18px;border:1px solid #ccc;border-radius:10px;background:#fff;cursor:pointer;">
+          <button type="button" onclick="rxClearImage();" style="padding:13px 18px; border:1px solid #ccc; border-radius:10px; background:#fff; cursor:pointer;">
             ❌ Change
           </button>
         </div>
@@ -639,49 +637,42 @@
 
     <!-- Loading Screen -->
     <div id="rxLoading" style="display:none; background:#fff; border-radius:14px; border:1px solid #e0e0e0; padding:35px 20px; text-align:center;">
-      <div style="width:36px;height:36px;border:3px solid #e8f5e9;border-top-color:#4CAF50;border-radius:50%;margin:0 auto 12px;animation:rxSpin 1s linear infinite;"></div>
-      <p style="font-family:'Segoe UI',sans-serif;font-size:16px;font-weight:600;color:#2E7D32;margin:0 0 4px;">AI Parh Raha Hai...</p>
-      <p style="font-family:'Segoe UI',sans-serif;font-size:13px;color:#666;margin:0;">Thora intezar karein, AI text recognize kar raha hai.</p>
+      <div style="width:36px; height:36px; border:3px solid #e8f5e9; border-top-color:#4CAF50; border-radius:50%; margin:0 auto 12px; animation:rxSpin 1s linear infinite;"></div>
+      <p style="font-size:16px; font-weight:600; color:#2E7D32; margin:0 0 4px;">AI Parh Raha Hai...</p>
+      <p style="font-size:13px; color:#666; margin:0;">Cloudflare Server image process kar raha hai...</p>
     </div>
 
-    <!-- Error Screen (Shows Actual Technical Error Now) -->
+    <!-- Error Screen -->
     <div id="rxError" style="display:none; background:#ffebee; border:1px solid #ffcdd2; border-radius:14px; padding:20px; text-align:center;">
       <div style="font-size:24px; margin-bottom:8px;">⚠️</div>
-      <p style="font-family:'Segoe UI',sans-serif;font-size:14px;color:#c62828;margin:0 0 10px;font-weight:600;" id="rxErrMsg">Kucch masla aaya hai.</p>
-      <button type="button" onclick="rxRetry();" style="padding:8px 18px;border:none;border-radius:8px;background:#4CAF50;color:#fff;cursor:pointer;">Dobara Koshish Karein</button>
+      <p style="font-size:14px; color:#c62828; margin:0 0 10px; font-weight:600;" id="rxErrMsg">Kucch masla aaya hai.</p>
+      <button type="button" onclick="rxRetry();" style="padding:8px 18px; border:none; border-radius:8px; background:#4CAF50; color:#fff; cursor:pointer;">Dobara Koshish Karein</button>
     </div>
 
     <!-- Results Area -->
     <div id="rxResults" style="display:none;">
-      
-      <div style="background:linear-gradient(135deg,#4CAF50,#2E7D32);border-radius:14px;padding:16px 20px;color:#fff;margin-bottom:15px;display:flex;justify-content:space-between;align-items:center;">
-        <div>
-          <div style="font-size:12px;opacity:0.9;">Result</div>
-          <div id="rxTotalMeds" style="font-size:20px;font-weight:800;font-family:'Segoe UI',sans-serif;">Medicines Found</div>
-        </div>
+      <div style="background:linear-gradient(135deg,#4CAF50,#2E7D32); border-radius:14px; padding:16px 20px; color:#fff; margin-bottom:15px;">
+        <div style="font-size:12px; opacity:0.9;">Result</div>
+        <div style="font-size:20px; font-weight:800;">Dawaiyan Pehchan Li Gayi Hain</div>
       </div>
 
-      <!-- Medicines List -->
       <div id="rxMedList" style="margin-bottom:15px;"></div>
 
-      <!-- Direct Pharmacist Confirm Button (WhatsApp) -->
+      <!-- WhatsApp Button -->
       <div style="margin-top:15px; margin-bottom:15px;">
-        <a id="rxWhatsappBtn" href="#" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:10px;background:#25D366;color:#fff;text-decoration:none;font-family:'Segoe UI',sans-serif;font-size:15px;font-weight:700;box-shadow:0 4px 12px rgba(37,211,102,0.3);">
+        <a id="rxWhatsappBtn" href="#" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:10px; padding:14px; border-radius:10px; background:#25D366; color:#fff; text-decoration:none; font-size:15px; font-weight:700; box-shadow:0 4px 12px rgba(37,211,102,0.3);">
           📱 Pharmacist Se Confirm Karein (WhatsApp)
         </a>
       </div>
 
-      <!-- Actions -->
-      <div style="display:flex;gap:10px;">
-        <button type="button" onclick="window.print();" style="flex:1;padding:10px;border:1px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;font-family:'Segoe UI',sans-serif;font-weight:600;">🖨️ Print</button>
-        <button type="button" onclick="rxNewScan();" style="flex:1;padding:10px;border:none;border-radius:8px;background:#2E7D32;color:#fff;cursor:pointer;font-family:'Segoe UI',sans-serif;font-weight:600;">🔄 Nayi Scan</button>
+      <div style="display:flex; gap:10px;">
+        <button type="button" onclick="window.print();" style="flex:1; padding:10px; border:1px solid #ccc; border-radius:8px; background:#fff; cursor:pointer; font-weight:600;">🖨️ Print</button>
+        <button type="button" onclick="rxNewScan();" style="flex:1; padding:10px; border:none; border-radius:8px; background:#2E7D32; color:#fff; cursor:pointer; font-weight:600;">🔄 Nayi Scan</button>
       </div>
 
-      <!-- Disclaimer -->
-      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px;margin-top:15px;font-family:'Segoe UI',sans-serif;font-size:12px;color:#92400e;line-height:1.4;">
+      <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:12px; margin-top:15px; font-size:12px; color:#92400e; line-height:1.4;">
         ⚠️ <strong>Note:</strong> Yeh AI dwara parhi gayi list hai. Confirm karne ke liye oper diye gaye WhatsApp button par click karein.
       </div>
-
     </div>
 
   </div>
@@ -692,11 +683,8 @@
 </style>
 
 <script>
-// ==============================================
-// ⚠️ APNI GEMINI API KEY YAHAN PASTE KAREIN
-// ==============================================
-const RX_API_KEY = "AQ.Ab8RN6JrIJSXE1zferO3IjIrJEjeh0y3N5NiI0QFU9uv0ejIQA";
-// ==============================================
+// Cloudflare Worker Endpoint
+const WORKER_URL = "https://rx-reader-proxy.faisalmedical25.workers.dev/";
 
 let rxImageBase64 = null;
 
@@ -722,10 +710,6 @@ function rxClearImage() {
 }
 
 async function rxAnalyze() {
-    if (!RX_API_KEY || RX_API_KEY === "YAHAN_APNI_API_KEY_DAALEIN" || RX_API_KEY.trim() === "") {
-        alert('API Key missing! Code mein line 114 par apni Gemini API Key paste karein.');
-        return;
-    }
     if (!rxImageBase64) return;
 
     document.getElementById('rxLoading').style.display = 'block';
@@ -735,39 +719,29 @@ async function rxAnalyze() {
 
     try {
         const base64Data = rxImageBase64.split(',')[1];
-        const mimeType = rxImageBase64.split(';')[0].split(':')[1];
 
-        // Using Gemini 1.5 Flash (Most reliable vision model)
-        const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${RX_API_KEY.trim()}`, {
+        const resp = await fetch(WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [
-                        { text: "Read this medical prescription or bill image carefully. List all medicine names, strengths (mg), dosage instructions, and quantities clearly. Try your best even if handwriting is difficult." },
-                        { inlineData: { mimeType: mimeType, data: base64Data } }
-                    ]
-                }]
-            })
+            body: JSON.stringify({ imageBase64: base64Data })
         });
 
         const data = await resp.json();
 
-        // Check for API level errors
         if (!resp.ok || data.error) {
-            throw new Error(data.error ? data.error.message : "API Request Failed with status " + resp.status);
+            throw new Error(data.error ? (typeof data.error === 'object' ? JSON.stringify(data.error) : data.error) : "Cloudflare Worker Error");
         }
 
         if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-            throw new Error("AI ne koi response nahi diya. Tasveer shayad clear nahi ya API block hui hai.");
+            throw new Error("AI response format invalid or content blocked.");
         }
 
         const textResponse = data.candidates[0].content.parts[0].text;
         rxShowResults(textResponse);
 
     } catch(err) {
-        console.error("Prescription AI Error:", err);
-        document.getElementById('rxErrMsg').innerHTML = "<b>Technical Error:</b><br>" + err.message;
+        console.error("Prescription Error:", err);
+        document.getElementById('rxErrMsg').innerHTML = "<b>Server Error:</b><br>" + err.message;
         document.getElementById('rxError').style.display = 'block';
     } finally {
         document.getElementById('rxLoading').style.display = 'none';
@@ -775,11 +749,9 @@ async function rxAnalyze() {
 }
 
 function rxShowResults(textResponse) {
-    document.getElementById('rxTotalMeds').textContent = "Result Found";
-
     let html = `
-    <div style="background:#fff;border:1px solid #e0e0e0;border-left:4px solid #4CAF50;border-radius:10px;padding:16px;margin-bottom:10px;box-shadow:0 2px 5px rgba(0,0,0,0.03);">
-      <div style="font-family:'Segoe UI',sans-serif;font-size:14px;color:#333;white-space:pre-line;line-height:1.6;">${rxEsc(textResponse)}</div>
+    <div style="background:#fff; border:1px solid #e0e0e0; border-left:4px solid #4CAF50; border-radius:10px; padding:16px; margin-bottom:10px; box-shadow:0 2px 5px rgba(0,0,0,0.03);">
+      <div style="font-size:14px; color:#333; white-space:pre-line; line-height:1.6;">${rxEsc(textResponse)}</div>
     </div>`;
 
     let whatsappText = "Assalam-o-Alaikum Lahore Medical Store! Maine prescription scan ki hai, yeh result aaya hai:\n\n" + textResponse + "\n\nPlease confirm kar dein.";
@@ -810,7 +782,7 @@ function rxNewScan() {
 }
 </script>
 <!-- ============================================== -->
-<!-- FIXED AI PRESCRIPTION READER TOOL - END -->
+<!-- CLOUDFLARE SECURED PRESCRIPTION READER - END -->
 <!-- ============================================== -->
 <section class="order-section" id="estimate" style="background:var(--cream);">
   <div class="wrap">

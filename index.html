@@ -679,29 +679,45 @@ function rxClearImage() {
 }
 
 async function rxAnalyze() {
+    if (!rxImageBase64) return;
+
     document.getElementById('rxLoading').style.display = 'block';
-    document.getElementById('rxError').style.display = 'none';
     document.getElementById('rxResults').style.display = 'none';
+    document.getElementById('rxError').style.display = 'none';
 
     try {
         const base64Data = rxImageBase64.split(',')[1];
+
         const resp = await fetch(WORKER_URL, {
             method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ imageBase64: base64Data })
         });
 
         const data = await resp.json();
-        if (data.error) throw new Error(data.error);
+
+        if (!resp.ok || data.error) {
+            throw new Error(data.error ? (typeof data.error === 'object' ? JSON.stringify(data.error) : data.error) : "Server Error");
+        }
+
+        // OpenRouter / AI Standard Response Format
+        if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+            throw new Error("AI Response Format Invalid");
+        }
 
         const textResponse = data.choices[0].message.content;
+        
+        // Show result
         document.getElementById('rxMedList').innerText = textResponse;
         
-        const encodedMsg = encodeURIComponent("AI Prescription Result:\n" + textResponse);
+        const encodedMsg = encodeURIComponent("Assalam-o-Alaikum! AI Prescription Result:\n\n" + textResponse);
         document.getElementById('rxWhatsappBtn').href = `https://wa.me/923218861265?text=${encodedMsg}`;
         
         document.getElementById('rxResults').style.display = 'block';
+
     } catch(err) {
-        document.getElementById('rxErrMsg').innerText = "Error: " + err.message;
+        console.error("Prescription Error:", err);
+        document.getElementById('rxErrMsg').innerHTML = "<b>Error:</b><br>" + err.message;
         document.getElementById('rxError').style.display = 'block';
     } finally {
         document.getElementById('rxLoading').style.display = 'none';

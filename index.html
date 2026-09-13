@@ -1374,6 +1374,28 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
   });
 })();
 </script>
+<!-- Anti-Right-Click & Anti-Inspect Script -->
+<script>
+  // Right Click Disable
+  document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+  });
 
+  // F12, Ctrl+U, Ctrl+Shift+I Disable
+  document.onkeydown = function(e) {
+    if (e.keyCode == 123) { // F12
+      return false;
+    }
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { // Ctrl+Shift+I
+      return false;
+    }
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { // Ctrl+Shift+J
+      return false;
+    }
+    if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { // Ctrl+U (View Source)
+      return false;
+    }
+  };
+</script>
 </body>
 </html>

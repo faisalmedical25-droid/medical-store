@@ -588,30 +588,30 @@
   </div>
 </header>
 <!-- ============================================== -->
-<!-- UPGRADED AI PRESCRIPTION READER TOOL - START -->
+<!-- FIXED AI PRESCRIPTION READER TOOL - START -->
 <!-- ============================================== -->
 <section id="prescription-reader-section" style="padding: 35px 0; background: #ffffff;">
   <div style="max-width: 900px; margin: 0 auto; padding: 0 20px;">
 
     <!-- Tool Header -->
     <div style="text-align: center; margin-bottom: 25px;">
-      <div style="display: inline-flex; align-items: center; justify-content: center; width: 60px; height: 65px; background: linear-gradient(135deg, #4CAF50, #2E7D32); border-radius: 16px; margin-bottom: 12px; box-shadow: 0 6px 18px rgba(76,175,80,0.25);">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="white"><path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zM12 6a1 1 0 011 1v2h2a1 1 0 010 2h-2v2a1 1 0 01-2 0v-2H9a1 1 0 010-2h2V7a1 1 0 011-1zm-4 10h8a1 1 0 010 2H8a1 1 0 010-2z"/></svg>
+      <div style="display: inline-flex; align-items: center; justify-content: center; width: 60px; height: 60px; background: linear-gradient(135deg, #4CAF50, #2E7D32); border-radius: 16px; margin-bottom: 12px; box-shadow: 0 6px 18px rgba(76,175,80,0.25);">
+        <svg width="30" height="32" viewBox="0 0 24 24" fill="white"><path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zM12 6a1 1 0 011 1v2h2a1 1 0 010 2h-2v2a1 1 0 01-2 0v-2H9a1 1 0 010-2h2V7a1 1 0 011-1zm-4 10h8a1 1 0 010 2H8a1 1 0 010-2z"/></svg>
       </div>
-      <h2 style="font-family: 'Segoe UI', Tahoma, sans-serif; font-size: 26px; font-weight: 700; color: #2E7D32; margin: 0 0 6px 0;">AI Prescription Reader (Pakistani Medicines)</h2>
-      <p style="font-family: 'Segoe UI', Tahoma, sans-serif; font-size: 14px; color: #555; max-width: 600px; margin: 0 auto; line-height: 1.5;">Aap apni prescription ki photo upload karein, AI doctor ki handwriting parh kar dawai aur khane ka tarika bataye ga.</p>
+      <h2 style="font-family: 'Segoe UI', Tahoma, sans-serif; font-size: 24px; font-weight: 700; color: #2E7D32; margin: 0 0 6px 0;">AI Prescription Reader</h2>
+      <p style="font-family: 'Segoe UI', Tahoma, sans-serif; font-size: 14px; color: #555; max-width: 600px; margin: 0 auto; line-height: 1.5;">Prescription ya Bill ki photo upload karein, AI parh kar dawaiyan bataye ga.</p>
     </div>
 
     <!-- Upload Card -->
     <div id="rxUploadCard" style="background: #fff; border-radius: 14px; border: 1px solid #e0e0e0; box-shadow: 0 4px 15px rgba(0,0,0,0.05); padding: 20px; margin-bottom: 20px;">
       
-      <div id="rxUploadZone" onclick="document.getElementById('rxFileInput').click();" style="border: 2px dashed #81C784; border-radius: 12px; padding: 35px 20px; text-align: center; cursor: pointer; background: #fafffe; transition: all 0.2s;"
+      <div id="rxUploadZone" onclick="document.getElementById('rxFileInput').click();" style="border: 2px dashed #81C784; border-radius: 12px; padding: 30px 20px; text-align: center; cursor: pointer; background: #fafffe;"
         onmouseover="this.style.borderColor='#4CAF50'; this.style.background='#f0fff0';"
         onmouseout="this.style.borderColor='#81C784'; this.style.background='#fafffe';">
         <input type="file" id="rxFileInput" accept="image/*" style="display:none;" onchange="if(this.files.length) rxHandleFile(this.files[0]);">
-        <div style="font-size: 38px; margin-bottom: 8px;">📷</div>
-        <p style="font-family:'Segoe UI',sans-serif;font-size:15px;font-weight:600;color:#333;margin:0 0 4px;">Prescription Photo Click Karein Ya Upload Karein</p>
-        <p style="font-family:'Segoe UI',sans-serif;font-size:12px;color:#777;margin:0;">Clear photo upload karein taake AI sahi tarah parh sakay</p>
+        <div style="font-size: 36px; margin-bottom: 8px;">📷</div>
+        <p style="font-family:'Segoe UI',sans-serif;font-size:15px;font-weight:600;color:#333;margin:0 0 4px;">Prescription / Bill Upload Karein</p>
+        <p style="font-family:'Segoe UI',sans-serif;font-size:12px;color:#777;margin:0;">Click karein ya file yahan drop karein</p>
       </div>
 
       <!-- Mobile Camera Button -->
@@ -627,7 +627,7 @@
         <img id="rxPreviewImg" src="" alt="Prescription" style="width:100%; max-height:350px; object-fit:contain; border-radius:10px; border:1px solid #ddd;">
         <div style="display:flex; gap:10px; margin-top:12px;">
           <button type="button" id="rxAnalyzeBtn" onclick="rxAnalyze();" style="flex:1;padding:13px;border:none;border-radius:10px;background:linear-gradient(135deg,#4CAF50,#2E7D32);color:#fff;font-family:'Segoe UI',sans-serif;font-size:15px;font-weight:600;cursor:pointer;">
-            🔍 Analyze Prescription
+            🔍 Parhein (Analyze)
           </button>
           <button type="button" onclick="rxClearImage();" style="padding:13px 18px;border:1px solid #ccc;border-radius:10px;background:#fff;cursor:pointer;">
             ❌ Change
@@ -640,13 +640,14 @@
     <!-- Loading Screen -->
     <div id="rxLoading" style="display:none; background:#fff; border-radius:14px; border:1px solid #e0e0e0; padding:35px 20px; text-align:center;">
       <div style="width:36px;height:36px;border:3px solid #e8f5e9;border-top-color:#4CAF50;border-radius:50%;margin:0 auto 12px;animation:rxSpin 1s linear infinite;"></div>
-      <p style="font-family:'Segoe UI',sans-serif;font-size:16px;font-weight:600;color:#2E7D32;margin:0 0 4px;">Prescription Parhi Ja Rahi Hai...</p>
-      <p style="font-family:'Segoe UI',sans-serif;font-size:13px;color:#666;margin:0;">Pakistani pharmacy inventory ke mutabiq dawaiyan match ho rahi hain.</p>
+      <p style="font-family:'Segoe UI',sans-serif;font-size:16px;font-weight:600;color:#2E7D32;margin:0 0 4px;">AI Parh Raha Hai...</p>
+      <p style="font-family:'Segoe UI',sans-serif;font-size:13px;color:#666;margin:0;">Thora intezar karein, AI text recognize kar raha hai.</p>
     </div>
 
-    <!-- Error Screen -->
+    <!-- Error Screen (Shows Actual Technical Error Now) -->
     <div id="rxError" style="display:none; background:#ffebee; border:1px solid #ffcdd2; border-radius:14px; padding:20px; text-align:center;">
-      <p style="font-family:'Segoe UI',sans-serif;font-size:14px;color:#c62828;margin:0 0 10px;" id="rxErrMsg">Tasveer clear nahi hai. Please dubara photo lein.</p>
+      <div style="font-size:24px; margin-bottom:8px;">⚠️</div>
+      <p style="font-family:'Segoe UI',sans-serif;font-size:14px;color:#c62828;margin:0 0 10px;font-weight:600;" id="rxErrMsg">Kucch masla aaya hai.</p>
       <button type="button" onclick="rxRetry();" style="padding:8px 18px;border:none;border-radius:8px;background:#4CAF50;color:#fff;cursor:pointer;">Dobara Koshish Karein</button>
     </div>
 
@@ -655,12 +656,8 @@
       
       <div style="background:linear-gradient(135deg,#4CAF50,#2E7D32);border-radius:14px;padding:16px 20px;color:#fff;margin-bottom:15px;display:flex;justify-content:space-between;align-items:center;">
         <div>
-          <div style="font-size:12px;opacity:0.9;">Pehchani Gayi Dawaiyan</div>
-          <div id="rxTotalMeds" style="font-size:22px;font-weight:800;font-family:'Segoe UI',sans-serif;">0 Medicines</div>
-        </div>
-        <div style="text-align:right;">
-          <div style="font-size:12px;opacity:0.9;">Match Accuracy</div>
-          <div id="rxConfidence" style="font-size:22px;font-weight:800;font-family:'Segoe UI',sans-serif;">-</div>
+          <div style="font-size:12px;opacity:0.9;">Result</div>
+          <div id="rxTotalMeds" style="font-size:20px;font-weight:800;font-family:'Segoe UI',sans-serif;">Medicines Found</div>
         </div>
       </div>
 
@@ -677,12 +674,12 @@
       <!-- Actions -->
       <div style="display:flex;gap:10px;">
         <button type="button" onclick="window.print();" style="flex:1;padding:10px;border:1px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;font-family:'Segoe UI',sans-serif;font-weight:600;">🖨️ Print</button>
-        <button type="button" onclick="rxNewScan();" style="flex:1;padding:10px;border:none;border-radius:8px;background:#2E7D32;color:#fff;cursor:pointer;font-family:'Segoe UI',sans-serif;font-weight:600;">🔄 Nayi Prescription</button>
+        <button type="button" onclick="rxNewScan();" style="flex:1;padding:10px;border:none;border-radius:8px;background:#2E7D32;color:#fff;cursor:pointer;font-family:'Segoe UI',sans-serif;font-weight:600;">🔄 Nayi Scan</button>
       </div>
 
       <!-- Disclaimer -->
       <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px;margin-top:15px;font-family:'Segoe UI',sans-serif;font-size:12px;color:#92400e;line-height:1.4;">
-        ⚠️ <strong>Note:</strong> Doctor ki handwriting parhna pechida ho sakta hai. Khasoosi taur par koi bhi naye brand ya high-potency dawai lene se pehle hamare Pharmacist se WhatsApp par zaroor confirm karein.
+        ⚠️ <strong>Note:</strong> Yeh AI dwara parhi gayi list hai. Confirm karne ke liye oper diye gaye WhatsApp button par click karein.
       </div>
 
     </div>
@@ -702,10 +699,9 @@ const RX_API_KEY = "AQ.Ab8RN6JrIJSXE1zferO3IjIrJEjeh0y3N5NiI0QFU9uv0ejIQA";
 // ==============================================
 
 let rxImageBase64 = null;
-let parsedMedsData = [];
 
 function rxHandleFile(file) {
-    if (!file.type.startsWith('image/')) { alert('Sirf image/photo file upload karein.'); return; }
+    if (!file.type.startsWith('image/')) { alert('Sirf image file upload karein.'); return; }
     const reader = new FileReader();
     reader.onload = function(e) {
         rxImageBase64 = e.target.result;
@@ -726,8 +722,8 @@ function rxClearImage() {
 }
 
 async function rxAnalyze() {
-    if (!RX_API_KEY || RX_API_KEY === "YAHAN_APNI_API_KEY_DAALEIN") {
-        alert('API Key missing. Please paste your Gemini API Key in the code.');
+    if (!RX_API_KEY || RX_API_KEY === "YAHAN_APNI_API_KEY_DAALEIN" || RX_API_KEY.trim() === "") {
+        alert('API Key missing! Code mein line 114 par apni Gemini API Key paste karein.');
         return;
     }
     if (!rxImageBase64) return;
@@ -741,100 +737,66 @@ async function rxAnalyze() {
         const base64Data = rxImageBase64.split(',')[1];
         const mimeType = rxImageBase64.split(';')[0].split(':')[1];
 
-        const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${RX_API_KEY}`, {
+        // Using Gemini 1.5 Flash (Most reliable vision model)
+        const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${RX_API_KEY.trim()}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 contents: [{
                     parts: [
-                        { text: `You are an expert senior Pakistani Pharmacist working at Lahore Medical Store. Your job is to carefully read Pakistani doctors' handwritten prescriptions and match them to Pakistani retail pharmacy brand names.
-
-COMMON PAKISTANI BRANDS TO MATCH AGAINST:
-Augmentin, Risek, Panadol, Arinac, Softin, Rigix, Cefspan, Velosef, Flagyl, Indrop-D, Lowplat, Lipiget, Zyrtec, Gravinate, Ponstan, Brufen, Surbex Z, Evion, Myteka, Neobrex, Cefec, Hydryllin, Calamox, Kapex, Loprin, Amoxil, Famila, Klaricid, Leflox, Entamizole, Motilium, Nexum, Flygyal, etc.
-
-COMMON DOCTOR SYMBOLS / DOSAGES IN PAKISTAN:
-- "1-0-1" -> Subah aur Shaam (Twice daily after meals)
-- "1-1-1" -> Subah, Dopahar aur Shaam (Three times daily)
-- "0-0-1" -> Raat ko khane ke baad (Once daily at bedtime)
-- "1-0-0" -> Subah nashte ke baad (Once daily morning)
-- "SOS / PRN" -> Zaroorat parne par (As needed)
-- "TDS / BD / OD" -> Standard Latin medical terms.
-
-INSTRUCTIONS:
-1. Try your best to decipher handwritten medicine names, strengths (e.g. 500mg, 20mg, 625mg, 10mg) and dosage instructions.
-2. DO NOT refuse to read the prescription. Make your best educated guess if handwriting is sloppy.
-3. Output ONLY valid JSON matching this exact structure:
-
-{
-  "medicines": [
-    {
-      "name": "Brand Name with Mg/Strength (e.g. Cap Risek 20mg)",
-      "dosage": "1 Capsule / 1 Tablet / 1 Teaspoon",
-      "frequency": "Subah-Shaam (1-0-1) / Din mein 3 baar",
-      "timing": "Khane ke baad (After meals) / Khane se pehle",
-      "duration": "5 Din / 7 Din / Zaroorat parne par"
-    }
-  ],
-  "confidence": 85
-}` },
+                        { text: "Read this medical prescription or bill image carefully. List all medicine names, strengths (mg), dosage instructions, and quantities clearly. Try your best even if handwriting is difficult." },
                         { inlineData: { mimeType: mimeType, data: base64Data } }
                     ]
-                }],
-                generationConfig: { temperature: 0.1 }
+                }]
             })
         });
 
         const data = await resp.json();
-        const text = data.candidates[0].content.parts[0].text;
-        
-        let parsed;
-        const match = text.match(/```(?:json)?\s*([\s\S]*?)```/);
-        parsed = JSON.parse(match ? match[1].trim() : text);
 
-        rxShowResults(parsed);
+        // Check for API level errors
+        if (!resp.ok || data.error) {
+            throw new Error(data.error ? data.error.message : "API Request Failed with status " + resp.status);
+        }
+
+        if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+            throw new Error("AI ne koi response nahi diya. Tasveer shayad clear nahi ya API block hui hai.");
+        }
+
+        const textResponse = data.candidates[0].content.parts[0].text;
+        rxShowResults(textResponse);
+
     } catch(err) {
-        console.error(err);
+        console.error("Prescription AI Error:", err);
+        document.getElementById('rxErrMsg').innerHTML = "<b>Technical Error:</b><br>" + err.message;
         document.getElementById('rxError').style.display = 'block';
     } finally {
         document.getElementById('rxLoading').style.display = 'none';
     }
 }
 
-function rxShowResults(data) {
-    const meds = data.medicines || [];
-    parsedMedsData = meds;
-    
-    document.getElementById('rxTotalMeds').textContent = meds.length + " Dawaiyan";
-    document.getElementById('rxConfidence').textContent = (data.confidence || 80) + '%';
+function rxShowResults(textResponse) {
+    document.getElementById('rxTotalMeds').textContent = "Result Found";
 
-    let html = '';
-    let whatsappText = "Assalam-o-Alaikum Lahore Medical Store! Maine prescription upload ki thi, AI ne yeh dawaiyan parhi hain. Please confirm kar dein:\n\n";
+    let html = `
+    <div style="background:#fff;border:1px solid #e0e0e0;border-left:4px solid #4CAF50;border-radius:10px;padding:16px;margin-bottom:10px;box-shadow:0 2px 5px rgba(0,0,0,0.03);">
+      <div style="font-family:'Segoe UI',sans-serif;font-size:14px;color:#333;white-space:pre-line;line-height:1.6;">${rxEsc(textResponse)}</div>
+    </div>`;
 
-    meds.forEach((m, i) => {
-        const medName = m.name || 'Medicine ' + (i+1);
-        whatsappText += `${i+1}. *${medName}*\n   - Dosage: ${m.dosage||'1'}\n   - Timing: ${m.frequency||''} (${m.timing||''})\n\n`;
+    let whatsappText = "Assalam-o-Alaikum Lahore Medical Store! Maine prescription scan ki hai, yeh result aaya hai:\n\n" + textResponse + "\n\nPlease confirm kar dein.";
 
-        html += `
-        <div style="background:#fff;border:1px solid #e0e0e0;border-left:4px solid #4CAF50;border-radius:10px;padding:14px;margin-bottom:10px;box-shadow:0 2px 5px rgba(0,0,0,0.03);">
-          <div style="font-family:'Segoe UI',sans-serif;font-size:16px;font-weight:700;color:#2E7D32;margin-bottom:6px;">${i+1}. ${medName}</div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:6px;font-family:'Segoe UI',sans-serif;font-size:13px;color:#444;">
-            ${m.dosage ? `<div><strong>Miqdar:</strong> ${m.dosage}</div>` : ''}
-            ${m.frequency ? `<div><strong>Waqt:</strong> ${m.frequency}</div>` : ''}
-            ${m.timing ? `<div><strong>Khana:</strong> ${m.timing}</div>` : ''}
-            ${m.duration ? `<div><strong>Muddat:</strong> ${m.duration}</div>` : ''}
-          </div>
-        </div>`;
-    });
-
-    whatsappText += "Kya yeh dawaiyan available hain aur sahi hain?";
-
-    // Update WhatsApp Button Link
     const encodedMsg = encodeURIComponent(whatsappText);
     document.getElementById('rxWhatsappBtn').href = `https://wa.me/923218861265?text=${encodedMsg}`;
 
     document.getElementById('rxMedList').innerHTML = html;
     document.getElementById('rxResults').style.display = 'block';
     document.getElementById('rxUploadCard').style.display = 'block';
+}
+
+function rxEsc(t) {
+    if(!t) return '';
+    const d = document.createElement('div');
+    d.textContent = t;
+    return d.innerHTML;
 }
 
 function rxRetry() {
@@ -848,7 +810,7 @@ function rxNewScan() {
 }
 </script>
 <!-- ============================================== -->
-<!-- UPGRADED AI PRESCRIPTION READER TOOL - END -->
+<!-- FIXED AI PRESCRIPTION READER TOOL - END -->
 <!-- ============================================== -->
 <section class="order-section" id="estimate" style="background:var(--cream);">
   <div class="wrap">

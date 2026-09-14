@@ -1013,20 +1013,16 @@ html, body {
   This is an online estimate tool. Printing this document as a bill is strictly prohibited.
 </div>
 
-<!-- Main Tool -->
+<!-- FAISAL PHARMACY POS TOOL -->
 <div class="abuzar-pos-wrapper">
   
-  <!-- Software Header -->
- <div class="abuzar-header">
-  <h3>Sales Invoice - Apna Bill Khud Banayein</h3>
-  <span>Faizal Pharmacy</span>
-</div>
+  <div class="abuzar-header">
+    <h3>Sales Invoice - Apna Bill Khud Banayein</h3>
+    <span>Faizal Pharmacy</span>
+  </div>
 
-  <!-- Entry Section -->
-  <!-- Entry Section -->
   <div class="abuzar-entry-area">
     <div class="entry-row">
-      
       <!-- Search Input -->
       <div class="entry-col search-col">
         <label class="abuzar-label" for="med-search">Product Name (دوا کا نام)</label>
@@ -1034,23 +1030,23 @@ html, body {
         <div id="search-results" style="display:none;"></div>
       </div>
 
-      <!-- Hidden selected item container for original JS -->
+      <!-- Yeh zaroori hai original JS ke liye -->
       <div id="selected-item" style="display:none;"></div>
 
-      <!-- Quantity Input (SAHI ID: med-qty) -->
+      <!-- Qty Input -->
       <div class="entry-col qty-col">
         <label class="abuzar-label" for="med-qty">Qty (مقدار)</label>
         <input type="number" id="med-qty" class="abuzar-input" value="1" min="1">
       </div>
 
-      <!-- Add Button (SAHI ID: add-item-btn) -->
+      <!-- Add Button -->
       <div class="entry-col btn-col">
         <label class="abuzar-label">&nbsp;</label>
         <button id="add-item-btn" class="abuzar-add-btn" type="button">Add (Enter)</button>
       </div>
-
     </div>
-    <span id="selected-item-name"></span>
+    <!-- Medicine selection text yahan show hoga -->
+    <span id="selected-item-name" style="display:block; margin-top:10px; color:#b8860b; font-weight:bold;"></span>
   </div>
 
   <!-- Bill Table Area -->
@@ -1061,8 +1057,6 @@ html, body {
       <div>Amount (Rs)</div>
       <div>Del</div>
     </div>
-    
-    <!-- Cart Items injected by JS -->
     <div id="cart-list"></div>
   </div>
 
@@ -1071,11 +1065,11 @@ html, body {
     <div class="total-block">
       Total Amount: <span id="cart-total">0 Rs</span>
     </div>
-    <a id="whatsapp-order-btn" href="#" class="wa-btn">
+    <!-- href="#" ko hata kar javascript:void(0) kar diya taake URL change na ho -->
+    <a id="whatsapp-order-btn" href="javascript:void(0)" class="wa-btn">
       Order on WhatsApp
     </a>
   </div>
-
 </div>
 <!-- ============================================== -->
 <!-- DELIVERY AREA CHECKER - UPDATED - START -->
@@ -2481,28 +2475,6 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
 </script>
 <!-- Anti-Right-Click & Anti-Inspect Script -->
 <script>
-  // Right Click Disable
-  document.addEventListener('contextmenu', function(e) {
-    e.preventDefault();
-  });
-
-  // F12, Ctrl+U, Ctrl+Shift+I Disable
-  document.onkeydown = function(e) {
-    if (e.keyCode == 123) { // F12
-      return false;
-    }
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { // Ctrl+Shift+I
-      return false;
-    }
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { // Ctrl+Shift+J
-      return false;
-    }
-    if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { // Ctrl+U (View Source)
-      return false;
-    }
-  };
-</script>
-<script>
 document.addEventListener("DOMContentLoaded", function () {
   const searchInput = document.getElementById("med-search");
   const searchResults = document.getElementById("search-results");
@@ -2513,92 +2485,78 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (!searchInput || !searchResults || !qtyInput || !addBtn) return;
 
-  // Search results mein se sirf valid clickable medicine items nikalna
   function getValidItems() {
-    const children = Array.from(searchResults.children);
-    return children.filter(function (el) {
-      const text = el.textContent.trim().toLowerCase();
-      // "No match" ya khali div ko ignore karega
-      return text !== "" && !text.includes("نہیں ملی") && !text.includes("no match");
-    });
-  }
-
-  function removeActive(items) {
-    items.forEach(function (el) {
-      el.classList.remove("pos-active-item");
+    return Array.from(searchResults.children).filter(el => {
+      return el.innerText.trim() !== "" && !el.innerText.includes("نہیں ملی");
     });
   }
 
   function setActive(items) {
     if (!items.length) return;
-    removeActive(items);
-
+    items.forEach(el => el.classList.remove("pos-active-item"));
     if (currentFocus >= items.length) currentFocus = 0;
     if (currentFocus < 0) currentFocus = items.length - 1;
-
-    const activeEl = items[currentFocus];
-    if (activeEl) {
-      activeEl.classList.add("pos-active-item");
-      activeEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
+    items[currentFocus].classList.add("pos-active-item");
+    items[currentFocus].scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
-  // 1. Search Box: Arrow Down / Arrow Up / Enter Controls
+  // 1. Search Box Controls
   searchInput.addEventListener("keydown", function (e) {
     const items = getValidItems();
 
     if (e.key === "ArrowDown") {
-      if (!items.length) return;
       e.preventDefault();
       currentFocus++;
       setActive(items);
     } else if (e.key === "ArrowUp") {
-      if (!items.length) return;
       e.preventDefault();
       currentFocus--;
       setActive(items);
     } else if (e.key === "Enter") {
-      if (!items.length) return;
-      e.preventDefault();
-
-      // Agar Down Arrow na dabaya ho to pehla item auto-select hoga
-      if (currentFocus < 0) currentFocus = 0;
-
-      const chosenItem = items[currentFocus];
-      if (chosenItem) {
-        // Original JS function ko trigger karke 'selected' variable fill karna
-        chosenItem.click();
+      e.preventDefault(); // Stop URL from adding #
+      
+      if (items.length > 0) {
+        if (currentFocus < 0) currentFocus = 0;
+        // Direct click simulate taake 'selected' variable fill ho jaye
+        items[currentFocus].click();
+        
+        // Focus Qty box
+        setTimeout(() => {
+          qtyInput.focus();
+          qtyInput.select();
+        }, 100);
       }
-
-      // Cursor ko Qty field par le jana
-      setTimeout(function () {
-        qtyInput.focus();
-        qtyInput.select();
-      }, 100);
     }
   });
 
-  // Typing start karne par index reset
-  searchInput.addEventListener("input", function () {
-    currentFocus = -1;
-  });
+  searchInput.addEventListener("input", () => { currentFocus = -1; });
 
-  // 2. Qty Box: Enter dabane par Bill mein Add karna
+  // 2. Qty Box Controls
   qtyInput.addEventListener("keydown", function (e) {
     if (e.key === "Enter") {
-      e.preventDefault();
-
-      // Asal Add button click hoga
+      e.preventDefault(); // Stop URL Hash jump
+      
+      // Original Add button click fire karein
       addBtn.click();
 
-      // Cursor wapas Search box mein aayega agli medicine ke liye
-      setTimeout(function () {
+      // Reset for next medicine
+      setTimeout(() => {
+        searchInput.value = "";
         searchInput.focus();
-        searchInput.select();
         currentFocus = -1;
-      }, 100);
+      }, 150);
     }
   });
+  
+  // Anti-Hash for WhatsApp button
+  const waBtn = document.getElementById("whatsapp-order-btn");
+  if(waBtn) {
+    waBtn.addEventListener("click", function(e) {
+      if(this.getAttribute("href") === "javascript:void(0)") {
+         // Agar JS ne link update nahi kiya to default click roko
+      }
+    });
+  }
 });
 </script>
 </body>

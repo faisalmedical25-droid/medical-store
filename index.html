@@ -2508,132 +2508,95 @@ document.addEventListener("DOMContentLoaded", function () {
   const searchResults = document.getElementById("search-results");
   const qtyInput = document.getElementById("med-qty");
   const addBtn = document.getElementById("add-item-btn");
-  const selectedName = document.getElementById("selected-item-name");
 
   let currentFocus = -1;
 
   if (!searchInput || !searchResults || !qtyInput || !addBtn) return;
 
-  function getResultItems() {
-    const directChildren = Array.from(searchResults.children).filter(function (el) {
-      return el.offsetParent !== null && el.textContent.trim() !== "";
-    });
-
-    if (directChildren.length) return directChildren;
-
-    return Array.from(searchResults.querySelectorAll("*")).filter(function (el) {
-      return el.offsetParent !== null && el.textContent.trim() !== "";
+  // Search results mein se sirf valid clickable medicine items nikalna
+  function getValidItems() {
+    const children = Array.from(searchResults.children);
+    return children.filter(function (el) {
+      const text = el.textContent.trim().toLowerCase();
+      // "No match" ya khali div ko ignore karega
+      return text !== "" && !text.includes("نہیں ملی") && !text.includes("no match");
     });
   }
 
   function removeActive(items) {
-    items.forEach(function (item) {
-      item.classList.remove("pos-active-item");
+    items.forEach(function (el) {
+      el.classList.remove("pos-active-item");
     });
   }
 
-  function addActive(items) {
+  function setActive(items) {
     if (!items.length) return;
-
     removeActive(items);
 
     if (currentFocus >= items.length) currentFocus = 0;
     if (currentFocus < 0) currentFocus = items.length - 1;
 
-    items[currentFocus].classList.add("pos-active-item");
-    items[currentFocus].scrollIntoView({
-      behavior: "smooth",
-      block: "nearest"
-    });
-  }
-
-  function fireRealClick(el) {
-    if (!el) return;
-
-    ["pointerdown", "mousedown", "mouseup", "click"].forEach(function (type) {
-      try {
-        el.dispatchEvent(new MouseEvent(type, {
-          bubbles: true,
-          cancelable: true,
-          view: window
-        }));
-      } catch (e) {}
-    });
-
-    if (typeof el.click === "function") {
-      try { el.click(); } catch (e) {}
+    const activeEl = items[currentFocus];
+    if (activeEl) {
+      activeEl.classList.add("pos-active-item");
+      activeEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
   }
 
-  function selectHighlightedResult() {
-    const items = getResultItems();
-    if (!items.length) return false;
-
-    if (currentFocus < 0) currentFocus = 0;
-
-    const activeItem = items[currentFocus];
-    if (!activeItem) return false;
-
-    fireRealClick(activeItem);
-
-    if (activeItem.firstElementChild) {
-      fireRealClick(activeItem.firstElementChild);
-    }
-
-    return true;
-  }
-
+  // 1. Search Box: Arrow Down / Arrow Up / Enter Controls
   searchInput.addEventListener("keydown", function (e) {
-    const items = getResultItems();
+    const items = getValidItems();
 
     if (e.key === "ArrowDown") {
       if (!items.length) return;
       e.preventDefault();
       currentFocus++;
-      addActive(items);
-    }
-
-    if (e.key === "ArrowUp") {
+      setActive(items);
+    } else if (e.key === "ArrowUp") {
       if (!items.length) return;
       e.preventDefault();
       currentFocus--;
-      addActive(items);
-    }
-
-    if (e.key === "Enter") {
+      setActive(items);
+    } else if (e.key === "Enter") {
       if (!items.length) return;
       e.preventDefault();
 
-      selectHighlightedResult();
+      // Agar Down Arrow na dabaya ho to pehla item auto-select hoga
+      if (currentFocus < 0) currentFocus = 0;
 
+      const chosenItem = items[currentFocus];
+      if (chosenItem) {
+        // Original JS function ko trigger karke 'selected' variable fill karna
+        chosenItem.click();
+      }
+
+      // Cursor ko Qty field par le jana
       setTimeout(function () {
         qtyInput.focus();
         qtyInput.select();
-      }, 180);
+      }, 100);
     }
   });
 
+  // Typing start karne par index reset
   searchInput.addEventListener("input", function () {
     currentFocus = -1;
   });
 
+  // 2. Qty Box: Enter dabane par Bill mein Add karna
   qtyInput.addEventListener("keydown", function (e) {
     if (e.key === "Enter") {
       e.preventDefault();
 
-      if (selectedName && selectedName.textContent.trim() === "") {
-        selectHighlightedResult();
-      }
+      // Asal Add button click hoga
+      addBtn.click();
 
+      // Cursor wapas Search box mein aayega agli medicine ke liye
       setTimeout(function () {
-        fireRealClick(addBtn);
-
-        setTimeout(function () {
-          searchInput.focus();
-          searchInput.select();
-          currentFocus = -1;
-        }, 180);
-      }, 120);
+        searchInput.focus();
+        searchInput.select();
+        currentFocus = -1;
+      }, 100);
     }
   });
 });

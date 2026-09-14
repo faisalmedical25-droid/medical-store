@@ -933,10 +933,10 @@ function rxRetry() { rxAnalyze(); }
 <div class="abuzar-pos-wrapper">
   
   <!-- Software Header -->
-  <div class="abuzar-header">
-    <h3>Sales Invoice - Apna Bill Khud Banayein</h3>
-    <span>Lahore Medical Store</span>
-  </div>
+ <div class="abuzar-header">
+  <h3>Sales Invoice - Apna Bill Khud Banayein</h3>
+  <span>Faizal Pharmacy</span>
+</div>
 
   <!-- Entry Section -->
   <div class="abuzar-entry-area">
@@ -2430,16 +2430,12 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
     }
   };
 </script>
-  <script>
+ <script>
 document.addEventListener("DOMContentLoaded", function () {
   const searchInput = document.getElementById("med-search");
   const searchResults = document.getElementById("search-results");
   const qtyInput = document.getElementById("qty-input");
-
-  const addBtn =
-    document.getElementById("add-btn") ||
-    document.getElementById("add-to-cart-btn") ||
-    document.querySelector("#selected-item button");
+  const selectedItem = document.getElementById("selected-item");
 
   let currentFocus = -1;
 
@@ -2459,7 +2455,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function addActive(items) {
     if (!items.length) return;
-
     removeActive(items);
 
     if (currentFocus >= items.length) currentFocus = 0;
@@ -2494,9 +2489,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!items.length) return;
       e.preventDefault();
 
-      if (currentFocus < 0) {
-        currentFocus = 0;
-      }
+      if (currentFocus < 0) currentFocus = 0;
 
       if (items[currentFocus]) {
         items[currentFocus].click();
@@ -2520,13 +2513,34 @@ document.addEventListener("DOMContentLoaded", function () {
       if (e.key === "Enter") {
         e.preventDefault();
 
-        if (addBtn) {
-          addBtn.click();
+        const innerQty = selectedItem ? selectedItem.querySelector("input[type='number']") : null;
+        if (innerQty && innerQty !== qtyInput) {
+          innerQty.value = qtyInput.value;
+          innerQty.dispatchEvent(new Event("input", { bubbles: true }));
+          innerQty.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+
+        let targetBtn = document.getElementById("add-btn");
+        const innerBtn = selectedItem ? selectedItem.querySelector("button") : null;
+
+        if (innerBtn) {
+          targetBtn = innerBtn;
+        } else {
+          targetBtn =
+            targetBtn ||
+            document.getElementById("add-to-cart") ||
+            document.getElementById("add-item-btn") ||
+            document.getElementById("add-to-cart-btn") ||
+            document.querySelector(".abuzar-add-btn");
+        }
+
+        if (targetBtn) {
+          targetBtn.click();
         }
 
         setTimeout(function () {
+          searchInput.value = "";
           searchInput.focus();
-          searchInput.select();
         }, 200);
       }
     });

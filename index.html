@@ -729,39 +729,215 @@ function rxRetry() { rxAnalyze(); }
 </script>
 <section class="order-section" id="estimate" style="background:var(--cream);">
   <div class="wrap">
+   <!-- Modern Pharmacy POS Tool Section -->
+<style>
+  .pos-terminal-card {
+    background: #ffffff;
+    border: 1px solid #ebdcc5;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(70, 50, 20, 0.08);
+    max-width: 680px;
+    margin: 20px auto 0 auto;
+    overflow: hidden;
+    direction: rtl;
+    text-align: right;
+    font-family: inherit;
+  }
+  .pos-header-banner {
+    background: linear-gradient(135deg, #fdfaf4 0%, #f4ebd9 100%);
+    padding: 24px 28px;
+    border-bottom: 2px solid #e5d7be;
+  }
+  .pos-badge {
+    display: inline-block;
+    background: #b8860b;
+    color: #ffffff;
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+  }
+  .pos-header-banner h2 {
+    margin: 0 0 8px 0 !important;
+    font-size: 1.8rem !important;
+    color: #2c241b !important;
+    font-weight: 700;
+  }
+  .pos-header-banner p {
+    margin: 0 !important;
+    font-size: 0.95rem !important;
+    color: #665b4e !important;
+    line-height: 1.6;
+  }
+  .pos-body-content {
+    padding: 24px 28px;
+  }
+  .pos-search-wrapper {
+    position: relative;
+    margin-bottom: 16px;
+  }
+  .pos-label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #4a3e31;
+    margin-bottom: 8px;
+  }
+  .pos-input-field {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1.5px solid #dcd1be;
+    border-radius: 10px;
+    font-size: 1rem;
+    background: #faf8f4;
+    transition: all 0.25s ease;
+    box-sizing: border-box;
+  }
+  .pos-input-field:focus {
+    outline: none;
+    border-color: #b8860b;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(184, 134, 11, 0.12);
+  }
+  #search-results {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    background: #ffffff;
+    border: 1px solid #e0d5c1;
+    border-radius: 10px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+    margin-top: 6px;
+    max-height: 240px;
+    overflow-y: auto;
+    z-index: 1000;
+  }
+  .pos-selected-box {
+    background: #fdfcf9;
+    border: 1px dashed #cbbba3;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-top: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .pos-receipt-area {
+    margin-top: 24px;
+    border-top: 2px dashed #e5d7be;
+    padding-top: 20px;
+  }
+  .pos-receipt-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #3b3125;
+    margin-bottom: 14px;
+  }
+  .pos-total-summary {
+    background: linear-gradient(135deg, #fbf7ee 0%, #f3e7d1 100%);
+    border: 1px solid #e2d2b5;
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .pos-total-text {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #3b3125;
+  }
+  #cart-total {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #b8860b;
+  }
+  .pos-cta-wrapper {
+    margin-top: 22px;
+    text-align: center;
+  }
+  .pos-whatsapp-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 16px 24px;
+    background: #25d366;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(37, 211, 102, 0.28);
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+  }
+  .pos-whatsapp-btn:hover {
+    background: #1ebc59;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(37, 211, 102, 0.38);
+  }
+  .pos-note {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: #7a6e60;
+  }
+</style>
+
+<div class="pos-terminal-card">
+  <!-- Header Banner -->
+  <div class="pos-header-banner">
+    <span class="pos-badge">Digital Billing POS</span>
     <h2>اپنا بل خود بنائیں</h2>
-    <p style="margin-top:14px; color:var(--ink-soft); max-width:56ch; font-size:1.02rem;">
-      دوا کا نام لکھنا شروع کریں، فہرست میں سے منتخب کریں، مقدار لکھیں۔ آخر میں ایک کلک سے واٹس ایپ پر آرڈر بھیج دیں۔
-    </p>
-
-    <div style="margin-top:36px; max-width:600px;">
-      <div style="position:relative;">
-        <label for="med-search" style="display:block; font-size:0.9rem; color:var(--ink-soft); margin-bottom:6px;">دوا کا نام لکھیں</label>
-        <input id="med-search" type="text" autocomplete="off" placeholder="e.g. Panadol" style="width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:3px; background:#fff; font-family:'Jameel Noori Nastaleeq','Noto Nastaliq Urdu',serif; font-size:1rem; color:var(--ink); box-sizing:border-box;">
-        <div id="search-results" style="display:none; position:absolute; top:100%; right:0; left:0; background:#fff; border:1px solid var(--line); border-top:none; max-height:280px; overflow-y:auto; z-index:20; box-shadow:0 8px 20px rgba(0,0,0,0.08);"></div>
-      </div>
-
-      <div id="selected-item" style="display:none; margin-top:16px; padding:14px 16px; background:var(--cream-2); border-radius:3px; display:flex; align-items:center; justify-content:space-between; gap:12px;">
-        <span id="selected-item-name" style="font-size:0.98rem;"></span>
-        <span style="display:flex; align-items:center; gap:10px; direction:ltr;">
-          <label style="font-size:0.85rem; color:var(--ink-soft);">Qty</label>
-          <input id="med-qty" type="number" min="1" value="1" style="width:70px; padding:8px 10px; border:1px solid var(--line); border-radius:3px; font-family:'Jameel Noori Nastaleeq','Noto Nastaliq Urdu',serif; font-size:0.95rem; direction:ltr; text-align:left;">
-          <button id="add-item-btn" class="btn btn-primary" style="border:none; cursor:pointer; padding:9px 16px; font-size:0.9rem;">شامل کریں</button>
-        </span>
-      </div>
-
-      <div id="cart-items" style="margin-top:26px; display:none;">
-        <div style="font-size:0.9rem; color:var(--ink-soft); margin-bottom:10px;">آپ کی فہرست:</div>
-        <div id="cart-list"></div>
-        <div style="margin-top:16px; padding:18px 20px; background:var(--cream-2); border-radius:3px; font-size:1.08rem; font-weight:600;">
-          تخمینی مجموعی رقم: <span id="cart-total" style="color:var(--terracotta);"></span>
-        </div>
-        <a id="whatsapp-order-btn" class="btn btn-primary" style="margin-top:16px; display:inline-block; text-decoration:none;" href="#" target="_blank" rel="noopener">واٹس ایپ پر یہ آرڈر بھیجیں</a>
-        <div style="margin-top:10px; font-size:0.86rem; color:var(--ink-soft);">یہ صرف اندازہ ہے — حتمی قیمت اور دستیابی واٹس ایپ پر طے ہوگی۔</div>
-      </div>
-    </div>
+    <p>دوا کا نام لکھنا شروع کریں، فہرست میں سے منتخب کریں، مقدار لکھیں۔ آخر میں ایک کلک سے واٹس ایپ پر آرڈر بھیج دیں۔</p>
   </div>
-</section>
+
+  <!-- Body Content -->
+  <div class="pos-body-content">
+    
+    <!-- Search Box -->
+    <div class="pos-search-wrapper">
+      <label for="med-search" class="pos-label">دوا کا نام تلاش کریں:</label>
+      <input id="med-search" class="pos-input-field" type="text" autocomplete="off" placeholder="e.g. Panadol, Arinac, Rigix...">
+      <div id="search-results" style="display:none;"></div>
+    </div>
+
+    <!-- Selected Item Container -->
+    <div id="selected-item" class="pos-selected-box" style="display:none;">
+      <span id="selected-item-name" style="font-weight: bold; color: #2c241b;"></span>
+      <span style="display:flex; align-items:center; gap:10px; direction:ltr;">
+        <label style="font-size:0.85rem; color:#665b4e; font-weight:bold;">Qty</label>
+      </span>
+    </div>
+
+    <!-- Cart Receipt Section -->
+    <div class="pos-receipt-area">
+      <div class="pos-receipt-title">آپ کی دواؤں کی فہرست:</div>
+      <div id="cart-list"></div>
+    </div>
+
+    <!-- Total Amount Section -->
+    <div class="pos-total-summary">
+      <span class="pos-total-text">تخمینی مجموعی رقم:</span>
+      <span id="cart-total">0 روپے</span>
+    </div>
+
+    <!-- WhatsApp Order Button -->
+    <div class="pos-cta-wrapper">
+      <a id="whatsapp-order-btn" class="pos-whatsapp-btn" href="#">
+        <span>واٹس ایپ پر آرڈر بھیجیں</span>
+      </a>
+      <div class="pos-note">حتمی قیمت اور ڈیلیوری کی تفصیلات واٹس ایپ پر طے ہوں گی</div>
+    </div>
+
+  </div>
+</div>
 <!-- ============================================== -->
 <!-- DELIVERY AREA CHECKER - UPDATED - START -->
 <!-- ============================================== -->

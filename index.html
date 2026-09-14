@@ -57,6 +57,7 @@
 }
 </script>
 <style>
+  
   @import url('https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap');
 
   :root{
@@ -731,6 +732,89 @@ function rxRetry() { rxAnalyze(); }
   <div class="wrap">
 <!-- ABUZAR STYLE POS TERMINAL (LTR & Print Protected) -->
 <style>
+  /* ===== MOBILE LEFT SPACE FIX ===== */
+html, body {
+  overflow-x: hidden;
+}
+
+.abuzar-pos-wrapper {
+  width: 100%;
+  max-width: 800px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .abuzar-pos-wrapper {
+    width: calc(100% - 16px) !important;
+    max-width: calc(100% - 16px) !important;
+    margin: 10px 8px !important;
+    box-sizing: border-box !important;
+  }
+
+  .abuzar-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 12px 14px;
+  }
+
+  .abuzar-entry-area,
+  .abuzar-table-area,
+  .abuzar-footer {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+    box-sizing: border-box;
+  }
+
+  .entry-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  .entry-col,
+  .entry-col.search-col,
+  .entry-col.qty-col,
+  .entry-col.btn-col {
+    width: 100% !important;
+    flex: none !important;
+  }
+
+  .abuzar-input,
+  .abuzar-add-btn {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    font-size: 16px;
+  }
+
+  .abuzar-add-btn {
+    height: 44px;
+  }
+
+  .table-header-row {
+    grid-template-columns: 2.2fr 0.8fr 1.2fr 0.5fr;
+    font-size: 0.75rem;
+  }
+
+  #cart-list > div {
+    grid-template-columns: 2.2fr 0.8fr 1.2fr 0.5fr !important;
+    font-size: 0.8rem !important;
+  }
+
+  .abuzar-footer {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .total-block,
+  .wa-btn {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    justify-content: center;
+    text-align: center;
+  }
+}
     /* Keyboard selected medicine highlight */
   .pos-active-item {
     background: #ebdcc5 !important;
@@ -2422,16 +2506,23 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
 document.addEventListener("DOMContentLoaded", function () {
   const searchInput = document.getElementById("med-search");
   const searchResults = document.getElementById("search-results");
-  const qtyInput = document.getElementById("med-qty");      // Sahi ID
-  const addBtn = document.getElementById("add-item-btn");  // Sahi ID
+  const qtyInput = document.getElementById("med-qty");
+  const addBtn = document.getElementById("add-item-btn");
+  const selectedName = document.getElementById("selected-item-name");
 
   let currentFocus = -1;
 
-  if (!searchInput || !searchResults) return;
+  if (!searchInput || !searchResults || !qtyInput || !addBtn) return;
 
   function getResultItems() {
-    return Array.from(searchResults.children).filter(function (item) {
-      return item.offsetParent !== null;
+    const directChildren = Array.from(searchResults.children).filter(function (el) {
+      return el.offsetParent !== null && el.textContent.trim() !== "";
+    });
+
+    if (directChildren.length) return directChildren;
+
+    return Array.from(searchResults.querySelectorAll("*")).filter(function (el) {
+      return el.offsetParent !== null && el.textContent.trim() !== "";
     });
   }
 
@@ -2443,16 +2534,55 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function addActive(items) {
     if (!items.length) return;
+
     removeActive(items);
 
     if (currentFocus >= items.length) currentFocus = 0;
     if (currentFocus < 0) currentFocus = items.length - 1;
 
     items[currentFocus].classList.add("pos-active-item");
-    items[currentFocus].scrollIntoView({ behavior: "smooth", block: "nearest" });
+    items[currentFocus].scrollIntoView({
+      behavior: "smooth",
+      block: "nearest"
+    });
   }
 
-  // Search input par keyboard Arrow + Enter navigation
+  function fireRealClick(el) {
+    if (!el) return;
+
+    ["pointerdown", "mousedown", "mouseup", "click"].forEach(function (type) {
+      try {
+        el.dispatchEvent(new MouseEvent(type, {
+          bubbles: true,
+          cancelable: true,
+          view: window
+        }));
+      } catch (e) {}
+    });
+
+    if (typeof el.click === "function") {
+      try { el.click(); } catch (e) {}
+    }
+  }
+
+  function selectHighlightedResult() {
+    const items = getResultItems();
+    if (!items.length) return false;
+
+    if (currentFocus < 0) currentFocus = 0;
+
+    const activeItem = items[currentFocus];
+    if (!activeItem) return false;
+
+    fireRealClick(activeItem);
+
+    if (activeItem.firstElementChild) {
+      fireRealClick(activeItem.firstElementChild);
+    }
+
+    return true;
+  }
+
   searchInput.addEventListener("keydown", function (e) {
     const items = getResultItems();
 
@@ -2474,16 +2604,12 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!items.length) return;
       e.preventDefault();
 
-      if (currentFocus < 0) currentFocus = 0;
-      if (items[currentFocus]) items[currentFocus].click();
+      selectHighlightedResult();
 
-      // Enter ke baad cursor Qty input mein jaye
       setTimeout(function () {
-        if (qtyInput) {
-          qtyInput.focus();
-          qtyInput.select();
-        }
-      }, 120);
+        qtyInput.focus();
+        qtyInput.select();
+      }, 180);
     }
   });
 
@@ -2491,23 +2617,25 @@ document.addEventListener("DOMContentLoaded", function () {
     currentFocus = -1;
   });
 
-  // Qty field mein Enter dabane par bill mein item add ho aur cursor wapas search par jaye
-  if (qtyInput) {
-    qtyInput.addEventListener("keydown", function (e) {
-      if (e.key === "Enter") {
-        e.preventDefault();
+  qtyInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
 
-        if (addBtn) {
-          addBtn.click();   // Asal Add button trigger karega
-        }
+      if (selectedName && selectedName.textContent.trim() === "") {
+        selectHighlightedResult();
+      }
+
+      setTimeout(function () {
+        fireRealClick(addBtn);
 
         setTimeout(function () {
           searchInput.focus();
           searchInput.select();
-        }, 150);
-      }
-    });
-  }
+          currentFocus = -1;
+        }, 180);
+      }, 120);
+    }
+  });
 });
 </script>
 </body>

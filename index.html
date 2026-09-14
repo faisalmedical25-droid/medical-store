@@ -729,214 +729,222 @@ function rxRetry() { rxAnalyze(); }
 </script>
 <section class="order-section" id="estimate" style="background:var(--cream);">
   <div class="wrap">
-   <!-- Modern Pharmacy POS Tool Section -->
+  <!-- ABUZAR STYLE POS TERMINAL -->
 <style>
-  .pos-terminal-card {
+  .abuzar-pos-wrapper {
     background: #ffffff;
     border: 1px solid #ebdcc5;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(70, 50, 20, 0.08);
-    max-width: 680px;
-    margin: 20px auto 0 auto;
-    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 20px auto;
+    font-family: Arial, sans-serif;
     direction: rtl;
     text-align: right;
-    font-family: inherit;
   }
-  .pos-header-banner {
-    background: linear-gradient(135deg, #fdfaf4 0%, #f4ebd9 100%);
-    padding: 24px 28px;
-    border-bottom: 2px solid #e5d7be;
-  }
-  .pos-badge {
-    display: inline-block;
+  
+  /* Header Like Software */
+  .abuzar-header {
     background: #b8860b;
-    color: #ffffff;
-    font-size: 0.8rem;
-    font-weight: bold;
-    padding: 4px 12px;
-    border-radius: 20px;
-    margin-bottom: 8px;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
-  .pos-header-banner h2 {
-    margin: 0 0 8px 0 !important;
-    font-size: 1.8rem !important;
-    color: #2c241b !important;
-    font-weight: 700;
+  .abuzar-header h3 { margin: 0; font-size: 1.2rem; font-weight: bold; }
+  .abuzar-header span { font-size: 0.9rem; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 4px; }
+
+  /* Entry Area (Search + Qty + Add) */
+  .abuzar-entry-area {
+    padding: 15px 20px;
+    background: #fbf8f3;
+    border-bottom: 2px solid #ebdcc5;
   }
-  .pos-header-banner p {
-    margin: 0 !important;
-    font-size: 0.95rem !important;
-    color: #665b4e !important;
-    line-height: 1.6;
+  .entry-row {
+    display: flex;
+    gap: 15px;
+    align-items: flex-end;
   }
-  .pos-body-content {
-    padding: 24px 28px;
-  }
-  .pos-search-wrapper {
-    position: relative;
-    margin-bottom: 16px;
-  }
-  .pos-label {
-    display: block;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #4a3e31;
-    margin-bottom: 8px;
-  }
-  .pos-input-field {
-    width: 100%;
-    padding: 14px 16px;
-    border: 1.5px solid #dcd1be;
-    border-radius: 10px;
+  .entry-col { display: flex; flex-direction: column; }
+  .entry-col.search-col { flex: 2; position: relative; }
+  .entry-col.qty-col { flex: 0.5; }
+  .entry-col.btn-col { flex: 0.5; }
+
+  .abuzar-label { font-size: 0.85rem; font-weight: bold; color: #555; margin-bottom: 5px; }
+  .abuzar-input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
     font-size: 1rem;
-    background: #faf8f4;
-    transition: all 0.25s ease;
-    box-sizing: border-box;
   }
-  .pos-input-field:focus {
-    outline: none;
-    border-color: #b8860b;
-    background: #ffffff;
-    box-shadow: 0 0 0 4px rgba(184, 134, 11, 0.12);
-  }
+  .abuzar-input:focus { border-color: #b8860b; outline: none; background: #fffde7; }
+  
   #search-results {
     position: absolute;
     top: 100%;
     right: 0;
     left: 0;
-    background: #ffffff;
-    border: 1px solid #e0d5c1;
-    border-radius: 10px;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
-    margin-top: 6px;
-    max-height: 240px;
+    background: #fff;
+    border: 1px solid #ccc;
+    max-height: 200px;
     overflow-y: auto;
-    z-index: 1000;
+    z-index: 100;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
   }
-  .pos-selected-box {
-    background: #fdfcf9;
-    border: 1px dashed #cbbba3;
-    border-radius: 10px;
-    padding: 16px 20px;
-    margin-top: 14px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
+
+  .abuzar-add-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    height: 40px;
   }
-  .pos-receipt-area {
-    margin-top: 24px;
-    border-top: 2px dashed #e5d7be;
-    padding-top: 20px;
-  }
-  .pos-receipt-title {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: #3b3125;
-    margin-bottom: 14px;
-  }
-  .pos-total-summary {
-    background: linear-gradient(135deg, #fbf7ee 0%, #f3e7d1 100%);
-    border: 1px solid #e2d2b5;
-    border-radius: 12px;
-    padding: 18px 22px;
-    margin-top: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .pos-total-text {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: #3b3125;
-  }
-  #cart-total {
-    font-size: 1.4rem;
-    font-weight: 800;
+  .abuzar-add-btn:hover { background: #45a049; }
+
+  /* Selected Item Name Display */
+  #selected-item-name {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.9rem;
     color: #b8860b;
+    font-weight: bold;
   }
-  .pos-cta-wrapper {
-    margin-top: 22px;
-    text-align: center;
+
+  /* Table / Bill Area */
+  .abuzar-table-area { padding: 15px 20px; min-height: 200px; }
+  
+  .table-header-row {
+    display: grid;
+    grid-template-columns: 3fr 1fr 1.5fr 0.5fr;
+    background: #eee;
+    padding: 10px;
+    font-weight: bold;
+    color: #333;
+    border: 1px solid #ccc;
+    font-size: 0.9rem;
   }
-  .pos-whatsapp-btn {
+
+  /* CSS to make your JS injected items look like table rows */
+  #cart-list { border: 1px solid #ccc; border-top: none; }
+  #cart-list > div {
+    display: grid !important;
+    grid-template-columns: 3fr 1fr 1.5fr 0.5fr !important;
+    padding: 10px !important;
+    border-bottom: 1px solid #eee;
+    align-items: center;
+    font-size: 0.95rem;
+  }
+  #cart-list > div:nth-child(even) { background: #fdfdfd; }
+  #cart-list > div:hover { background: #f5f5f5; }
+
+  /* Footer / Totals */
+  .abuzar-footer {
+    background: #fbf8f3;
+    padding: 15px 20px;
+    border-top: 2px solid #ebdcc5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 0 0 8px 8px;
+  }
+  .total-block {
+    background: #fff;
+    border: 2px solid #b8860b;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+  }
+  #cart-total { color: #b8860b; font-size: 1.5rem; margin-right: 10px; }
+
+  .wa-btn {
+    background: #25d366;
+    color: white !important;
+    text-decoration: none;
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 1.1rem;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
-    width: 100%;
-    padding: 16px 24px;
-    background: #25d366;
-    color: #ffffff !important;
-    text-decoration: none !important;
-    font-weight: 700;
-    font-size: 1.1rem;
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(37, 211, 102, 0.28);
-    transition: all 0.3s ease;
-    box-sizing: border-box;
+    gap: 8px;
   }
-  .pos-whatsapp-btn:hover {
-    background: #1ebc59;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgba(37, 211, 102, 0.38);
-  }
-  .pos-note {
-    margin-top: 10px;
-    font-size: 0.85rem;
-    color: #7a6e60;
+  .wa-btn:hover { background: #1ebc59; }
+
+  @media (max-width: 600px) {
+    .entry-row { flex-direction: column; align-items: stretch; }
+    .abuzar-footer { flex-direction: column; gap: 15px; }
   }
 </style>
 
-<div class="pos-terminal-card">
-  <!-- Header Banner -->
-  <div class="pos-header-banner">
-    <span class="pos-badge">Digital Billing POS</span>
-    <h2>اپنا بل خود بنائیں</h2>
-    <p>دوا کا نام لکھنا شروع کریں، فہرست میں سے منتخب کریں، مقدار لکھیں۔ آخر میں ایک کلک سے واٹس ایپ پر آرڈر بھیج دیں۔</p>
+<div class="abuzar-pos-wrapper">
+  
+  <!-- Software Header -->
+  <div class="abuzar-header">
+    <h3>Sales Invoice - اپنا بل خود بنائیں</h3>
+    <span>Lahore Medical Store</span>
   </div>
 
-  <!-- Body Content -->
-  <div class="pos-body-content">
+  <!-- Entry Section (Like Abuzar Barcode/Search entry) -->
+  <div class="abuzar-entry-area">
+    <div class="entry-row">
+      <!-- Search Input -->
+      <div class="entry-col search-col">
+        <label class="abuzar-label" for="med-search">Product Name / دوا کا نام (F2)</label>
+        <input id="med-search" class="abuzar-input" type="text" autocomplete="off" placeholder="Enter Medicine Name...">
+        <div id="search-results" style="display:none;"></div>
+      </div>
+      
+      <!-- ID "selected-item" wrap for JS Logic -->
+      <div id="selected-item" style="display:none; width: 100%;"></div>
+
+      <!-- Quantity Input -->
+      <div class="entry-col qty-col">
+        <label class="abuzar-label" for="qty-input">Qty / مقدار</label>
+        <input type="number" id="qty-input" class="abuzar-input" value="1" min="1">
+      </div>
+
+      <!-- Add Button -->
+      <div class="entry-col btn-col">
+        <label class="abuzar-label">&nbsp;</label>
+        <!-- یادرہے: اگر آپکی JS میں Add بٹن کی ID مختلف ہے تو یہاں تبدیل کرلیں -->
+        <button id="add-btn" class="abuzar-add-btn">Add (Enter)</button>
+      </div>
+    </div>
+    <!-- Selected Item Name shows here before adding -->
+    <span id="selected-item-name"></span>
+  </div>
+
+  <!-- Bill Table Area -->
+  <div class="abuzar-table-area">
+    <div class="table-header-row">
+      <div>Product Description</div>
+      <div>Qty</div>
+      <div>Amount</div>
+      <div>Del</div>
+    </div>
     
-    <!-- Search Box -->
-    <div class="pos-search-wrapper">
-      <label for="med-search" class="pos-label">دوا کا نام تلاش کریں:</label>
-      <input id="med-search" class="pos-input-field" type="text" autocomplete="off" placeholder="e.g. Panadol, Arinac, Rigix...">
-      <div id="search-results" style="display:none;"></div>
-    </div>
-
-    <!-- Selected Item Container -->
-    <div id="selected-item" class="pos-selected-box" style="display:none;">
-      <span id="selected-item-name" style="font-weight: bold; color: #2c241b;"></span>
-      <span style="display:flex; align-items:center; gap:10px; direction:ltr;">
-        <label style="font-size:0.85rem; color:#665b4e; font-weight:bold;">Qty</label>
-      </span>
-    </div>
-
-    <!-- Cart Receipt Section -->
-    <div class="pos-receipt-area">
-      <div class="pos-receipt-title">آپ کی دواؤں کی فہرست:</div>
-      <div id="cart-list"></div>
-    </div>
-
-    <!-- Total Amount Section -->
-    <div class="pos-total-summary">
-      <span class="pos-total-text">تخمینی مجموعی رقم:</span>
-      <span id="cart-total">0 روپے</span>
-    </div>
-
-    <!-- WhatsApp Order Button -->
-    <div class="pos-cta-wrapper">
-      <a id="whatsapp-order-btn" class="pos-whatsapp-btn" href="#">
-        <span>واٹس ایپ پر آرڈر بھیجیں</span>
-      </a>
-      <div class="pos-note">حتمی قیمت اور ڈیلیوری کی تفصیلات واٹس ایپ پر طے ہوں گی</div>
-    </div>
-
+    <!-- Cart Items will be injected here by JS -->
+    <div id="cart-list"></div>
   </div>
+
+  <!-- Footer Area (Totals & Checkout) -->
+  <div class="abuzar-footer">
+    <div class="total-block">
+      Total / مجموعی رقم: <span id="cart-total">0 روپے</span>
+    </div>
+    <a id="whatsapp-order-btn" href="#" class="wa-btn">
+      Order on WhatsApp
+    </a>
+  </div>
+
 </div>
 <!-- ============================================== -->
 <!-- DELIVERY AREA CHECKER - UPDATED - START -->

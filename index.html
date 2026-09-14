@@ -729,8 +729,9 @@ function rxRetry() { rxAnalyze(); }
 </script>
 <section class="order-section" id="estimate" style="background:var(--cream);">
   <div class="wrap">
-  <!-- ABUZAR STYLE POS TERMINAL -->
+<!-- ABUZAR STYLE POS TERMINAL (LTR & Print Protected) -->
 <style>
+  /* 1. Main Wrapper - Now Left to Right (LTR) */
   .abuzar-pos-wrapper {
     background: #ffffff;
     border: 1px solid #ebdcc5;
@@ -739,11 +740,33 @@ function rxRetry() { rxAnalyze(); }
     max-width: 800px;
     margin: 20px auto;
     font-family: Arial, sans-serif;
-    direction: rtl;
-    text-align: right;
+    direction: ltr; /* Changed from rtl to ltr */
+    text-align: left; /* Changed text alignment */
   }
   
-  /* Header Like Software */
+  /* 2. Print Protection (Lock) */
+  .print-warning-msg {
+    display: none;
+  }
+  @media print {
+    /* Hides the entire billing tool during printing */
+    .abuzar-pos-wrapper {
+      display: none !important;
+    }
+    /* Shows a warning message on the printed paper instead */
+    .print-warning-msg {
+      display: block !important;
+      text-align: center;
+      font-size: 24px;
+      color: red;
+      font-weight: bold;
+      margin-top: 100px;
+      border: 2px solid red;
+      padding: 20px;
+    }
+  }
+
+  /* Header */
   .abuzar-header {
     background: #b8860b;
     color: white;
@@ -756,7 +779,7 @@ function rxRetry() { rxAnalyze(); }
   .abuzar-header h3 { margin: 0; font-size: 1.2rem; font-weight: bold; }
   .abuzar-header span { font-size: 0.9rem; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 4px; }
 
-  /* Entry Area (Search + Qty + Add) */
+  /* Entry Area */
   .abuzar-entry-area {
     padding: 15px 20px;
     background: #fbf8f3;
@@ -778,6 +801,7 @@ function rxRetry() { rxAnalyze(); }
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 1rem;
+    text-align: left;
   }
   .abuzar-input:focus { border-color: #b8860b; outline: none; background: #fffde7; }
   
@@ -807,7 +831,6 @@ function rxRetry() { rxAnalyze(); }
   }
   .abuzar-add-btn:hover { background: #45a049; }
 
-  /* Selected Item Name Display */
   #selected-item-name {
     display: block;
     margin-top: 8px;
@@ -830,7 +853,6 @@ function rxRetry() { rxAnalyze(); }
     font-size: 0.9rem;
   }
 
-  /* CSS to make your JS injected items look like table rows */
   #cart-list { border: 1px solid #ccc; border-top: none; }
   #cart-list > div {
     display: grid !important;
@@ -862,7 +884,7 @@ function rxRetry() { rxAnalyze(); }
     font-weight: bold;
     color: #333;
   }
-  #cart-total { color: #b8860b; font-size: 1.5rem; margin-right: 10px; }
+  #cart-total { color: #b8860b; font-size: 1.5rem; margin-left: 10px; font-weight: 900; }
 
   .wa-btn {
     background: #25d366;
@@ -875,8 +897,9 @@ function rxRetry() { rxAnalyze(); }
     display: flex;
     align-items: center;
     gap: 8px;
+    transition: 0.3s;
   }
-  .wa-btn:hover { background: #1ebc59; }
+  .wa-btn:hover { background: #1ebc59; transform: scale(1.02); }
 
   @media (max-width: 600px) {
     .entry-row { flex-direction: column; align-items: stretch; }
@@ -884,41 +907,45 @@ function rxRetry() { rxAnalyze(); }
   }
 </style>
 
+<!-- Warning Message ONLY Visible When Someone Tries to Print -->
+<div class="print-warning-msg">
+  ⚠️ NOT A VALID RECEIPT<br>
+  This is an online estimate tool. Printing this document as a bill is strictly prohibited.
+</div>
+
+<!-- Main Tool -->
 <div class="abuzar-pos-wrapper">
   
   <!-- Software Header -->
   <div class="abuzar-header">
-    <h3>Sales Invoice - اپنا بل خود بنائیں</h3>
+    <h3>Sales Invoice - Apna Bill Khud Banayein</h3>
     <span>Lahore Medical Store</span>
   </div>
 
-  <!-- Entry Section (Like Abuzar Barcode/Search entry) -->
+  <!-- Entry Section -->
   <div class="abuzar-entry-area">
     <div class="entry-row">
-      <!-- Search Input -->
+      <!-- Search Input (Left Side Now) -->
       <div class="entry-col search-col">
-        <label class="abuzar-label" for="med-search">Product Name / دوا کا نام (F2)</label>
+        <label class="abuzar-label" for="med-search">Product Name (دوا کا نام)</label>
         <input id="med-search" class="abuzar-input" type="text" autocomplete="off" placeholder="Enter Medicine Name...">
         <div id="search-results" style="display:none;"></div>
       </div>
       
-      <!-- ID "selected-item" wrap for JS Logic -->
       <div id="selected-item" style="display:none; width: 100%;"></div>
 
-      <!-- Quantity Input -->
+      <!-- Quantity Input (Middle) -->
       <div class="entry-col qty-col">
-        <label class="abuzar-label" for="qty-input">Qty / مقدار</label>
+        <label class="abuzar-label" for="qty-input">Qty (مقدار)</label>
         <input type="number" id="qty-input" class="abuzar-input" value="1" min="1">
       </div>
 
-      <!-- Add Button -->
+      <!-- Add Button (Right Side) -->
       <div class="entry-col btn-col">
         <label class="abuzar-label">&nbsp;</label>
-        <!-- یادرہے: اگر آپکی JS میں Add بٹن کی ID مختلف ہے تو یہاں تبدیل کرلیں -->
         <button id="add-btn" class="abuzar-add-btn">Add (Enter)</button>
       </div>
     </div>
-    <!-- Selected Item Name shows here before adding -->
     <span id="selected-item-name"></span>
   </div>
 
@@ -927,9 +954,25 @@ function rxRetry() { rxAnalyze(); }
     <div class="table-header-row">
       <div>Product Description</div>
       <div>Qty</div>
-      <div>Amount</div>
+      <div>Amount (Rs)</div>
       <div>Del</div>
     </div>
+    
+    <!-- Cart Items injected by JS -->
+    <div id="cart-list"></div>
+  </div>
+
+  <!-- Footer Area -->
+  <div class="abuzar-footer">
+    <div class="total-block">
+      Total Amount: <span id="cart-total">0 Rs</span>
+    </div>
+    <a id="whatsapp-order-btn" href="#" class="wa-btn">
+      Send Order on WhatsApp
+    </a>
+  </div>
+
+</div>
     
     <!-- Cart Items will be injected here by JS -->
     <div id="cart-list"></div>

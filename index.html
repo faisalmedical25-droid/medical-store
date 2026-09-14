@@ -1162,17 +1162,15 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
   <button class="float-tools-toggle" id="float-tools-toggle" aria-label="Tools">🧰</button>
   <div class="float-tools-menu">
     <a href="#medicine-lookup">🔎 دوا تلاش کریں</a>
-    <a href=<a href="#da-section">📍 ڈلیوری چیک کریں</a>
+   <a href="#da-section">📍 ڈلیوری چیک کریں</a>
     <a href="#estimate">💊 بل کیلکولیٹر</a>
   </div>
 </div>
 
 <a class="float-wa" href="https://wa.me/923218861265" target="_blank" rel="noopener">واٹس ایپ کریں</a>
 
-<script>
-(function(){
 <!-- ============================================== -->
-<!-- LIVE SEARCH DELIVERY AREA CHECKER TOOL - START -->
+<!-- 100% FIXED LIVE SEARCH DELIVERY TOOL - START -->
 <!-- ============================================== -->
 <section id="da-section" style="padding: 35px 0; background: #ffffff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
   <div style="max-width: 800px; margin: 0 auto; padding: 0 20px;">
@@ -1188,7 +1186,7 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
       <h2 style="font-size: 24px; font-weight: 700; color: #2E7D32; margin: 0 0 6px 0;">Delivery Area Checker</h2>
       <p style="font-size: 15px; font-weight: 600; color: #444; margin: 0 0 4px 0;">اپنا ایریا تلاش کریں</p>
       <p style="font-size: 14px; color: #666; max-width: 520px; margin: 0 auto; line-height: 1.5;">
-        Apna area type karein ya GPS location se delivery status check karein.
+        Apna area type karein ya live GPS location se delivery status check karein.
       </p>
     </div>
 
@@ -1208,7 +1206,7 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
       <!-- Live Search Box Wrapper -->
       <div style="position: relative; margin-top: 10px;">
         <div style="position: relative; display: flex; align-items: center;">
-          <input type="text" id="da-search-input" onkeyup="daFilterAreas()" onfocus="daFilterAreas()" placeholder="🔍 Type area name (e.g. Walton, Model Town)..." autocomplete="off" style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 2px solid #2E7D32; font-size: 15px; font-family: inherit; outline: none; background: #fafffe; box-sizing: border-box;" />
+          <input type="text" id="da-search-input" oninput="daFilterAreas()" onfocus="daFilterAreas()" placeholder="🔍 Type area name (e.g. Walton, Model Town)..." autocomplete="off" style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 2px solid #2E7D32; font-size: 15px; font-family: inherit; outline: none; background: #fafffe; box-sizing: border-box;" />
           <button type="button" id="da-clear-btn" onclick="daClearSearch()" style="display:none; position: absolute; right: 12px; background: none; border: none; font-size: 18px; color: #888; cursor: pointer;">✕</button>
         </div>
 
@@ -1331,11 +1329,11 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
     left: 0;
     right: 0;
     background: #ffffff;
-    border: 1px solid #4CAF50;
+    border: 2px solid #2E7D32;
     border-radius: 12px;
     max-height: 220px;
     overflow-y: auto;
-    z-index: 9999;
+    z-index: 99999;
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     margin-top: 4px;
   }
@@ -1356,119 +1354,127 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
 
 <!-- JavaScript Engine -->
 <script>
-(function () {
-  // Store Exact Coordinates (Faisal Medical Store, Ferozepur Road, Lahore)
-  const PHARMACY_LAT = 31.4546674;
-  const PHARMACY_LNG = 74.3522174;
-  const WHATSAPP_NUMBER = "923218861265";
+  // Store Coordinates (Faisal Medical Store)
+  var PHARMACY_LAT = 31.4546674;
+  var PHARMACY_LNG = 74.3522174;
+  var WHATSAPP_NUMBER = "923218861265";
 
-  // Comprehensive List of Local Areas Near Lahore Medical Store
-  const LOCAL_AREAS = [
-    { name: "Gul Colony (Opp. General Hospital)", dist: 0.5, time: "10–15 mins", status: "fast" },
-    { name: "General Hospital Gate / Ferozepur Rd", dist: 0.8, time: "10–15 mins", status: "fast" },
-    { name: "Chungi Amar Sidhu", dist: 1.2, time: "15–20 mins", status: "fast" },
-    { name: "Ismail Nagar / Asif Town", dist: 1.5, time: "15–20 mins", status: "fast" },
-    { name: "Kamahan / Nishtar Colony", dist: 2.0, time: "20–25 mins", status: "fast" },
-    { name: "Walton / Walton Road", dist: 3.2, time: "20–30 mins", status: "fast" },
-    { name: "Kot Lakhpat / Phatak", dist: 3.5, time: "20–30 mins", status: "fast" },
-    { name: "Kainchi / Package Factory", dist: 3.0, time: "20–30 mins", status: "fast" },
-    { name: "Township (Sector A, B, C)", dist: 4.5, time: "30–40 mins", status: "available" },
-    { name: "Model Town (Block A, B, C, D, M)", dist: 5.0, time: "30–40 mins", status: "available" },
-    { name: "Green Town", dist: 5.5, time: "30–45 mins", status: "available" },
-    { name: "Ferozepur Road (Ichhra / Mozang side)", dist: 6.5, time: "35–45 mins", status: "available" },
-    { name: "DHA Phase 1 & 2", dist: 6.0, time: "35–45 mins", status: "available" },
-    { name: "DHA Phase 3 & 4", dist: 7.5, time: "40–50 mins", status: "extended" },
-    { name: "DHA Phase 5 & 6", dist: 9.0, time: "45–60 mins", status: "extended" },
-    { name: "Gulberg III / Main Market", dist: 7.8, time: "45–60 mins", status: "extended" },
-    { name: "Cavalry Ground", dist: 7.2, time: "45–60 mins", status: "extended" },
-    { name: "Faisal Town", dist: 6.8, time: "35–45 mins", status: "available" },
-    { name: "Garden Town", dist: 7.5, time: "45–60 mins", status: "extended" },
-    { name: "Johar Town", dist: 9.5, time: "45–60 mins", status: "extended" },
-    { name: "Bahria Town", dist: 22.0, time: "Pickup / Ride", status: "outside" },
-    { name: "Thokar Niaz Baig", dist: 16.0, time: "Pickup / Ride", status: "outside" },
-    { name: "Shahdara / Ravi Road", dist: 20.0, time: "Pickup / Ride", status: "outside" },
-    { name: "Multan Road / Sabzazar", dist: 15.0, time: "Pickup / Ride", status: "outside" }
+  // Comprehensive Local Area List
+  var LOCAL_AREAS = [
+    { name: "Gul Colony (Opp. General Hospital)", dist: "0.5", time: "10–15 mins", status: "fast" },
+    { name: "General Hospital Gate / Ferozepur Rd", dist: "0.8", time: "10–15 mins", status: "fast" },
+    { name: "Chungi Amar Sidhu", dist: "1.2", time: "15–20 mins", status: "fast" },
+    { name: "Ismail Nagar / Asif Town", dist: "1.5", time: "15–20 mins", status: "fast" },
+    { name: "Kamahan / Nishtar Colony", dist: "2.0", time: "20–25 mins", status: "fast" },
+    { name: "Walton / Walton Road", dist: "3.2", time: "20–30 mins", status: "fast" },
+    { name: "Kot Lakhpat / Phatak", dist: "3.5", time: "20–30 mins", status: "fast" },
+    { name: "Kainchi / Package Factory", dist: "3.0", time: "20–30 mins", status: "fast" },
+    { name: "Township (Sector A, B, C)", dist: "4.5", time: "30–40 mins", status: "available" },
+    { name: "Model Town (Block A, B, C, D, M)", dist: "5.0", time: "30–40 mins", status: "available" },
+    { name: "Green Town", dist: "5.5", time: "30–45 mins", status: "available" },
+    { name: "Ferozepur Road (Ichhra / Mozang)", dist: "6.5", time: "35–45 mins", status: "available" },
+    { name: "DHA Phase 1 & 2", dist: "6.0", time: "35–45 mins", status: "available" },
+    { name: "DHA Phase 3 & 4", dist: "7.5", time: "40–50 mins", status: "extended" },
+    { name: "DHA Phase 5 & 6", dist: "9.0", time: "45–60 mins", status: "extended" },
+    { name: "Gulberg III / Main Market", dist: "7.8", time: "45–60 mins", status: "extended" },
+    { name: "Cavalry Ground", dist: "7.2", time: "45–60 mins", status: "extended" },
+    { name: "Faisal Town", dist: "6.8", time: "35–45 mins", status: "available" },
+    { name: "Garden Town", dist: "7.5", time: "45–60 mins", status: "extended" },
+    { name: "Bahria Town", dist: "22.0", time: "Pickup / Ride", status: "outside" },
+    { name: "Thokar Niaz Baig", dist: "16.0", time: "Pickup / Ride", status: "outside" },
+    { name: "Shahdara / Ravi Road", dist: "20.0", time: "Pickup / Ride", status: "outside" },
+    { name: "Multan Road / Sabzazar", dist: "15.0", time: "Pickup / Ride", status: "outside" }
   ];
 
-  let daCurrentStatus = "";
-  let daCurrentDistance = "";
-  let daCurrentLocationDetails = "";
-  let daUserMapLink = "";
+  var daCurrentStatus = "";
+  var daCurrentDistance = "";
+  var daCurrentLocationDetails = "";
+  var daUserMapLink = "";
 
-  function daById(id) { return document.getElementById(id); }
+  function daEscapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
 
-  // Distance Formula
   function daCalculateDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371;
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-              Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var R = 6371;
+    var dLat = (lat2 - lat1) * Math.PI / 180;
+    var dLon = (lon2 - lon1) * Math.PI / 180;
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return (R * c).toFixed(1);
   }
 
-  // Live Autocomplete Filter
-  window.daFilterAreas = function () {
-    const input = daById("da-search-input");
-    const box = daById("da-suggestions-box");
-    const clearBtn = daById("da-clear-btn");
+  function daFilterAreas() {
+    var input = document.getElementById("da-search-input");
+    var box = document.getElementById("da-suggestions-box");
+    var clearBtn = document.getElementById("da-clear-btn");
 
     if (!input || !box) return;
 
-    const query = input.value.trim().toLowerCase();
-    clearBtn.style.display = query.length > 0 ? "block" : "none";
+    var query = input.value.trim().toLowerCase();
+    if (clearBtn) clearBtn.style.display = query.length > 0 ? "block" : "none";
 
     if (query.length === 0) {
       box.style.display = "none";
       return;
     }
 
-    const matches = LOCAL_AREAS.filter(item => item.name.toLowerCase().includes(query));
+    var html = "";
+    var matchesCount = 0;
 
-    if (matches.length === 0) {
-      box.innerHTML = `<div class="da-suggestion-item" style="color:#888; cursor:default;">No area matched. Click GPS button above.</div>`;
-    } else {
-      let html = "";
-      matches.forEach(item => {
-        let tagText = item.status === 'fast' ? '⚡ Fast Range' : item.status === 'available' ? '🟢 Available' : item.status === 'extended' ? '🟠 Extended' : '🔴 Outside';
-        html += `<div class="da-suggestion-item" onclick="daSelectArea('${item.name.replace(/'/g, "\\'")}', '${item.dist}', '${item.time}', '${item.status}')">
-                  <span>📍 ${item.name}</span>
-                  <span class="da-tag">${tagText}</span>
-                 </div>`;
-      });
-      box.innerHTML = html;
+    for (var i = 0; i < LOCAL_AREAS.length; i++) {
+      var item = LOCAL_AREAS[i];
+      if (item.name.toLowerCase().indexOf(query) !== -1) {
+        matchesCount++;
+        var tagText = item.status === 'fast' ? '⚡ Fast Range' : (item.status === 'available' ? '🟢 Available' : (item.status === 'extended' ? '🟠 Extended' : '🔴 Outside'));
+        
+        // Pass ONLY array index i to avoid quote bugs
+        html += '<div class="da-suggestion-item" onclick="daSelectAreaByIndex(' + i + ')">' +
+                  '<span>📍 ' + daEscapeHtml(item.name) + '</span>' +
+                  '<span class="da-tag">' + tagText + '</span>' +
+                '</div>';
+      }
     }
 
+    if (matchesCount === 0) {
+      box.innerHTML = '<div class="da-suggestion-item" style="color:#888; cursor:default;">No area matched. Click GPS button above.</div>';
+    } else {
+      box.innerHTML = html;
+    }
     box.style.display = "block";
-  };
+  }
 
-  window.daClearSearch = function () {
-    const input = daById("da-search-input");
-    if(input) input.value = "";
-    daById("da-suggestions-box").style.display = "none";
-    daById("da-clear-btn").style.display = "none";
-    daById("da-result-area").style.display = "none";
-  };
+  function daClearSearch() {
+    var input = document.getElementById("da-search-input");
+    if (input) input.value = "";
+    document.getElementById("da-suggestions-box").style.display = "none";
+    document.getElementById("da-clear-btn").style.display = "none";
+    document.getElementById("da-result-area").style.display = "none";
+  }
 
-  // When User Clicks an Autocomplete Suggestion
-  window.daSelectArea = function (name, dist, time, status) {
-    daById("da-search-input").value = name;
-    daById("da-suggestions-box").style.display = "none";
+  function daSelectAreaByIndex(index) {
+    var item = LOCAL_AREAS[index];
+    if (!item) return;
+
+    var input = document.getElementById("da-search-input");
+    if (input) input.value = item.name;
+
+    document.getElementById("da-suggestions-box").style.display = "none";
 
     daUserMapLink = "";
-    daCurrentLocationDetails = name;
-    daCurrentDistance = typeof dist === 'number' ? dist + " km" : dist + " km";
+    daCurrentLocationDetails = item.name;
+    daCurrentDistance = item.dist + " km";
 
-    daApplyUI(status, daCurrentDistance, time, "Selected Area: " + name);
-  };
+    daApplyUI(item.status, daCurrentDistance, item.time, "Selected Area: " + item.name);
+  }
 
-  // GPS Location Handler
-  window.daRequestLocation = function () {
-    const msgBox = daById("da-message-area");
-    daById("da-result-area").style.display = "none";
-    daById("da-suggestions-box").style.display = "none";
+  function daRequestLocation() {
+    var msgBox = document.getElementById("da-message-area");
+    document.getElementById("da-result-area").style.display = "none";
+    document.getElementById("da-suggestions-box").style.display = "none";
 
     if (!navigator.geolocation) {
       msgBox.textContent = "Browser GPS support nahi karta. Type area name in search box.";
@@ -1482,16 +1488,16 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
     navigator.geolocation.getCurrentPosition(
       function (pos) {
         msgBox.style.display = "none";
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        const distKm = parseFloat(daCalculateDistance(PHARMACY_LAT, PHARMACY_LNG, lat, lng));
+        var lat = pos.coords.latitude;
+        var lng = pos.coords.longitude;
+        var distKm = parseFloat(daCalculateDistance(PHARMACY_LAT, PHARMACY_LNG, lat, lng));
 
-        daUserMapLink = `https://www.google.com/maps?q=${lat},${lng}`;
+        daUserMapLink = "https://www.google.com/maps?q=" + lat + "," + lng;
         daCurrentLocationDetails = "Live GPS Location Shared";
         daCurrentDistance = distKm + " km";
 
-        let status = distKm <= 3 ? "fast" : distKm <= 7 ? "available" : distKm <= 10 ? "extended" : "outside";
-        let time = distKm <= 3 ? "15–25 mins" : distKm <= 7 ? "30–45 mins" : distKm <= 10 ? "45–60 mins" : "Pickup / Ride";
+        var status = distKm <= 3 ? "fast" : (distKm <= 7 ? "available" : (distKm <= 10 ? "extended" : "outside"));
+        var time = distKm <= 3 ? "15–25 mins" : (distKm <= 7 ? "30–45 mins" : (distKm <= 10 ? "45–60 mins" : "Pickup / Ride"));
 
         daApplyUI(status, distKm + " km", time, "Live GPS Coordinates");
       },
@@ -1501,17 +1507,16 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
       },
       { timeout: 10000, enableHighAccuracy: true }
     );
-  };
+  }
 
-  // Display Result UI
   function daApplyUI(statusCode, distanceText, timeText, contextText) {
-    const badge = daById("da-status-badge");
-    const distEl = daById("da-distance-text");
-    const timeEl = daById("da-time-text");
-    const msgEl = daById("da-message-text");
-    const mapBtn = daById("da-map-btn");
-    const resArea = daById("da-result-area");
-    const rideBtn = daById("da-ride-wa-btn");
+    var badge = document.getElementById("da-status-badge");
+    var distEl = document.getElementById("da-distance-text");
+    var timeEl = document.getElementById("da-time-text");
+    var msgEl = document.getElementById("da-message-text");
+    var mapBtn = document.getElementById("da-map-btn");
+    var resArea = document.getElementById("da-result-area");
+    var rideBtn = document.getElementById("da-ride-wa-btn");
 
     if (!badge || !distEl || !timeEl || !msgEl || !resArea) return;
 
@@ -1523,26 +1528,26 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
 
     if (statusCode === "fast") {
       badge.textContent = "Fast Delivery Available";
-      badge.classList.add("da-badge-green");
+      badge.className = "da-badge da-badge-green";
       msgEl.textContent = "Great! Aap hamari fast delivery range (0-3 km) mein hain. " + contextText;
       daCurrentStatus = "Fast Delivery Available";
       if (rideBtn) rideBtn.style.display = "none";
     } else if (statusCode === "available") {
       badge.textContent = "Delivery Available";
-      badge.classList.add("da-badge-green");
+      badge.className = "da-badge da-badge-green";
       msgEl.textContent = "Aap hamari normal delivery range (3-7 km) mein hain. " + contextText;
       daCurrentStatus = "Delivery Available";
       if (rideBtn) rideBtn.style.display = "none";
     } else if (statusCode === "extended") {
       badge.textContent = "Extended Delivery Area";
-      badge.classList.add("da-badge-orange");
+      badge.className = "da-badge da-badge-orange";
       msgEl.style.borderLeftColor = "#f59e0b";
       msgEl.textContent = "Aap hamari extended range (7-10 km) mein hain. Delivery time aur charges pharmacist confirm karega. " + contextText;
       daCurrentStatus = "Extended Delivery Area";
       if (rideBtn) rideBtn.style.display = "none";
     } else {
       badge.textContent = "Outside Delivery Range";
-      badge.classList.add("da-badge-red");
+      badge.className = "da-badge da-badge-red";
       msgEl.style.borderLeftColor = "#c62828";
       msgEl.textContent = "Aap hamari regular delivery range se bahar (>10 km) hain. Aap Yango / InDrive bike ride se delivery request kar sakte hain. Ride charges customer khud pay karega.";
       daCurrentStatus = "Outside Delivery Range";
@@ -1550,16 +1555,15 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
     }
 
     if (mapBtn) {
-      mapBtn.href = `https://www.google.com/maps/dir/?api=1&destination=${PHARMACY_LAT},${PHARMACY_LNG}`;
+      mapBtn.href = "https://www.google.com/maps/dir/?api=1&destination=" + PHARMACY_LAT + "," + PHARMACY_LNG;
       mapBtn.style.display = "flex";
     }
 
     resArea.style.display = "block";
   }
 
-  // Normal WhatsApp Order Message
-  window.daSendWhatsApp = function () {
-    let msg = "Assalam-o-Alaikum Faisal Medical Store / Lahore Medical Store!\n";
+  function daSendWhatsApp() {
+    var msg = "Assalam-o-Alaikum Faisal Medical Store / Lahore Medical Store!\n";
     msg += "Maine website par delivery area check kiya hai.\n\n";
     msg += "📍 Area/Location: " + daCurrentLocationDetails + "\n";
     msg += "📏 Distance: " + daCurrentDistance + "\n";
@@ -1571,11 +1575,10 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
 
     msg += "Please confirm medicine delivery aur charges.";
     window.open("https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(msg), "_blank");
-  };
+  }
 
-  // Ride Request Message for Far Customers
-  window.daSendRideRequest = function () {
-    let msg = "Assalam-o-Alaikum Faisal Medical Store / Lahore Medical Store!\n";
+  function daSendRideRequest() {
+    var msg = "Assalam-o-Alaikum Faisal Medical Store / Lahore Medical Store!\n";
     msg += "Main delivery range se bahar hoon, lekin medicine chahiye.\n\n";
     msg += "📍 Area/Location: " + daCurrentLocationDetails + "\n";
     msg += "📏 Distance: " + daCurrentDistance + "\n\n";
@@ -1584,24 +1587,20 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
     msg += "Ride charges main khud pay karunga/karungi.\n\n";
     msg += "Please confirm medicine packing aur process.";
     window.open("https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(msg), "_blank");
-  };
+  }
 
-  // Close suggestions if clicked outside
+  // Hide suggestions when clicking outside
   document.addEventListener("click", function (e) {
-    const box = daById("da-suggestions-box");
-    const input = daById("da-search-input");
+    var box = document.getElementById("da-suggestions-box");
+    var input = document.getElementById("da-search-input");
     if (box && input && !box.contains(e.target) && !input.contains(e.target)) {
       box.style.display = "none";
     }
   });
-
-})();
 </script>
 <!-- ============================================== -->
-<!-- LIVE SEARCH DELIVERY AREA CHECKER TOOL - END -->
+<!-- 100% FIXED LIVE SEARCH DELIVERY TOOL - END -->
 <!-- ============================================== -->
-</script>
-
 <script>
 (function(){
   // Reuses the SAME global PRODUCTS array already loaded for the medicine calculator above.

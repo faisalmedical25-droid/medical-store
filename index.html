@@ -731,6 +731,22 @@ function rxRetry() { rxAnalyze(); }
   <div class="wrap">
 <!-- ABUZAR STYLE POS TERMINAL (LTR & Print Protected) -->
 <style>
+    /* Keyboard selected medicine highlight */
+  .pos-active-item {
+    background: #ebdcc5 !important;
+    color: #2c241b !important;
+    font-weight: bold !important;
+    outline: 2px solid #b8860b;
+  }
+
+  /* Search result items keyboard friendly */
+  #search-results > * {
+    cursor: pointer;
+  }
+
+  #search-results > *:hover {
+    background: #f3e7d1 !important;
+  }
   /* 1. Main Wrapper - Now Left to Right (LTR) */
   .abuzar-pos-wrapper {
     background: #ffffff;
@@ -2413,6 +2429,109 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
       return false;
     }
   };
+</script>
+  <script>
+document.addEventListener("DOMContentLoaded", function () {
+  const searchInput = document.getElementById("med-search");
+  const searchResults = document.getElementById("search-results");
+  const qtyInput = document.getElementById("qty-input");
+
+  const addBtn =
+    document.getElementById("add-btn") ||
+    document.getElementById("add-to-cart-btn") ||
+    document.querySelector("#selected-item button");
+
+  let currentFocus = -1;
+
+  if (!searchInput || !searchResults) return;
+
+  function getResultItems() {
+    return Array.from(searchResults.children).filter(function (item) {
+      return item.offsetParent !== null;
+    });
+  }
+
+  function removeActive(items) {
+    items.forEach(function (item) {
+      item.classList.remove("pos-active-item");
+    });
+  }
+
+  function addActive(items) {
+    if (!items.length) return;
+
+    removeActive(items);
+
+    if (currentFocus >= items.length) currentFocus = 0;
+    if (currentFocus < 0) currentFocus = items.length - 1;
+
+    items[currentFocus].classList.add("pos-active-item");
+
+    items[currentFocus].scrollIntoView({
+      behavior: "smooth",
+      block: "nearest"
+    });
+  }
+
+  searchInput.addEventListener("keydown", function (e) {
+    const items = getResultItems();
+
+    if (e.key === "ArrowDown") {
+      if (!items.length) return;
+      e.preventDefault();
+      currentFocus++;
+      addActive(items);
+    }
+
+    if (e.key === "ArrowUp") {
+      if (!items.length) return;
+      e.preventDefault();
+      currentFocus--;
+      addActive(items);
+    }
+
+    if (e.key === "Enter") {
+      if (!items.length) return;
+      e.preventDefault();
+
+      if (currentFocus < 0) {
+        currentFocus = 0;
+      }
+
+      if (items[currentFocus]) {
+        items[currentFocus].click();
+      }
+
+      setTimeout(function () {
+        if (qtyInput) {
+          qtyInput.focus();
+          qtyInput.select();
+        }
+      }, 150);
+    }
+  });
+
+  searchInput.addEventListener("input", function () {
+    currentFocus = -1;
+  });
+
+  if (qtyInput) {
+    qtyInput.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+
+        if (addBtn) {
+          addBtn.click();
+        }
+
+        setTimeout(function () {
+          searchInput.focus();
+          searchInput.select();
+        }, 200);
+      }
+    });
+  }
+});
 </script>
 </body>
 </html>

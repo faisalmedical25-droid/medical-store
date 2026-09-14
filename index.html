@@ -939,28 +939,32 @@ function rxRetry() { rxAnalyze(); }
 </div>
 
   <!-- Entry Section -->
+  <!-- Entry Section -->
   <div class="abuzar-entry-area">
     <div class="entry-row">
-      <!-- Search Input (Left Side Now) -->
+      
+      <!-- Search Input -->
       <div class="entry-col search-col">
         <label class="abuzar-label" for="med-search">Product Name (دوا کا نام)</label>
         <input id="med-search" class="abuzar-input" type="text" autocomplete="off" placeholder="Enter Medicine Name...">
         <div id="search-results" style="display:none;"></div>
       </div>
-      
-      <div id="selected-item" style="display:none; width: 100%;"></div>
 
-      <!-- Quantity Input (Middle) -->
+      <!-- Hidden selected item container for original JS -->
+      <div id="selected-item" style="display:none;"></div>
+
+      <!-- Quantity Input (SAHI ID: med-qty) -->
       <div class="entry-col qty-col">
-        <label class="abuzar-label" for="qty-input">Qty (مقدار)</label>
-        <input type="number" id="qty-input" class="abuzar-input" value="1" min="1">
+        <label class="abuzar-label" for="med-qty">Qty (مقدار)</label>
+        <input type="number" id="med-qty" class="abuzar-input" value="1" min="1">
       </div>
 
-      <!-- Add Button (Right Side) -->
+      <!-- Add Button (SAHI ID: add-item-btn) -->
       <div class="entry-col btn-col">
         <label class="abuzar-label">&nbsp;</label>
-        <button id="add-btn" class="abuzar-add-btn">Add (Enter)</button>
+        <button id="add-item-btn" class="abuzar-add-btn" type="button">Add (Enter)</button>
       </div>
+
     </div>
     <span id="selected-item-name"></span>
   </div>
@@ -982,22 +986,6 @@ function rxRetry() { rxAnalyze(); }
   <div class="abuzar-footer">
     <div class="total-block">
       Total Amount: <span id="cart-total">0 Rs</span>
-    </div>
-    <a id="whatsapp-order-btn" href="#" class="wa-btn">
-      Send Order on WhatsApp
-    </a>
-  </div>
-
-</div>
-    
-    <!-- Cart Items will be injected here by JS -->
-    <div id="cart-list"></div>
-  </div>
-
-  <!-- Footer Area (Totals & Checkout) -->
-  <div class="abuzar-footer">
-    <div class="total-block">
-      Total / مجموعی رقم: <span id="cart-total">0 روپے</span>
     </div>
     <a id="whatsapp-order-btn" href="#" class="wa-btn">
       Order on WhatsApp
@@ -2430,12 +2418,12 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
     }
   };
 </script>
- <script>
+<script>
 document.addEventListener("DOMContentLoaded", function () {
   const searchInput = document.getElementById("med-search");
   const searchResults = document.getElementById("search-results");
-  const qtyInput = document.getElementById("qty-input");
-  const selectedItem = document.getElementById("selected-item");
+  const qtyInput = document.getElementById("med-qty");      // Sahi ID
+  const addBtn = document.getElementById("add-item-btn");  // Sahi ID
 
   let currentFocus = -1;
 
@@ -2461,13 +2449,10 @@ document.addEventListener("DOMContentLoaded", function () {
     if (currentFocus < 0) currentFocus = items.length - 1;
 
     items[currentFocus].classList.add("pos-active-item");
-
-    items[currentFocus].scrollIntoView({
-      behavior: "smooth",
-      block: "nearest"
-    });
+    items[currentFocus].scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
+  // Search input par keyboard Arrow + Enter navigation
   searchInput.addEventListener("keydown", function (e) {
     const items = getResultItems();
 
@@ -2490,17 +2475,15 @@ document.addEventListener("DOMContentLoaded", function () {
       e.preventDefault();
 
       if (currentFocus < 0) currentFocus = 0;
+      if (items[currentFocus]) items[currentFocus].click();
 
-      if (items[currentFocus]) {
-        items[currentFocus].click();
-      }
-
+      // Enter ke baad cursor Qty input mein jaye
       setTimeout(function () {
         if (qtyInput) {
           qtyInput.focus();
           qtyInput.select();
         }
-      }, 150);
+      }, 120);
     }
   });
 
@@ -2508,40 +2491,20 @@ document.addEventListener("DOMContentLoaded", function () {
     currentFocus = -1;
   });
 
+  // Qty field mein Enter dabane par bill mein item add ho aur cursor wapas search par jaye
   if (qtyInput) {
     qtyInput.addEventListener("keydown", function (e) {
       if (e.key === "Enter") {
         e.preventDefault();
 
-        const innerQty = selectedItem ? selectedItem.querySelector("input[type='number']") : null;
-        if (innerQty && innerQty !== qtyInput) {
-          innerQty.value = qtyInput.value;
-          innerQty.dispatchEvent(new Event("input", { bubbles: true }));
-          innerQty.dispatchEvent(new Event("change", { bubbles: true }));
-        }
-
-        let targetBtn = document.getElementById("add-btn");
-        const innerBtn = selectedItem ? selectedItem.querySelector("button") : null;
-
-        if (innerBtn) {
-          targetBtn = innerBtn;
-        } else {
-          targetBtn =
-            targetBtn ||
-            document.getElementById("add-to-cart") ||
-            document.getElementById("add-item-btn") ||
-            document.getElementById("add-to-cart-btn") ||
-            document.querySelector(".abuzar-add-btn");
-        }
-
-        if (targetBtn) {
-          targetBtn.click();
+        if (addBtn) {
+          addBtn.click();   // Asal Add button trigger karega
         }
 
         setTimeout(function () {
-          searchInput.value = "";
           searchInput.focus();
-        }, 200);
+          searchInput.select();
+        }, 150);
       }
     });
   }

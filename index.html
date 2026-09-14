@@ -1172,92 +1172,92 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
 <script>
 (function(){
 <!-- ============================================== -->
+<!-- ============================================== -->
 <!-- DELIVERY AREA CHECKER TOOL - START -->
 <!-- ============================================== -->
-<section id="da-section" style="padding: 35px 0; background: #ffffff; font-family: 'Segoe UI', Tahoma, sans-serif;">
+<section id="da-section" style="padding: 35px 0; background: #ffffff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
   <div style="max-width: 800px; margin: 0 auto; padding: 0 20px;">
 
-    <!-- Tool Header -->
+    <!-- Header -->
     <div style="text-align: center; margin-bottom: 25px;">
       <div style="display: inline-flex; align-items: center; justify-content: center; width: 60px; height: 60px; background: linear-gradient(135deg, #4CAF50, #2E7D32); border-radius: 16px; margin-bottom: 12px; box-shadow: 0 6px 18px rgba(76,175,80,0.25);">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
           <circle cx="12" cy="10" r="3"></circle>
         </svg>
       </div>
       <h2 style="font-size: 24px; font-weight: 700; color: #2E7D32; margin: 0 0 6px 0;">Delivery Area Checker</h2>
       <p style="font-size: 15px; font-weight: 600; color: #444; margin: 0 0 4px 0;">اپنا ایریا چیک کریں</p>
-      <p style="font-size: 14px; color: #666; max-width: 500px; margin: 0 auto; line-height: 1.5;">Check karein ke aap hamari 7–10 km delivery range mein hain ya nahi.</p>
+      <p style="font-size: 14px; color: #666; max-width: 520px; margin: 0 auto; line-height: 1.5;">
+        Check karein ke aap Faisal Medical Store se 7–10 km delivery range mein hain ya nahi.
+      </p>
     </div>
 
     <!-- Main Card -->
-    <div class="da-card" style="background: #fff; border-radius: 16px; border: 1px solid #e0e0e0; box-shadow: 0 4px 15px rgba(0,0,0,0.05); padding: 24px;">
-      
+    <div style="background: #fff; border-radius: 16px; border: 1px solid #e0e0e0; box-shadow: 0 4px 15px rgba(0,0,0,0.05); padding: 24px;">
+
       <!-- Action Buttons -->
       <div id="da-action-area" style="display: flex; flex-direction: column; gap: 12px;">
-        <button onclick="daRequestLocation()" class="da-btn da-btn-primary">
+        <button type="button" onclick="daRequestLocation()" class="da-btn da-btn-primary">
           📍 Use My Current Location
         </button>
-        <button onclick="daShowManual()" class="da-btn da-btn-secondary">
+        <button type="button" onclick="daShowManual()" class="da-btn da-btn-secondary">
           🏠 Select Area Manually
         </button>
       </div>
 
-      <!-- Loading / Message Area -->
-      <div id="da-message-area" style="display: none; text-align: center; margin-top: 15px; font-size: 14px; color: #d97706; background: #fffbeb; padding: 10px; border-radius: 8px; border: 1px solid #fde68a;">
-      </div>
+      <!-- Message -->
+      <div id="da-message-area" style="display: none; text-align: center; margin-top: 15px; font-size: 14px; color: #92400e; background: #fffbeb; padding: 12px; border-radius: 10px; border: 1px solid #fde68a; line-height: 1.5;"></div>
 
-      <!-- Manual Area Selection (Hidden by default) -->
-      <div id="da-manual-area" style="display: none; margin-top: 20px; text-align: left;">
-        <label style="font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px; display: block;">Apna Area Select Karein:</label>
-        <select id="da-area-select" onchange="daHandleManualSelect()" style="width: 100%; padding: 12px 15px; border-radius: 10px; border: 1px solid #ccc; font-size: 15px; font-family: inherit; background: #f9f9f9; outline: none;">
+      <!-- Manual Area -->
+      <div id="da-manual-area" style="display: none; margin-top: 18px; text-align: left;">
+        <label for="da-area-select" style="font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px; display: block;">Apna Area Select Karein:</label>
+        <select id="da-area-select" onchange="daHandleManualSelect()" style="width: 100%; padding: 13px 15px; border-radius: 12px; border: 1px solid #ccc; font-size: 15px; font-family: inherit; background: #f9f9f9; outline: none;">
           <option value="">-- Area Select Karein --</option>
-          <!-- JavaScript will populate this list -->
         </select>
       </div>
 
-      <!-- Results Area (Hidden by default) -->
-      <div id="da-result-area" style="display: none; margin-top: 25px; border-top: 1px solid #eee; padding-top: 20px;">
-        
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
-          <div>
-            <span id="da-status-badge" class="da-badge">Status</span>
-            <h3 id="da-distance-text" style="margin: 8px 0 4px; font-size: 20px; color: #333;">0 km away</h3>
-            <p id="da-time-text" style="margin: 0; font-size: 13px; color: #666; font-weight: 600;">Time: --</p>
-          </div>
+      <!-- Result -->
+      <div id="da-result-area" style="display: none; margin-top: 22px; border-top: 1px solid #eee; padding-top: 18px;">
+        <div style="margin-bottom: 14px;">
+          <span id="da-status-badge" class="da-badge">Status</span>
+          <h3 id="da-distance-text" style="margin: 10px 0 4px; font-size: 20px; color: #222;">0 km away</h3>
+          <p id="da-time-text" style="margin: 0; font-size: 13px; color: #666; font-weight: 600;">Time: --</p>
         </div>
 
-        <p id="da-message-text" style="font-size: 14px; color: #444; line-height: 1.5; margin-bottom: 20px; background: #f9f9f9; padding: 12px; border-radius: 8px; border-left: 4px solid #4CAF50;">
-          Message here.
-        </p>
+        <p id="da-message-text" style="font-size: 14px; color: #444; line-height: 1.55; margin: 0 0 18px; background: #f9f9f9; padding: 12px 14px; border-radius: 10px; border-left: 4px solid #4CAF50;"></p>
 
-        <!-- Result Action Buttons -->
         <div style="display: flex; flex-direction: column; gap: 10px;">
-          <button onclick="daSendWhatsApp()" class="da-btn da-btn-whatsapp">
+          <button type="button" id="da-normal-wa-btn" onclick="daSendWhatsApp()" class="da-btn da-btn-whatsapp">
             📱 Order on WhatsApp
           </button>
-          <a id="da-map-btn" href="#" target="_blank" class="da-btn da-btn-map" style="display: none; text-decoration: none; text-align: center;">
+
+          <button type="button" id="da-ride-wa-btn" onclick="daSendRideRequest()" class="da-btn da-btn-ride" style="display:none;">
+            🛵 Yango / InDrive Delivery Request
+          </button>
+
+          <a id="da-map-btn" href="#" target="_blank" rel="noopener" class="da-btn da-btn-map" style="display: none; text-decoration: none;">
             🗺️ Get Directions to Pharmacy
           </a>
         </div>
       </div>
-
     </div>
 
-    <!-- Trust Badges & Privacy -->
-    <div style="margin-top: 20px; text-align: center;">
-      <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 12px;">
+    <!-- Trust + Privacy -->
+    <div style="margin-top: 18px; text-align: center;">
+      <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 10px;">
         <span class="da-trust-badge">🛡️ Genuine Medicines</span>
         <span class="da-trust-badge">👨‍⚕️ Pharmacist Support</span>
         <span class="da-trust-badge">🛵 Fast Local Delivery</span>
       </div>
-      <p style="font-size: 11px; color: #999;">🔒 Privacy Note: Aapki location save nahi hoti. Sirf distance calculate karne ke liye use hoti hai.</p>
+      <p style="font-size: 11px; color: #999; margin: 0; line-height: 1.4;">
+        🔒 Privacy: Aapki location save nahi hoti. Sirf delivery distance calculate karne ke liye use hoti hai.
+      </p>
     </div>
 
   </div>
 </section>
 
-<!-- CSS Styles for Delivery Tool -->
 <style>
   .da-btn {
     width: 100%;
@@ -1267,51 +1267,52 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
     font-weight: 600;
     font-family: inherit;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.25s ease;
     border: none;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
+    box-sizing: border-box;
   }
-  
   .da-btn-primary {
     background: linear-gradient(135deg, #4CAF50, #2E7D32);
-    color: white;
+    color: #fff;
     box-shadow: 0 4px 12px rgba(76,175,80,0.25);
   }
-  .da-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(76,175,80,0.35); }
-  
+  .da-btn-primary:hover { transform: translateY(-1px); }
   .da-btn-secondary {
     background: #f0fff0;
     color: #2E7D32;
     border: 1px solid #4CAF50;
   }
-  .da-btn-secondary:hover { background: #e8f5e9; }
-  
   .da-btn-whatsapp {
     background: #25D366;
-    color: white;
+    color: #fff;
     box-shadow: 0 4px 12px rgba(37,211,102,0.25);
   }
-  
+  .da-btn-ride {
+    background: #fff7ed;
+    color: #c2410c;
+    border: 1px solid #fdba74;
+  }
   .da-btn-map {
     background: #fff;
     color: #444;
     border: 1px solid #ccc;
   }
-
   .da-badge {
+    display: inline-block;
     padding: 5px 12px;
     border-radius: 50px;
     font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
+    letter-spacing: 0.3px;
   }
   .da-badge-green { background: #e8f5e9; color: #2E7D32; }
   .da-badge-orange { background: #fff3e0; color: #e65100; }
   .da-badge-red { background: #ffebee; color: #c62828; }
-
   .da-trust-badge {
     background: #f5f5f5;
     padding: 5px 10px;
@@ -1320,210 +1321,264 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
     color: #555;
     font-weight: 600;
   }
-
   @media (min-width: 600px) {
     #da-action-area { flex-direction: row; }
   }
 </style>
 
-<!-- JavaScript for Delivery Tool -->
 <script>
+(function () {
   // ==========================================
-  // ⚙️ PHARMACY LOCATION SETTINGS
+  // FAISAL MEDICAL STORE - EXACT COORDINATES
+  // Opposite General Hospital Main Gate, Gul Colony, Lahore-Kasur Rd
   // ==========================================
-  
-  // Yahan Google Maps se apne store ki exact location daalein:
-  const PHARMACY_LAT = 31.475442; // Example Latitude (Isay apne store se change karein)
-  const PHARMACY_LNG = 74.343158; // Example Longitude (Isay apne store se change karein)
-  
-  const WHATSAPP_NUMBER = "923218861265"; 
+  const PHARMACY_LAT = 31.4546674;
+  const PHARMACY_LNG = 74.3522174;
+  const WHATSAPP_NUMBER = "923218861265";
 
-  // ==========================================
-  // 📋 MANUAL AREA LIST (Aap isko edit kar sakte hain)
-  // ==========================================
+  // Delivery radius settings
+  const FAST_RADIUS_KM = 3;
+  const FULL_DELIVERY_RADIUS_KM = 7;
+  const EXTENDED_DELIVERY_RADIUS_KM = 10;
+
+  // Manual areas near store (Johar Town removed)
   const DELIVERY_AREAS = [
-    { name: "General Hospital Area", status: "fast", time: "20–30 minutes", dist: "1-3 km" },
-    { name: "Model Town", status: "fast", time: "20–30 minutes", dist: "2-4 km" },
-    { name: "Ferozepur Road", status: "available", time: "30–45 minutes", dist: "4-6 km" },
-    { name: "DHA Lahore", status: "available", time: "30–45 minutes", dist: "5-7 km" },
-    { name: "Gulberg", status: "extended", time: "45–60 minutes", dist: "8-10 km" },
-    { name: "Johar Town", status: "extended", time: "45–60 minutes", dist: "8-10 km" },
-    { name: "Bahria Town", status: "outside", time: "Pickup recommended", dist: ">10 km" },
-    { name: "Other Area (Far)", status: "outside", time: "Pickup recommended", dist: "Unknown" }
+    { name: "Opposite General Hospital / Gul Colony", status: "fast", time: "15–25 minutes", dist: "0–2 km" },
+    { name: "Walton", status: "fast", time: "20–30 minutes", dist: "2–4 km" },
+    { name: "Kot Lakhpat", status: "fast", time: "20–30 minutes", dist: "2–4 km" },
+    { name: "Model Town", status: "available", time: "30–40 minutes", dist: "4–6 km" },
+    { name: "Ferozepur Road", status: "available", time: "30–45 minutes", dist: "4–7 km" },
+    { name: "Township", status: "available", time: "30–45 minutes", dist: "5–7 km" },
+    { name: "Gulberg", status: "extended", time: "45–60 minutes", dist: "8–10 km" },
+    { name: "DHA Lahore", status: "extended", time: "45–60 minutes", dist: "8–10 km" },
+    { name: "Bahria Town / Far Area", status: "outside", time: "Pickup / Ride request", dist: ">10 km" }
   ];
 
   let daCurrentStatus = "";
   let daCurrentDistance = "";
   let daCurrentLocationDetails = "";
-  let daMapLink = "";
+  let daUserMapLink = "";
 
-  window.addEventListener('DOMContentLoaded', () => {
-    const select = document.getElementById('da-area-select');
-    if(select) {
-        DELIVERY_AREAS.forEach((area, index) => {
-          let opt = document.createElement('option');
-          opt.value = index;
-          opt.innerText = area.name;
-          select.appendChild(opt);
-        });
-    }
-  });
+  function daById(id) {
+    return document.getElementById(id);
+  }
 
   function daCalculateDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371; 
+    const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-              Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    return (R * c).toFixed(1); 
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return (R * c).toFixed(1);
   }
 
   function daShowMessage(msg) {
-    const msgArea = document.getElementById('da-message-area');
-    msgArea.innerText = msg;
-    msgArea.style.display = 'block';
+    const box = daById("da-message-area");
+    if (!box) return;
+    box.textContent = msg;
+    box.style.display = "block";
   }
 
-  function daRequestLocation() {
-    document.getElementById('da-message-area').style.display = 'none';
-    document.getElementById('da-manual-area').style.display = 'none';
-    document.getElementById('da-result-area').style.display = 'none';
+  function daHideMessage() {
+    const box = daById("da-message-area");
+    if (box) box.style.display = "none";
+  }
+
+  function daInitDropdown() {
+    const select = daById("da-area-select");
+    if (!select) return;
+    while (select.options.length > 1) select.remove(1);
+    DELIVERY_AREAS.forEach(function (area, index) {
+      const opt = document.createElement("option");
+      opt.value = String(index);
+      opt.textContent = area.name;
+      select.appendChild(opt);
+    });
+  }
+
+  window.daRequestLocation = function () {
+    daHideMessage();
+    if (daById("da-manual-area")) daById("da-manual-area").style.display = "none";
+    if (daById("da-result-area")) daById("da-result-area").style.display = "none";
 
     if (!navigator.geolocation) {
       daShowMessage("Aapka browser location support nahi karta. Manual area select karein.");
-      daShowManual();
+      window.daShowManual();
       return;
     }
 
-    daShowMessage("Location check ho rahi hai... Please allow permission on your screen.");
+    daShowMessage("Location check ho rahi hai... Please allow permission.");
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        document.getElementById('da-message-area').style.display = 'none';
+      function (position) {
+        daHideMessage();
         const userLat = position.coords.latitude;
         const userLng = position.coords.longitude;
-        
         const distKm = daCalculateDistance(PHARMACY_LAT, PHARMACY_LNG, userLat, userLng);
-        daMapLink = `https://www.google.com/maps?q=${userLat},${userLng}`;
+
+        daUserMapLink = "https://www.google.com/maps?q=" + userLat + "," + userLng;
         daCurrentLocationDetails = "GPS Location Shared";
         daCurrentDistance = distKm + " km";
-        
-        daProcessResult(parseFloat(distKm), true);
+
+        daProcessResult(parseFloat(distKm));
       },
-      (error) => {
+      function () {
         daShowMessage("Location permission allow nahi hui. Aap manual area select kar sakte hain.");
-        daShowManual();
+        window.daShowManual();
       },
-      { timeout: 10000, enableHighAccuracy: true }
+      { timeout: 12000, enableHighAccuracy: true }
     );
-  }
+  };
 
-  function daShowManual() {
-    document.getElementById('da-message-area').style.display = 'none';
-    document.getElementById('da-result-area').style.display = 'none';
-    document.getElementById('da-manual-area').style.display = 'block';
-  }
+  window.daShowManual = function () {
+    daHideMessage();
+    if (daById("da-result-area")) daById("da-result-area").style.display = "none";
+    if (daById("da-manual-area")) daById("da-manual-area").style.display = "block";
+  };
 
-  function daHandleManualSelect() {
-    const select = document.getElementById('da-area-select');
-    if(select.value === "") {
-      document.getElementById('da-result-area').style.display = 'none';
+  window.daHandleManualSelect = function () {
+    const select = daById("da-area-select");
+    if (!select || select.value === "") {
+      if (daById("da-result-area")) daById("da-result-area").style.display = "none";
       return;
     }
 
-    const area = DELIVERY_AREAS[select.value];
-    daMapLink = ""; 
+    const area = DELIVERY_AREAS[parseInt(select.value, 10)];
+    if (!area) return;
+
+    daUserMapLink = "";
     daCurrentLocationDetails = area.name;
     daCurrentDistance = area.dist;
 
-    daApplyUI(area.status, area.dist, area.time, `Selected Area: ${area.name}`);
-  }
+    daApplyUI(area.status, area.dist, area.time, "Selected Area: " + area.name);
+  };
 
-  function daProcessResult(dist, isGps) {
+  function daProcessResult(dist) {
     let status = "";
     let time = "";
-    
-    if (dist <= 3) {
-      status = "fast"; time = "20–30 minutes";
-    } else if (dist <= 7) {
-      status = "available"; time = "30–45 minutes";
-    } else if (dist <= 10) {
-      status = "extended"; time = "45–60 minutes";
+
+    if (dist <= FAST_RADIUS_KM) {
+      status = "fast";
+      time = "20–30 minutes";
+    } else if (dist <= FULL_DELIVERY_RADIUS_KM) {
+      status = "available";
+      time = "30–45 minutes";
+    } else if (dist <= EXTENDED_DELIVERY_RADIUS_KM) {
+      status = "extended";
+      time = "45–60 minutes";
     } else {
-      status = "outside"; time = "Pickup recommended";
+      status = "outside";
+      time = "Pickup / Ride request";
     }
 
-    daApplyUI(status, dist + " km", time, (isGps ? "Aapki current location se." : ""));
+    daApplyUI(status, dist + " km", time, "Aapki current location se.");
   }
 
   function daApplyUI(statusCode, distanceText, timeText, contextText) {
-    const resArea = document.getElementById('da-result-area');
-    const badge = document.getElementById('da-status-badge');
-    const distEl = document.getElementById('da-distance-text');
-    const timeEl = document.getElementById('da-time-text');
-    const msgEl = document.getElementById('da-message-text');
-    const mapBtn = document.getElementById('da-map-btn');
+    const badge = daById("da-status-badge");
+    const distEl = daById("da-distance-text");
+    const timeEl = daById("da-time-text");
+    const msgEl = daById("da-message-text");
+    const mapBtn = daById("da-map-btn");
+    const resArea = daById("da-result-area");
+    const normalBtn = daById("da-normal-wa-btn");
+    const rideBtn = daById("da-ride-wa-btn");
 
-    distEl.innerText = distanceText + " away";
-    timeEl.innerText = "Estimated Time: " + timeText;
-    
+    if (!badge || !distEl || !timeEl || !msgEl || !resArea) return;
+
+    distEl.textContent = distanceText + " away";
+    timeEl.textContent = "Estimated Time: " + timeText;
+
     badge.className = "da-badge";
     msgEl.style.borderLeftColor = "#4CAF50";
 
+    if (normalBtn) normalBtn.style.display = "flex";
+
     if (statusCode === "fast") {
-      badge.innerText = "Fast Delivery Available";
+      badge.textContent = "Fast Delivery Available";
       badge.classList.add("da-badge-green");
-      msgEl.innerText = `Great! Aap hamari fast delivery range mein hain. ${contextText}`;
+      msgEl.textContent = "Great! Aap hamari fast delivery range mein hain. " + contextText;
       daCurrentStatus = "Fast Delivery Available";
-    } 
-    else if (statusCode === "available") {
-      badge.innerText = "Delivery Available";
+      if (rideBtn) rideBtn.style.display = "none";
+    } else if (statusCode === "available") {
+      badge.textContent = "Delivery Available";
       badge.classList.add("da-badge-green");
-      msgEl.innerText = `Aap hamari normal delivery range mein hain. ${contextText}`;
+      msgEl.textContent = "Aap hamari normal delivery range mein hain. " + contextText;
       daCurrentStatus = "Delivery Available";
-    } 
-    else if (statusCode === "extended") {
-      badge.innerText = "Extended Delivery Area";
+      if (rideBtn) rideBtn.style.display = "none";
+    } else if (statusCode === "extended") {
+      badge.textContent = "Extended Delivery Area";
       badge.classList.add("da-badge-orange");
       msgEl.style.borderLeftColor = "#f59e0b";
-      msgEl.innerText = `Aap hamari extended range mein hain. Delivery time aur charges pharmacist confirm karega. ${contextText}`;
+      msgEl.textContent = "Aap hamari extended range mein hain. Delivery time aur charges pharmacist confirm karega. " + contextText;
       daCurrentStatus = "Extended Delivery Area";
-    } 
-    else {
-      badge.innerText = "Outside Delivery Range";
+      if (rideBtn) rideBtn.style.display = "none";
+    } else {
+      badge.textContent = "Outside Delivery Range";
       badge.classList.add("da-badge-red");
       msgEl.style.borderLeftColor = "#c62828";
-      msgEl.innerText = `Aap hamari regular delivery range se bahar hain. Aap self-pickup kar sakte hain ya special delivery confirm karein. ${contextText}`;
+      msgEl.textContent = "Aap hamari regular delivery range se bahar hain. Aap pickup kar sakte hain, ya Yango/InDrive/Bike Ride se delivery request kar sakte hain. Ride charges customer khud pay karega.";
       daCurrentStatus = "Outside Delivery Range";
+      if (rideBtn) rideBtn.style.display = "flex";
     }
 
-    if(daMapLink !== "") {
-      mapBtn.href = `https://www.google.com/maps/dir/?api=1&destination=${PHARMACY_LAT},${PHARMACY_LNG}`;
-      mapBtn.style.display = "block";
-    } else {
-      mapBtn.style.display = "none";
+    if (mapBtn) {
+      if (daUserMapLink) {
+        mapBtn.href = "https://www.google.com/maps/dir/?api=1&destination=" + PHARMACY_LAT + "," + PHARMACY_LNG;
+        mapBtn.style.display = "flex";
+      } else {
+        mapBtn.style.display = "none";
+      }
     }
 
     resArea.style.display = "block";
   }
 
-  function daSendWhatsApp() {
-    let msg = `Assalam-o-Alaikum Lahore Medical Store!\nMaine website par delivery area check kiya hai.\n\n`;
-    msg += `📍 Area/Location: ${daCurrentLocationDetails}\n`;
-    msg += `📏 Distance: ${daCurrentDistance}\n`;
-    msg += `🟢 Status: ${daCurrentStatus}\n\n`;
-    
-    if(daMapLink) {
-      msg += `My GPS Location: ${daMapLink}\n\n`;
+  window.daSendWhatsApp = function () {
+    let msg = "Assalam-o-Alaikum Faisal Medical Store / Lahore Medical Store!\n";
+    msg += "Maine website par delivery area check kiya hai.\n\n";
+    msg += "📍 Area/Location: " + daCurrentLocationDetails + "\n";
+    msg += "📏 Distance: " + daCurrentDistance + "\n";
+    msg += "🟢 Status: " + daCurrentStatus + "\n\n";
+
+    if (daUserMapLink) {
+      msg += "My GPS Location: " + daUserMapLink + "\n\n";
     }
-    
-    msg += `Please confirm medicine delivery aur charges.`;
-    
-    const encoded = encodeURIComponent(msg);
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`, '_blank');
+
+    msg += "Please confirm medicine delivery aur charges.";
+
+    window.open("https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(msg), "_blank");
+  };
+
+  window.daSendRideRequest = function () {
+    let msg = "Assalam-o-Alaikum Faisal Medical Store / Lahore Medical Store!\n";
+    msg += "Main delivery range se bahar hoon, lekin medicine chahiye.\n\n";
+    msg += "📍 Area/Location: " + daCurrentLocationDetails + "\n";
+    msg += "📏 Distance: " + daCurrentDistance + "\n";
+    msg += "🟢 Status: " + daCurrentStatus + "\n\n";
+
+    if (daUserMapLink) {
+      msg += "My GPS Location: " + daUserMapLink + "\n\n";
+    }
+
+    msg += "Request:\n";
+    msg += "Please medicine Yango / InDrive / Bike Ride ke through bhej dein.\n";
+    msg += "Ride/delivery charges main khud pay karunga/karungi.\n";
+    msg += "Pharmacy medicine packing ready kar dein. Rider mere account se book ho sakta hai ya aap guide kar dein.\n\n";
+    msg += "Please confirm availability aur process.";
+
+    window.open("https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(msg), "_blank");
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", daInitDropdown);
+  } else {
+    daInitDropdown();
   }
+})();
 </script>
 <!-- ============================================== -->
 <!-- DELIVERY AREA CHECKER TOOL - END -->

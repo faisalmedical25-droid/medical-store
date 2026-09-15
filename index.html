@@ -824,6 +824,133 @@ function rxRetry() { rxAnalyze(); }
     .abuzar-footer { flex-direction: column !important; gap: 12px !important; }
     .table-header-row, #cart-list > div { grid-template-columns: 2fr 0.8fr 1.2fr 0.5fr !important; font-size: 0.8rem !important; }
   }
+  /* ===== DESKTOP PHARMACY INVOICE GRID ===== */
+
+.pos-invoice-grid {
+  margin-top: 14px;
+  border: 1px solid #aeb4bb;
+  background: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  overflow-x: auto;
+  min-height: 300px;
+}
+
+.pos-product-details-title {
+  min-width: 720px;
+  padding: 4px 8px;
+  background: #e2e4e8;
+  border-bottom: 1px solid #b7bcc2;
+  color: #252d91;
+  font-size: 13px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.pos-invoice-grid .table-header-row {
+  display: grid;
+  grid-template-columns:
+    minmax(280px, 1fr)
+    70px
+    90px
+    110px
+    110px
+    36px;
+  min-width: 720px;
+  background: #f1f1f2;
+  border-bottom: 1px solid #aeb4bb;
+}
+
+.pos-invoice-grid .table-header-row > div {
+  padding: 6px 7px;
+  border-right: 1px solid #c8ccd1;
+  color: #151515;
+  font-size: 13px;
+  font-weight: 400;
+  text-align: right;
+}
+
+.pos-invoice-grid .table-header-row > div:first-child {
+  text-align: left;
+}
+
+.pos-invoice-grid #cart-list {
+  min-width: 720px;
+}
+
+.pos-invoice-row {
+  display: grid;
+  grid-template-columns:
+    minmax(280px, 1fr)
+    70px
+    90px
+    110px
+    110px
+    36px;
+  min-width: 720px;
+  min-height: 27px;
+  border-bottom: 1px solid #d2d5d9;
+  color: #151b50;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+}
+
+.pos-invoice-row:nth-child(odd) {
+  background: #f7f4ff;
+}
+
+.pos-invoice-row:nth-child(even) {
+  background: #eef4f8;
+}
+
+.pos-invoice-cell {
+  padding: 5px 7px;
+  border-right: 1px solid #d2d5d9;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-align: right;
+}
+
+.pos-invoice-cell.product-name {
+  text-align: left;
+  color: #171d60;
+}
+
+.pos-invoice-cell.remove-cell {
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pos-invoice-remove {
+  width: 100%;
+  height: 100%;
+  min-height: 26px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #1b1b30;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.pos-invoice-remove:hover {
+  background: #ffdede;
+  color: #b00000;
+}
+
+/* Keep desktop-software table usable on phones */
+@media (max-width: 768px) {
+  .pos-invoice-grid {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    min-height: 240px;
+  }
+}
 </style>
 
 <div class="print-warning-msg">
@@ -859,15 +986,24 @@ function rxRetry() { rxAnalyze(); }
     <span id="selected-item-name" style="display:block; margin-top:8px; color:#b8860b; font-weight:bold;"></span>
   </div>
 
-  <div class="abuzar-table-area" id="cart-items">
-    <div class="table-header-row">
-      <div>Product Description</div>
-      <div>Qty</div>
-      <div>Amount (Rs)</div>
-      <div>Del</div>
-    </div>
-    <div id="cart-list"></div>
+ <div class="abuzar-table-area pos-invoice-grid" id="cart-items">
+
+  <div class="pos-product-details-title">
+    Product Details
   </div>
+
+  <div class="table-header-row">
+    <div>Product Name</div>
+    <div>Qty</div>
+    <div>Price</div>
+    <div>Amount</div>
+    <div>Total</div>
+    <div></div>
+  </div>
+
+  <div id="cart-list"></div>
+
+</div>
 
   <div class="abuzar-footer">
     <div class="total-block">
@@ -1889,95 +2025,123 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
     if(!resultsBox.contains(e.target) && e.target !== searchInput){ resultsBox.style.display = 'none'; }
   });
 
-  function render(){
+ function render(){
     var listEl = document.getElementById('cart-list');
     var totalEl = document.getElementById('cart-total');
     var cartWrap = document.getElementById('cart-items');
-    if(cart.length === 0){ cartWrap.style.display = 'none'; return; }
+
+    if(cart.length === 0){
+      cartWrap.style.display = 'none';
+      return;
+    }
+
     cartWrap.style.display = 'block';
     listEl.innerHTML = '';
+
     var total = 0;
+
     cart.forEach(function(item, idx){
-      var lineTotal = item.price * item.qty;
+      var price = Number(item.price) || 0;
+      var qty = Number(item.qty) || 1;
+      var lineTotal = price * qty;
+
       total += lineTotal;
+
       var row = document.createElement('div');
-      row.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-top:1px solid var(--line); font-size:0.95rem;';
-      row.innerHTML = '<span>' + item.name + ' × ' + item.qty + '</span>' +
-        '<span style="display:flex; align-items:center; gap:12px;">روپے ' + lineTotal.toLocaleString() +
-        ' <button data-idx="' + idx + '" class="remove-item" style="border:none; background:none; color:var(--terracotta); cursor:pointer; font-size:1rem;">✕</button></span>';
+      row.className = 'pos-invoice-row';
+
+      /*
+       * Product Name | Qty | Price | Amount | Total | X
+       *
+       * No Stock column
+       * No Discount column
+       */
+      row.innerHTML =
+        '<div class="pos-invoice-cell product-name"></div>' +
+        '<div class="pos-invoice-cell">' + qty + '</div>' +
+        '<div class="pos-invoice-cell">' + price.toFixed(2) + '</div>' +
+        '<div class="pos-invoice-cell">' + lineTotal.toFixed(2) + '</div>' +
+        '<div class="pos-invoice-cell">' + lineTotal.toFixed(2) + '</div>' +
+        '<div class="pos-invoice-cell remove-cell">' +
+          '<button type="button" data-idx="' + idx + '" class="remove-item pos-invoice-remove" aria-label="Remove item">×</button>' +
+        '</div>';
+
+      /*
+       * textContent is used for medicine name so product
+       * names are not interpreted as HTML.
+       */
+      row.querySelector('.product-name').textContent = item.name;
+
       listEl.appendChild(row);
     });
-    totalEl.textContent = 'روپے ' + total.toLocaleString();
 
+    totalEl.textContent = 'Rs. ' + total.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+    /*
+     * Existing delete functionality
+     */
     listEl.querySelectorAll('.remove-item').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        cart.splice(parseInt(btn.getAttribute('data-idx'), 10), 1);
+      btn.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+
+        cart.splice(
+          parseInt(btn.getAttribute('data-idx'), 10),
+          1
+        );
+
         render();
       });
     });
 
+    /*
+     * Existing WhatsApp medicine formatting
+     */
     function cleanName(name){
-      // Remove pack-size tokens like 30S, 20S, 100S and normalize to sentence case
-      var cleaned = name.replace(/\b\d+\s*S\b/gi, '').replace(/\s{2,}/g, ' ').trim();
+      var cleaned = name
+        .replace(/\b\d+\s*S\b/gi, '')
+        .replace(/\s{2,}/g, ' ')
+        .trim();
+
       cleaned = cleaned.toLowerCase();
       cleaned = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+
       return cleaned;
     }
+
     function unitSuffix(originalName){
       var upper = originalName.toUpperCase();
+
       if(/\bTAB\b/.test(upper)) return 'Tab';
       if(/\bSYP\b/.test(upper)) return 'Syp';
       if(/\bINJ\b/.test(upper)) return 'Inj';
+
       return '';
     }
+
     var lines = cart.map(function(item){
       var suffix = unitSuffix(item.name);
-      return cleanName(item.name) + ' ' + item.qty + (suffix ? ' ' + suffix : '');
+
+      return cleanName(item.name) +
+        ' ' +
+        item.qty +
+        (suffix ? ' ' + suffix : '');
     }).join('\n');
-    var msg = 'Mujhe ye Medicine Chahiye.\n' + lines + '\n\nTotal: Rs. ' + total + '\nDelivery ke liye rabta karein';
-    document.getElementById('whatsapp-order-btn').href = 'https://wa.me/923218861265?text=' + encodeURIComponent(msg);
+
+    var msg =
+      'Mujhe ye Medicine Chahiye.\n' +
+      lines +
+      '\n\nTotal: Rs. ' +
+      total +
+      '\nDelivery ke liye rabta karein';
+
+    document.getElementById('whatsapp-order-btn').href =
+      'https://wa.me/923218861265?text=' +
+      encodeURIComponent(msg);
   }
-
-  function addSelectedToCart(){
-    if(!selected){ return; }
-    var qty = parseInt(qtyInput.value, 10) || 1;
-    var existing = cart.find(function(i){ return i.name === selected[0]; });
-    if(existing){ existing.qty += qty; } else { cart.push({name: selected[0], price: selected[1], qty: qty}); }
-    render();
-    selected = null;
-    selectedBox.style.display = 'none';
-    searchInput.value = '';
-    qtyInput.value = 1;
-    // Jump back to search box so the next medicine can be typed immediately,
-    // exactly like a real pharmacy billing counter.
-    setTimeout(function(){ searchInput.focus(); }, 30);
-  }
-
-  addBtn.addEventListener('click', function(e){
-    e.preventDefault();
-    addSelectedToCart();
-  });
-
-  qtyInput.addEventListener('keydown', function(e){
-    if(e.key === 'Enter'){
-      e.preventDefault();
-      addSelectedToCart();
-    }
-  });
-
-  // Global bridge: lets other features (e.g. prescription upload) add a confirmed
-  // medicine straight into this same calculator cart, then scroll user to it.
-  window.addToCalculatorCart = function(name, price, qty){
-    qty = qty || 1;
-    var existing = cart.find(function(i){ return i.name === name; });
-    if(existing){ existing.qty += qty; } else { cart.push({name: name, price: price, qty: qty}); }
-    render();
-    var el = document.getElementById('estimate');
-    if(el){ el.scrollIntoView({behavior:'smooth'}); }
-  };
-})();
-</script>
-
 
 <section class="hero">
   <div class="wrap">

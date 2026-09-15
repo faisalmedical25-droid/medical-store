@@ -785,15 +785,16 @@ function rxRetry() { rxAnalyze(); }
     border-radius: 4px; font-size: 1rem; font-weight: bold; cursor: pointer; height: 40px;
   }
 
-  .abuzar-table-area { padding: 15px 20px; min-height: 180px; }
+  /* Table Area matched to original render() structure */
+  .abuzar-table-area { padding: 15px 20px; min-height: 150px; }
   .table-header-row {
-    display: grid; grid-template-columns: 3fr 1fr 1.5fr 0.5fr;
-    background: #eee; padding: 10px; font-weight: bold; color: #333; border: 1px solid #ccc; font-size: 0.9rem;
+    display: flex; justify-content: space-between;
+    background: #eee; padding: 10px 15px; font-weight: bold; color: #333; border: 1px solid #ccc; font-size: 0.9rem;
   }
   #cart-list { border: 1px solid #ccc; border-top: none; }
   #cart-list > div {
-    display: grid !important; grid-template-columns: 3fr 1fr 1.5fr 0.5fr !important;
-    padding: 10px !important; border-bottom: 1px solid #eee; align-items: center; font-size: 0.95rem;
+    display: flex !important; justify-content: space-between !important; align-items: center !important;
+    padding: 10px 15px !important; border-bottom: 1px solid #eee; font-size: 0.95rem;
   }
 
   .abuzar-footer {
@@ -822,7 +823,6 @@ function rxRetry() { rxAnalyze(); }
     .entry-col { width: 100% !important; flex: none !important; }
     .abuzar-input, .abuzar-add-btn, .wa-btn, .total-block { width: 100% !important; box-sizing: border-box !important; }
     .abuzar-footer { flex-direction: column !important; gap: 12px !important; }
-    .table-header-row, #cart-list > div { grid-template-columns: 2fr 0.8fr 1.2fr 0.5fr !important; font-size: 0.8rem !important; }
   }
 </style>
 
@@ -836,8 +836,7 @@ function rxRetry() { rxAnalyze(); }
     <span>Faizal Pharmacy</span>
   </div>
 
-  <!-- onsubmit="return false;" lagaya hai taake URL mein /#products na aaye -->
-  <form class="abuzar-entry-area" onsubmit="return false;">
+  <div class="abuzar-entry-area">
     <div class="entry-row">
       <div class="entry-col search-col">
         <label class="abuzar-label" for="med-search">Product Name (دوا کا نام)</label>
@@ -845,7 +844,6 @@ function rxRetry() { rxAnalyze(); }
         <div id="search-results" style="display:none;"></div>
       </div>
 
-      <!-- selected-item-name ko selected-item ke ANDAR rakha hai -->
       <div id="selected-item" style="display:none; margin-top:8px;">
         <span id="selected-item-name" style="color:#b8860b; font-weight:bold;"></span>
       </div>
@@ -860,14 +858,12 @@ function rxRetry() { rxAnalyze(); }
         <button id="add-item-btn" class="abuzar-add-btn" type="button">Add (Enter)</button>
       </div>
     </div>
-  </form>
+  </div>
 
   <div class="abuzar-table-area">
     <div class="table-header-row">
-      <div>Product Description</div>
-      <div>Qty</div>
-      <div>Amount (Rs)</div>
-      <div>Del</div>
+      <div>Product Description & Qty</div>
+      <div>Amount (Rs) & Action</div>
     </div>
     <div id="cart-list"></div>
   </div>
@@ -2326,81 +2322,86 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
 </script>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-  const searchInput = document.getElementById("med-search");
-  const searchResults = document.getElementById("search-results");
-  const qtyInput = document.getElementById("med-qty");
-  const addBtn = document.getElementById("add-item-btn");
+(function() {
+  var currentFocus = -1;
 
-  let currentFocus = -1;
+  function initPOSKeyboard() {
+    var searchInput = document.getElementById("med-search");
+    var resultsBox = document.getElementById("search-results");
+    var qtyInput = document.getElementById("med-qty");
+    var addBtn = document.getElementById("add-item-btn");
 
-  if (!searchInput || !searchResults || !qtyInput || !addBtn) return;
+    if (!searchInput || !resultsBox || !qtyInput || !addBtn) return;
 
-  function highlightItem(items) {
-    items.forEach(el => el.classList.remove("pos-active-item"));
-    if (items[currentFocus]) {
-      items[currentFocus].classList.add("pos-active-item");
-      items[currentFocus].scrollIntoView({ behavior: "smooth", block: "nearest" });
+    function getItems() {
+      return Array.from(resultsBox.querySelectorAll(".search-result-item"));
     }
-  }
 
-  // 1. Search Bar Controls
-  searchInput.addEventListener("keydown", function (e) {
-    const items = Array.from(searchResults.querySelectorAll(".search-result-item"));
-
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      if (!items.length) return;
-      currentFocus++;
-      if (currentFocus >= items.length) currentFocus = 0;
-      highlightItem(items);
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      if (!items.length) return;
-      currentFocus--;
-      if (currentFocus < 0) currentFocus = items.length - 1;
-      highlightItem(items);
-    } else if (e.key === "Enter") {
-      e.preventDefault(); // Form submit roko
-      e.stopPropagation();
-
-      if (items.length > 0) {
-        if (currentFocus < 0) currentFocus = 0;
-        
-        // Original JS function ko call karo taake 'selected' variable fill ho jaye
-        items[currentFocus].click();
-
-        // Qty field par jump karo
-        setTimeout(function() {
-          qtyInput.focus();
-          qtyInput.select();
-        }, 100);
+    function highlight(items) {
+      items.forEach(function(el) { el.classList.remove("pos-active-item"); });
+      if (items[currentFocus]) {
+        items[currentFocus].classList.add("pos-active-item");
+        items[currentFocus].scrollIntoView({ behavior: "smooth", block: "nearest" });
       }
     }
-  });
 
-  searchInput.addEventListener("input", function() {
-    currentFocus = -1;
-  });
+    // 1. Search Box Controls
+    searchInput.addEventListener("keydown", function(e) {
+      var items = getItems();
 
-  // 2. Qty Box Enter -> Trigger Original Add Click
-  qtyInput.addEventListener("keydown", function (e) {
-    if (e.key === "Enter") {
-      e.preventDefault(); // Form submit aur page jump roko
-      e.stopPropagation();
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        if (!items.length) return;
+        currentFocus++;
+        if (currentFocus >= items.length) currentFocus = 0;
+        highlight(items);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        if (!items.length) return;
+        currentFocus--;
+        if (currentFocus < 0) currentFocus = items.length - 1;
+        highlight(items);
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        if (items.length > 0) {
+          if (currentFocus < 0) currentFocus = 0;
+          // Item par click simulate karna taake original JS 'selected' variable set kar de
+          items[currentFocus].click();
+          
+          setTimeout(function() {
+            qtyInput.focus();
+            qtyInput.select();
+          }, 80);
+        }
+      }
+    });
 
-      // Original add-item-btn click listener run karo
-      addBtn.click();
+    searchInput.addEventListener("input", function() {
+      currentFocus = -1;
+    });
 
-      // Cursor search par le aao
-      setTimeout(function() {
-        searchInput.focus();
-        searchInput.select();
-        currentFocus = -1;
-      }, 120);
-    }
-  });
-});
+    // 2. Qty Box Controls -> Add Button Hit Karna
+    qtyInput.addEventListener("keydown", function(e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        // Original add button listener hit hoga jo item cart mein daal kar render() call karega
+        addBtn.click();
+
+        setTimeout(function() {
+          searchInput.focus();
+          searchInput.select();
+          currentFocus = -1;
+        }, 100);
+      }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initPOSKeyboard);
+  } else {
+    initPOSKeyboard();
+  }
+})();
 </script>
 </body>
 </html>

@@ -2323,21 +2323,189 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
 </script>
 
 <script>
-(function(){
-  var floatTools = document.getElementById('float-tools');
-  var toggleBtn = document.getElementById('float-tools-toggle');
-  toggleBtn.addEventListener('click', function(){
-    floatTools.classList.toggle('open');
-  });
-  floatTools.querySelectorAll('.float-tools-menu a').forEach(function(link){
-    link.addEventListener('click', function(){
-      floatTools.classList.remove('open');
+// Wait for DOM to fully load
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // PRODUCT DATA - Apna existing products array yahan paste karo
+    var products = [
+        ["Panadol 500mg", 5],
+        ["Brufen 400mg", 8],
+        ["Disprin", 3],
+        ["Augmentin 625mg", 45],
+        ["Flagyl 400mg", 12],
+        ["Risek 20mg", 15],
+        ["Arinac Forte", 6],
+        ["Calpol 120mg Syrup", 85],
+        ["Cetrizine 10mg", 4],
+        ["Amoxil 500mg", 10],
+        ["Dettol Antiseptic 500ml", 320],
+        ["Betadine Solution", 180],
+        ["Band Aid Box", 95],
+        ["Soframycin Cream", 145],
+        ["Vicks Vaporub", 125],
+        ["ORS Sachet", 15],
+        ["Gravinate Tablet", 8],
+        ["Imodium", 22],
+        ["Multivitamin Tablet", 18],
+        ["Vitamin C 1000mg", 12]
+    ];
+
+    // VARIABLES
+    var cart = [];
+    var selected = null;
+
+    // GET ELEMENTS
+    var searchInput = document.getElementById('med-search');
+    var resultsBox = document.getElementById('search-results');
+    var selectedBox = document.getElementById('selected-item');
+    var selectedName = document.getElementById('selected-item-name');
+    var qtyInput = document.getElementById('med-qty');
+    var cartContent = document.getElementById('cart-content');
+    var addBtn = document.getElementById('add-item-btn');
+
+    // Check if all elements exist
+    if (!searchInput || !resultsBox || !selectedBox || !selectedName || !qtyInput || !cartContent || !addBtn) {
+        console.error('Error: Required elements not found!');
+        alert('Page loading error. Please refresh the page.');
+        return;
+    }
+
+    // SEARCH FUNCTIONALITY
+    searchInput.addEventListener('input', function() {
+        var query = this.value.trim().toLowerCase();
+        
+        if (query.length < 2) {
+            resultsBox.style.display = 'none';
+            return;
+        }
+
+        var matches = products.filter(function(p) {
+            return p[0].toLowerCase().indexOf(query) > -1;
+        });
+
+        if (matches.length === 0) {
+            resultsBox.innerHTML = '<div style="padding:15px;color:#999;">No medicine found</div>';
+            resultsBox.style.display = 'block';
+            return;
+        }
+
+        resultsBox.innerHTML = matches.map(function(p, idx) {
+            return '<div class="search-result-item" data-idx="' + idx + '"><span>' + p[0] + '</span><span>Rs. ' + p[1] + '</span></div>';
+        }).join('');
+
+        resultsBox.style.display = 'block';
+
+        // Click handler for results
+        var resultItems = resultsBox.querySelectorAll('.search-result-item');
+        resultItems.forEach(function(el, idx) {
+            el.addEventListener('click', function() {
+                selected = matches[idx];
+                selectedName.textContent = selected[0] + ' — Rs. ' + selected[1];
+                selectedBox.style.display = 'flex';
+                resultsBox.style.display = 'none';
+                searchInput.value = '';
+                qtyInput.focus();
+            });
+        });
     });
-  });
-  document.addEventListener('click', function(e){
-    if(!floatTools.contains(e.target)){ floatTools.classList.remove('open'); }
-  });
-})();
+
+    // ADD TO CART
+    addBtn.addEventListener('click', function() {
+        if (!selected) return;
+
+        var qty = parseInt(qtyInput.value, 10) || 1;
+        
+        if (qty < 1) {
+            alert('Please enter a valid quantity');
+            return;
+        }
+
+        var existing = cart.find(function(i) {
+            return i.name === selected[0];
+        });
+
+        if (existing) {
+            existing.qty += qty;
+        } else {
+            cart.push({
+                name: selected[0],
+                price: selected[1],
+                qty: qty
+            });
+        }
+
+        render();
+        
+        // Reset
+        selected = null;
+        selectedBox.style.display = 'none';
+        searchInput.value = '';
+        qtyInput.value = 1;
+        searchInput.focus();
+    });
+
+    // RENDER CART
+    function render() {
+        if (cart.length === 0) {
+            cartContent.innerHTML = '<div class="empty-cart"><svg fill="#ccc" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg><p>Your cart is empty. Search and add medicines above.</p></div>';
+            return;
+        }
+
+        var total = 0;
+        var rows = cart.map(function(item, idx) {
+            var subtotal = item.price * item.qty;
+            total += subtotal;
+            return '<tr>' +
+                '<td data-label="Medicine">' + item.name + '</td>' +
+                '<td data-label="Price" class="text-right">Rs. ' + item.price + '</td>' +
+                '<td data-label="Qty" class="text-center">' + item.qty + '</td>' +
+                '<td data-label="Total" class="text-right">Rs. ' + subtotal + '</td>' +
+                '<td class="text-center"><button class="remove-btn" onclick="removeItem(' + idx + ')">✕</button></td>' +
+                '</tr>';
+        }).join('');
+
+        var whatsappNum = '923001234567'; // APNA NUMBER YAHAN LAGAO
+        var message = encodeURIComponent(
+            '*Order from Faizal Pharmacy*\n\n' +
+            cart.map(function(item) {
+                return item.name + ' x' + item.qty + ' = Rs. ' + (item.price * item.qty);
+            }).join('\n') +
+            '\n\n*Total: Rs. ' + total + '*'
+        );
+
+        cartContent.innerHTML = 
+            '<table class="cart-table">' +
+            '<thead><tr>' +
+            '<th>Medicine Name</th>' +
+            '<th class="text-right">Price</th>' +
+            '<th class="text-center">Qty</th>' +
+            '<th class="text-right">Subtotal</th>' +
+            '<th class="text-center">Action</th>' +
+            '</tr></thead>' +
+            '<tbody>' + rows + '</tbody>' +
+            '</table>' +
+            '<div class="cart-total"><h3>Total: <span>Rs. ' + total + '</span></h3></div>' +
+            '<button class="whatsapp-btn no-print" onclick="window.open(\'https://wa.me/' + whatsappNum + '?text=' + message + '\', \'_blank\')">' +
+            '💬 Send Order via WhatsApp' +
+            '</button>';
+    }
+
+    // REMOVE ITEM (global function)
+    window.removeItem = function(idx) {
+        cart.splice(idx, 1);
+        render();
+    };
+
+    // ENTER KEY
+    qtyInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            addBtn.click();
+        }
+    });
+
+    // Initial render
+    render();
+});
 </script>
 </body>
 </html>

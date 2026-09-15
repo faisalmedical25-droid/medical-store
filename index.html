@@ -785,16 +785,15 @@ function rxRetry() { rxAnalyze(); }
     border-radius: 4px; font-size: 1rem; font-weight: bold; cursor: pointer; height: 40px;
   }
 
-  /* Table Area matched to original render() structure */
-  .abuzar-table-area { padding: 15px 20px; min-height: 150px; }
+  .abuzar-table-area { padding: 15px 20px; min-height: 180px; }
   .table-header-row {
-    display: flex; justify-content: space-between;
-    background: #eee; padding: 10px 15px; font-weight: bold; color: #333; border: 1px solid #ccc; font-size: 0.9rem;
+    display: grid; grid-template-columns: 3fr 1fr 1.5fr 0.5fr;
+    background: #eee; padding: 10px; font-weight: bold; color: #333; border: 1px solid #ccc; font-size: 0.9rem;
   }
   #cart-list { border: 1px solid #ccc; border-top: none; }
   #cart-list > div {
-    display: flex !important; justify-content: space-between !important; align-items: center !important;
-    padding: 10px 15px !important; border-bottom: 1px solid #eee; font-size: 0.95rem;
+    display: grid !important; grid-template-columns: 3fr 1fr 1.5fr 0.5fr !important;
+    padding: 10px !important; border-bottom: 1px solid #eee; align-items: center; font-size: 0.95rem;
   }
 
   .abuzar-footer {
@@ -823,6 +822,7 @@ function rxRetry() { rxAnalyze(); }
     .entry-col { width: 100% !important; flex: none !important; }
     .abuzar-input, .abuzar-add-btn, .wa-btn, .total-block { width: 100% !important; box-sizing: border-box !important; }
     .abuzar-footer { flex-direction: column !important; gap: 12px !important; }
+    .table-header-row, #cart-list > div { grid-template-columns: 2fr 0.8fr 1.2fr 0.5fr !important; font-size: 0.8rem !important; }
   }
 </style>
 
@@ -844,9 +844,7 @@ function rxRetry() { rxAnalyze(); }
         <div id="search-results" style="display:none;"></div>
       </div>
 
-      <div id="selected-item" style="display:none; margin-top:8px;">
-        <span id="selected-item-name" style="color:#b8860b; font-weight:bold;"></span>
-      </div>
+      <div id="selected-item" style="display:none;"></div>
 
       <div class="entry-col qty-col">
         <label class="abuzar-label" for="med-qty">Qty (مقدار)</label>
@@ -858,12 +856,15 @@ function rxRetry() { rxAnalyze(); }
         <button id="add-item-btn" class="abuzar-add-btn" type="button">Add (Enter)</button>
       </div>
     </div>
+    <span id="selected-item-name" style="display:block; margin-top:8px; color:#b8860b; font-weight:bold;"></span>
   </div>
 
-  <div class="abuzar-table-area">
+  <div class="abuzar-table-area" id="cart-items">
     <div class="table-header-row">
-      <div>Product Description & Qty</div>
-      <div>Amount (Rs) & Action</div>
+      <div>Product Description</div>
+      <div>Qty</div>
+      <div>Amount (Rs)</div>
+      <div>Del</div>
     </div>
     <div id="cart-list"></div>
   </div>
@@ -1878,7 +1879,6 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
       highlightItems();
     } else if(e.key === 'Enter'){
       e.preventDefault();
-      e.stopPropagation();
       if(items.length > 0){
         pickItem(currentFocus >= 0 ? currentFocus : 0);
       }
@@ -1955,14 +1955,12 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
 
   addBtn.addEventListener('click', function(e){
     e.preventDefault();
-    e.stopPropagation();
     addSelectedToCart();
   });
 
   qtyInput.addEventListener('keydown', function(e){
     if(e.key === 'Enter'){
       e.preventDefault();
-      e.stopPropagation();
       addSelectedToCart();
     }
   });
@@ -2325,85 +2323,20 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
 </script>
 
 <script>
-(function() {
-  var currentFocus = -1;
-
-  function initPOSKeyboard() {
-    var searchInput = document.getElementById("med-search");
-    var resultsBox = document.getElementById("search-results");
-    var qtyInput = document.getElementById("med-qty");
-    var addBtn = document.getElementById("add-item-btn");
-
-    if (!searchInput || !resultsBox || !qtyInput || !addBtn) return;
-
-    function getItems() {
-      return Array.from(resultsBox.querySelectorAll(".search-result-item"));
-    }
-
-    function highlight(items) {
-      items.forEach(function(el) { el.classList.remove("pos-active-item"); });
-      if (items[currentFocus]) {
-        items[currentFocus].classList.add("pos-active-item");
-        items[currentFocus].scrollIntoView({ behavior: "smooth", block: "nearest" });
-      }
-    }
-
-    // 1. Search Box Controls
-    searchInput.addEventListener("keydown", function(e) {
-      var items = getItems();
-
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        if (!items.length) return;
-        currentFocus++;
-        if (currentFocus >= items.length) currentFocus = 0;
-        highlight(items);
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        if (!items.length) return;
-        currentFocus--;
-        if (currentFocus < 0) currentFocus = items.length - 1;
-        highlight(items);
-      } else if (e.key === "Enter") {
-        e.preventDefault();
-        if (items.length > 0) {
-          if (currentFocus < 0) currentFocus = 0;
-          // Item par click simulate karna taake original JS 'selected' variable set kar de
-          items[currentFocus].click();
-          
-          setTimeout(function() {
-            qtyInput.focus();
-            qtyInput.select();
-          }, 80);
-        }
-      }
+(function(){
+  var floatTools = document.getElementById('float-tools');
+  var toggleBtn = document.getElementById('float-tools-toggle');
+  toggleBtn.addEventListener('click', function(){
+    floatTools.classList.toggle('open');
+  });
+  floatTools.querySelectorAll('.float-tools-menu a').forEach(function(link){
+    link.addEventListener('click', function(){
+      floatTools.classList.remove('open');
     });
-
-    searchInput.addEventListener("input", function() {
-      currentFocus = -1;
-    });
-
-    // 2. Qty Box Controls -> Add Button Hit Karna
-    qtyInput.addEventListener("keydown", function(e) {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        // Original add button listener hit hoga jo item cart mein daal kar render() call karega
-        addBtn.click();
-
-        setTimeout(function() {
-          searchInput.focus();
-          searchInput.select();
-          currentFocus = -1;
-        }, 100);
-      }
-    });
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initPOSKeyboard);
-  } else {
-    initPOSKeyboard();
-  }
+  });
+  document.addEventListener('click', function(e){
+    if(!floatTools.contains(e.target)){ floatTools.classList.remove('open'); }
+  });
 })();
 </script>
 </body>

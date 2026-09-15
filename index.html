@@ -1809,14 +1809,42 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
   var resultsBox = document.getElementById('search-results');
   var selectedBox = document.getElementById('selected-item');
   var selectedName = document.getElementById('selected-item-name');
+  var qtyInput = document.getElementById('med-qty');
+  var addBtn = document.getElementById('add-item-btn');
+
+  var currentMatches = [];
+  var currentFocus = -1;
+
+  function highlightItems(){
+    var items = resultsBox.querySelectorAll('.search-result-item');
+    items.forEach(function(el){ el.classList.remove('pos-active-item'); });
+    if(items[currentFocus]){
+      items[currentFocus].classList.add('pos-active-item');
+      items[currentFocus].scrollIntoView({behavior:'smooth', block:'nearest'});
+    }
+  }
+
+  function pickItem(idx){
+    if(!currentMatches[idx]) return;
+    selected = currentMatches[idx];
+    selectedName.textContent = selected[0] + ' — Rs. ' + selected[1];
+    selectedBox.style.display = 'flex';
+    resultsBox.style.display = 'none';
+    searchInput.value = selected[0];
+    currentFocus = -1;
+    // Real pharmacy billing flow: jump straight to qty so Enter can add it
+    setTimeout(function(){ qtyInput.focus(); qtyInput.select(); }, 30);
+  }
 
   searchInput.addEventListener('input', function(){
     var q = searchInput.value.trim().toLowerCase();
-    if(q.length < 2){ resultsBox.style.display = 'none'; return; }
+    currentFocus = -1;
+    if(q.length < 2){ resultsBox.style.display = 'none'; currentMatches = []; return; }
     var matches = [];
     for(var i = 0; i < PRODUCTS.length && matches.length < 15; i++){
       if(PRODUCTS[i][0].toLowerCase().indexOf(q) !== -1){ matches.push(PRODUCTS[i]); }
     }
+    currentMatches = matches;
     if(matches.length === 0){
       resultsBox.innerHTML = '<div style="padding:12px 14px; color:var(--ink-soft); font-size:0.9rem;">کوئی نتیجہ نہیں ملا</div>';
       resultsBox.style.display = 'block';
@@ -1829,16 +1857,32 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
     resultsBox.style.display = 'block';
 
     resultsBox.querySelectorAll('.search-result-item').forEach(function(el, idx){
-      el.addEventListener('click', function(){
-        selected = matches[idx];
-        selectedName.textContent = selected[0] + ' — Rs. ' + selected[1];
-        selectedBox.style.display = 'flex';
-        resultsBox.style.display = 'none';
-        searchInput.value = selected[0];
-      });
+      el.addEventListener('click', function(){ pickItem(idx); });
       el.addEventListener('mouseenter', function(){ el.style.background = 'var(--cream-2)'; });
       el.addEventListener('mouseleave', function(){ el.style.background = '#fff'; });
     });
+  });
+
+  // Keyboard navigation: Arrow keys to move through results, Enter to pick the
+  // highlighted item (or the only match) and jump straight to the qty box.
+  searchInput.addEventListener('keydown', function(e){
+    var items = resultsBox.querySelectorAll('.search-result-item');
+    if(e.key === 'ArrowDown'){
+      if(!items.length) return;
+      e.preventDefault();
+      currentFocus = (currentFocus + 1) % items.length;
+      highlightItems();
+    } else if(e.key === 'ArrowUp'){
+      if(!items.length) return;
+      e.preventDefault();
+      currentFocus = (currentFocus - 1 + items.length) % items.length;
+      highlightItems();
+    } else if(e.key === 'Enter'){
+      e.preventDefault();
+      if(items.length > 0){
+        pickItem(currentFocus >= 0 ? currentFocus : 0);
+      }
+    }
   });
 
   document.addEventListener('click', function(e){
@@ -1894,16 +1938,31 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
     document.getElementById('whatsapp-order-btn').href = 'https://wa.me/923218861265?text=' + encodeURIComponent(msg);
   }
 
-  document.getElementById('add-item-btn').addEventListener('click', function(){
+  function addSelectedToCart(){
     if(!selected){ return; }
-    var qty = parseInt(document.getElementById('med-qty').value, 10) || 1;
+    var qty = parseInt(qtyInput.value, 10) || 1;
     var existing = cart.find(function(i){ return i.name === selected[0]; });
     if(existing){ existing.qty += qty; } else { cart.push({name: selected[0], price: selected[1], qty: qty}); }
     render();
     selected = null;
     selectedBox.style.display = 'none';
     searchInput.value = '';
-    document.getElementById('med-qty').value = 1;
+    qtyInput.value = 1;
+    // Jump back to search box so the next medicine can be typed immediately,
+    // exactly like a real pharmacy billing counter.
+    setTimeout(function(){ searchInput.focus(); }, 30);
+  }
+
+  addBtn.addEventListener('click', function(e){
+    e.preventDefault();
+    addSelectedToCart();
+  });
+
+  qtyInput.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      addSelectedToCart();
+    }
   });
 
   // Global bridge: lets other features (e.g. prescription upload) add a confirmed
@@ -2277,115 +2336,6 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
   });
   document.addEventListener('click', function(e){
     if(!floatTools.contains(e.target)){ floatTools.classList.remove('open'); }
-  });
-})();
-</script>
-<!-- Anti-Right-Click & Anti-Inspect Script -->
-<script>
-(function() {
-  document.addEventListener("DOMContentLoaded", function () {
-    const searchInput = document.getElementById("med-search");
-    const searchResults = document.getElementById("search-results");
-    const qtyInput = document.getElementById("med-qty");
-    const addBtn = document.getElementById("add-item-btn");
-    const selectedName = document.getElementById("selected-item-name");
-    const selectedBox = document.getElementById("selected-item");
-
-    if (!searchInput || !searchResults || !qtyInput || !addBtn) return;
-
-    let currentFocus = -1;
-
-    // Helper: Active item ko highlight karna
-    function highlightItem(items) {
-      items.forEach(el => el.classList.remove("pos-active-item"));
-      if (items[currentFocus]) {
-        items[currentFocus].classList.add("pos-active-item");
-        items[currentFocus].scrollIntoView({ behavior: "smooth", block: "nearest" });
-      }
-    }
-
-    // Direct Add Function (Original system ke sath 100% connected)
-    function executeAddToCart() {
-      if (window.selected) {
-        var qty = parseInt(qtyInput.value, 10) || 1;
-        if (typeof window.cart !== "undefined") {
-          var existing = window.cart.find(function(i) { return i.name === window.selected[0]; });
-          if (existing) {
-            existing.qty += qty;
-          } else {
-            window.cart.push({ name: window.selected[0], price: window.selected[1], qty: qty });
-          }
-          if (typeof window.render === "function") {
-            window.render();
-          }
-          window.selected = null;
-          if (selectedBox) selectedBox.style.display = "none";
-          if (selectedName) selectedName.textContent = "";
-          searchInput.value = "";
-          qtyInput.value = 1;
-        }
-      }
-
-      setTimeout(function() {
-        searchInput.focus();
-        searchInput.select();
-        currentFocus = -1;
-      }, 100);
-    }
-
-    // 1. Search Box Controls
-    searchInput.addEventListener("keydown", function (e) {
-      const items = Array.from(searchResults.querySelectorAll(".search-result-item"));
-
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        if (!items.length) return;
-        currentFocus++;
-        if (currentFocus >= items.length) currentFocus = 0;
-        highlightItem(items);
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        if (!items.length) return;
-        currentFocus--;
-        if (currentFocus < 0) currentFocus = items.length - 1;
-        highlightItem(items);
-      } else if (e.key === "Enter") {
-        e.preventDefault();
-        e.stopPropagation();
-
-        if (items.length > 0) {
-          if (currentFocus < 0) currentFocus = 0;
-          
-          // Click item to trigger selection
-          items[currentFocus].click();
-
-          setTimeout(function() {
-            qtyInput.focus();
-            qtyInput.select();
-          }, 100);
-        }
-      }
-    });
-
-    searchInput.addEventListener("input", function() {
-      currentFocus = -1;
-    });
-
-    // 2. Qty Box Enter
-    qtyInput.addEventListener("keydown", function (e) {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        e.stopPropagation();
-        executeAddToCart();
-      }
-    });
-
-    // 3. Add Button Click
-    addBtn.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      executeAddToCart();
-    });
   });
 })();
 </script>

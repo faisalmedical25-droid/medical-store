@@ -836,7 +836,8 @@ function rxRetry() { rxAnalyze(); }
     <span>Faizal Pharmacy</span>
   </div>
 
-  <div class="abuzar-entry-area">
+  <!-- onsubmit="return false;" lagaya hai taake URL mein /#products na aaye -->
+  <form class="abuzar-entry-area" onsubmit="return false;">
     <div class="entry-row">
       <div class="entry-col search-col">
         <label class="abuzar-label" for="med-search">Product Name (دوا کا نام)</label>
@@ -844,7 +845,10 @@ function rxRetry() { rxAnalyze(); }
         <div id="search-results" style="display:none;"></div>
       </div>
 
-      <div id="selected-item" style="display:none;"></div>
+      <!-- selected-item-name ko selected-item ke ANDAR rakha hai -->
+      <div id="selected-item" style="display:none; margin-top:8px;">
+        <span id="selected-item-name" style="color:#b8860b; font-weight:bold;"></span>
+      </div>
 
       <div class="entry-col qty-col">
         <label class="abuzar-label" for="med-qty">Qty (مقدار)</label>
@@ -856,8 +860,7 @@ function rxRetry() { rxAnalyze(); }
         <button id="add-item-btn" class="abuzar-add-btn" type="button">Add (Enter)</button>
       </div>
     </div>
-    <span id="selected-item-name" style="display:block; margin-top:8px; color:#b8860b; font-weight:bold;"></span>
-  </div>
+  </form>
 
   <div class="abuzar-table-area">
     <div class="table-header-row">
@@ -2323,221 +2326,80 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
 </script>
 
 <script>
-// ==========================================
-// FAISAL PHARMACY - NULL-SAFE FIXED SCRIPT
-// ==========================================
+document.addEventListener("DOMContentLoaded", function () {
+  const searchInput = document.getElementById("med-search");
+  const searchResults = document.getElementById("search-results");
+  const qtyInput = document.getElementById("med-qty");
+  const addBtn = document.getElementById("add-item-btn");
 
-// 1. Safe Helper Function (کسی بھی element کے null ہونے پر crash نہیں ہوگا)
-function safeStyle(id, prop, value) {
-  var el = document.getElementById(id);
-  if (el) el.style[prop] = value;
-}
-function safeText(id, text) {
-  var el = document.getElementById(id);
-  if (el) el.textContent = text;
-}
-function safeHtml(id, html) {
-  var el = document.getElementById(id);
-  if (el) el.innerHTML = html;
-}
+  let currentFocus = -1;
 
-// 2. AI Prescription Reader (Null-Safe)
-let rxImageBase64 = null;
-const RX_WORKER_URL = "https://rx-reader-proxy.faisalmedical25.workers.dev/";
+  if (!searchInput || !searchResults || !qtyInput || !addBtn) return;
 
-function rxHandleFile(file) {
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    rxImageBase64 = e.target.result;
-    safeStyle('rxPreviewImg', 'src', rxImageBase64); // Safe
-    safeStyle('rxPreviewArea', 'display', 'block');
-    safeStyle('rxUploadZone', 'display', 'none');
-  };
-  reader.readAsDataURL(file);
-}
-
-function rxClearImage() {
-  rxImageBase64 = null;
-  safeStyle('rxPreviewArea', 'display', 'none');
-  safeStyle('rxUploadZone', 'display', 'block');
-  var fileInput = document.getElementById('rxFileInput');
-  if (fileInput) fileInput.value = '';
-}
-
-async function rxAnalyze() {
-  if (!rxImageBase64) return;
-  safeStyle('rxLoading', 'display', 'block');
-  safeStyle('rxResults', 'display', 'none');
-  safeStyle('rxError', 'display', 'none');
-
-  try {
-    const base64Data = rxImageBase64.split(',')[1];
-    const resp = await fetch(RX_WORKER_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ imageBase64: base64Data })
-    });
-    const data = await resp.json();
-    if (!resp.ok || data.error) throw new Error(data.error || "Server Error");
-    if (!data.choices || !data.choices[0] || !data.choices[0].message) throw new Error("AI Response Invalid");
-
-    const textResponse = data.choices[0].message.content;
-    safeHtml('rxMedList', textResponse);
-    
-    const encodedMsg = encodeURIComponent("Assalam-o-Alaikum! AI Prescription Result:\n\n" + textResponse);
-    safeStyle('rxWhatsappBtn', 'href', `https://wa.me/923218861265?text=${encodedMsg}`);
-    safeStyle('rxResults', 'display', 'block');
-  } catch(err) {
-    console.error("Prescription Error:", err);
-    safeHtml('rxErrMsg', "<b>Error:</b><br>" + err.message);
-    safeStyle('rxError', 'display', 'block');
-  } finally {
-    safeStyle('rxLoading', 'display', 'none');
-  }
-}
-
-function rxNewScan() { location.reload(); }
-function rxRetry() { rxAnalyze(); }
-
-
-// 3. Delivery Area Checker (Null-Safe)
-const PHARMACY_LAT = 31.4546674;
-const PHARMACY_LNG = 74.3522174;
-const LOCAL_AREAS = [
-  { name: "Gul Colony / Opp General Hospital", dist: 0.5 },
-  { name: "Chungi Amar Sidhu", dist: 1.2 },
-  { name: "Walton", dist: 3.2 },
-  { name: "Township", dist: 4.5 },
-  { name: "Model Town", dist: 5.0 },
-  { name: "Gulberg", dist: 7.5 },
-  { name: "DHA Phase 5", dist: 8.5 },
-  { name: "Johar Town", dist: 9.5 }
-];
-
-function daGetPlan(distKm) {
-  if (distKm <= 3) return { code: "free", badge: "Free Delivery", fee: "مفت", color: "#2E7D32" };
-  if (distKm <= 5) return { code: "paid", badge: "Rs. 100 Delivery", fee: "100 روپے", color: "#e65100" };
-  return { code: "ride", badge: "InDrive / Yango", fee: "کسٹمر ادا کرے گا", color: "#c62828" };
-}
-
-window.daFilterAreas = function() {
-  var input = document.getElementById("da-search-input");
-  var box = document.getElementById("da-suggestions-box");
-  var clearBtn = document.getElementById("da-clear-btn");
-  if (!input || !box) return;
-
-  var query = input.value.trim().toLowerCase();
-  if (clearBtn) clearBtn.style.display = query.length > 0 ? "block" : "none";
-
-  if (query.length === 0) { box.style.display = "none"; return; }
-
-  var html = "";
-  var count = 0;
-  for (var i = 0; i < LOCAL_AREAS.length; i++) {
-    var item = LOCAL_AREAS[i];
-    if (item.name.toLowerCase().indexOf(query) !== -1) {
-      count++;
-      var plan = daGetPlan(item.dist);
-      html += '<div class="da-suggestion-item" onclick="daSelectArea(' + i + ')" style="padding:10px; border-bottom:1px solid #eee; cursor:pointer;">' +
-              '📍 ' + item.name + ' <span style="float:right; color:' + plan.color + '; font-weight:bold;">' + plan.badge + '</span></div>';
+  function highlightItem(items) {
+    items.forEach(el => el.classList.remove("pos-active-item"));
+    if (items[currentFocus]) {
+      items[currentFocus].classList.add("pos-active-item");
+      items[currentFocus].scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
   }
-  box.innerHTML = count === 0 ? '<div style="padding:10px; color:#888;">No area matched. Use GPS button.</div>' : html;
-  box.style.display = "block";
-};
 
-window.daSelectArea = function(index) {
-  var item = LOCAL_AREAS[index];
-  if (!item) return;
-  var input = document.getElementById("da-search-input");
-  if (input) input.value = item.name;
-  safeStyle("da-suggestions-box", "display", "none");
+  // 1. Search Bar Controls
+  searchInput.addEventListener("keydown", function (e) {
+    const items = Array.from(searchResults.querySelectorAll(".search-result-item"));
 
-  var plan = daGetPlan(item.dist);
-  safeText("da-distance-text", item.dist + " km away");
-  safeText("da-fee-text", "ڈیلیوری چارج: " + plan.fee);
-  safeText("da-message-text", plan.code === "ride" ? "5 km سے باہر: InDrive/Yango کے ذریعے ڈیلیوری۔" : "ڈیلیوری دستیاب ہے۔");
-  
-  var badge = document.getElementById("da-status-badge");
-  if (badge) { badge.textContent = plan.badge; badge.style.color = plan.color; }
-  safeStyle("da-result-area", "display", "block");
-};
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (!items.length) return;
+      currentFocus++;
+      if (currentFocus >= items.length) currentFocus = 0;
+      highlightItem(items);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (!items.length) return;
+      currentFocus--;
+      if (currentFocus < 0) currentFocus = items.length - 1;
+      highlightItem(items);
+    } else if (e.key === "Enter") {
+      e.preventDefault(); // Form submit roko
+      e.stopPropagation();
 
-window.daRequestLocation = function() {
-  var msgBox = document.getElementById("da-message-area");
-  safeStyle("da-result-area", "display", "none");
-  safeStyle("da-suggestions-box", "display", "none");
+      if (items.length > 0) {
+        if (currentFocus < 0) currentFocus = 0;
+        
+        // Original JS function ko call karo taake 'selected' variable fill ho jaye
+        items[currentFocus].click();
 
-  if (!navigator.geolocation) {
-    if (msgBox) { msgBox.textContent = "Browser GPS support نہیں کرتا۔"; msgBox.style.display = "block"; }
-    return;
-  }
-  if (msgBox) { msgBox.textContent = "📍 Location check ہو رہی ہے..."; msgBox.style.display = "block"; }
-
-  navigator.geolocation.getCurrentPosition(
-    function(pos) {
-      if (msgBox) msgBox.style.display = "none";
-      var lat = pos.coords.latitude;
-      var lng = pos.coords.longitude;
-      var R = 6371;
-      var dLat = (lat - PHARMACY_LAT) * Math.PI / 180;
-      var dLon = (lng - PHARMACY_LNG) * Math.PI / 180;
-      var a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(PHARMACY_LAT*Math.PI/180)*Math.cos(lat*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
-      var distKm = (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))).toFixed(1);
-
-      var plan = daGetPlan(parseFloat(distKm));
-      safeText("da-distance-text", distKm + " km away");
-      safeText("da-fee-text", "ڈیلیوری چارج: " + plan.fee);
-      safeStyle("da-result-area", "display", "block");
-    },
-    function() {
-      if (msgBox) { msgBox.textContent = "Location allow نہیں ہوئی۔ براہ کرم علاقے کا نام لکھیں۔"; msgBox.style.display = "block"; }
+        // Qty field par jump karo
+        setTimeout(function() {
+          qtyInput.focus();
+          qtyInput.select();
+        }, 100);
+      }
     }
-  );
-};
+  });
 
+  searchInput.addEventListener("input", function() {
+    currentFocus = -1;
+  });
 
-// 4. Medicine Finder & Bill Calculator (Null-Safe Bridge)
-window.mfOnSearch = function() {
-  var input = document.getElementById("mf-search-input");
-  var box = document.getElementById("mf-results-box");
-  if (!input || !box) return;
-  var q = input.value.trim().toLowerCase();
-  if (q.length < 2) { box.innerHTML = ""; return; }
-  
-  // Demo catalog (آپ اپنا اصل PRODUCTS array یہاں استعمال کر سکتے ہیں)
-  var catalog = typeof PRODUCTS !== "undefined" ? PRODUCTS : [
-    ["Panadol 500mg", 50], ["Augmentin 625mg", 250], ["Risek 20mg", 120]
-  ];
-  
-  var results = catalog.filter(p => String(p[0] || p.name).toLowerCase().includes(q)).slice(0, 5);
-  
-  if (results.length > 0) {
-    box.innerHTML = results.map(p => {
-      var name = p[0] || p.name;
-      var price = p[1] || p.price || "N/A";
-      return '<div style="padding:12px; border:1px solid #e0e0e0; border-radius:8px; margin-bottom:8px; background:#fff;">' +
-             '<b>' + name + '</b> <span style="float:right; color:#2E7D32;">Rs. ' + price + '</span><br>' +
-             '<button onclick="window.addToCalculatorCart(\'' + name + '\', ' + price + ', 1)" style="margin-top:8px; padding:6px 12px; background:#25D366; color:#fff; border:none; border-radius:4px; cursor:pointer;">📱 WhatsApp آرڈر / بل میں شامل کریں</button>' +
-             '</div>';
-    }).join('');
-  } else {
-    box.innerHTML = '<div style="padding:12px; color:#c62828;">❌ دوا فوری سٹاک میں نہیں ملی۔ براہ کرم نیچے Special Request بھیجیں۔</div>';
-  }
-};
+  // 2. Qty Box Enter -> Trigger Original Add Click
+  qtyInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      e.preventDefault(); // Form submit aur page jump roko
+      e.stopPropagation();
 
-window.addToCalculatorCart = function(name, price, qty) {
-  alert(name + " بل کیلکولیٹر میں شامل کر دی گئی ہے! (مزید بہتری کے لیے اصل POS script برقرار رکھیں)");
-};
+      // Original add-item-btn click listener run karo
+      addBtn.click();
 
-// Close dropdowns when clicking outside
-document.addEventListener("click", function(e) {
-  var box = document.getElementById("da-suggestions-box");
-  var input = document.getElementById("da-search-input");
-  if (box && input && !box.contains(e.target) && !input.contains(e.target)) {
-    box.style.display = "none";
-  }
+      // Cursor search par le aao
+      setTimeout(function() {
+        searchInput.focus();
+        searchInput.select();
+        currentFocus = -1;
+      }, 120);
+    }
+  });
 });
 </script>
 </body>

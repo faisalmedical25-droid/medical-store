@@ -730,115 +730,8 @@ function rxRetry() { rxAnalyze(); }
 </script>
 <section class="order-section" id="estimate" style="background:var(--cream);">
   <div class="wrap">
-<!-- ABUZAR STYLE POS TERMINAL (LTR & Print Protected) -->
+<!-- FAISAL PHARMACY POS TERMINAL -->
 <style>
-/* Keyboard se item highlight karne ke liye */
-.search-result-item.pos-active-item {
-  background-color: #ebdcc5 !important;
-  color: #2c241b !important;
-  font-weight: bold !important;
-  outline: 2px solid #b8860b !important;
-}
-  /* ===== MOBILE LEFT SPACE FIX ===== */
-html, body {
-  overflow-x: hidden;
-}
-
-.abuzar-pos-wrapper {
-  width: 100%;
-  max-width: 800px;
-  box-sizing: border-box;
-}
-
-@media (max-width: 768px) {
-  .abuzar-pos-wrapper {
-    width: calc(100% - 16px) !important;
-    max-width: calc(100% - 16px) !important;
-    margin: 10px 8px !important;
-    box-sizing: border-box !important;
-  }
-
-  .abuzar-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-    padding: 12px 14px;
-  }
-
-  .abuzar-entry-area,
-  .abuzar-table-area,
-  .abuzar-footer {
-    padding-left: 14px !important;
-    padding-right: 14px !important;
-    box-sizing: border-box;
-  }
-
-  .entry-row {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 10px !important;
-  }
-
-  .entry-col,
-  .entry-col.search-col,
-  .entry-col.qty-col,
-  .entry-col.btn-col {
-    width: 100% !important;
-    flex: none !important;
-  }
-
-  .abuzar-input,
-  .abuzar-add-btn {
-    width: 100% !important;
-    box-sizing: border-box !important;
-    font-size: 16px;
-  }
-
-  .abuzar-add-btn {
-    height: 44px;
-  }
-
-  .table-header-row {
-    grid-template-columns: 2.2fr 0.8fr 1.2fr 0.5fr;
-    font-size: 0.75rem;
-  }
-
-  #cart-list > div {
-    grid-template-columns: 2.2fr 0.8fr 1.2fr 0.5fr !important;
-    font-size: 0.8rem !important;
-  }
-
-  .abuzar-footer {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 12px !important;
-  }
-
-  .total-block,
-  .wa-btn {
-    width: 100% !important;
-    box-sizing: border-box !important;
-    justify-content: center;
-    text-align: center;
-  }
-}
-    /* Keyboard selected medicine highlight */
-  .pos-active-item {
-    background: #ebdcc5 !important;
-    color: #2c241b !important;
-    font-weight: bold !important;
-    outline: 2px solid #b8860b;
-  }
-
-  /* Search result items keyboard friendly */
-  #search-results > * {
-    cursor: pointer;
-  }
-
-  #search-results > *:hover {
-    background: #f3e7d1 !important;
-  }
-  /* 1. Main Wrapper - Now Left to Right (LTR) */
   .abuzar-pos-wrapper {
     background: #ffffff;
     border: 1px solid #ebdcc5;
@@ -847,33 +740,10 @@ html, body {
     max-width: 800px;
     margin: 20px auto;
     font-family: Arial, sans-serif;
-    direction: ltr; /* Changed from rtl to ltr */
-    text-align: left; /* Changed text alignment */
+    direction: ltr;
+    text-align: left;
+    box-sizing: border-box;
   }
-  
-  /* 2. Print Protection (Lock) */
-  .print-warning-msg {
-    display: none;
-  }
-  @media print {
-    /* Hides the entire billing tool during printing */
-    .abuzar-pos-wrapper {
-      display: none !important;
-    }
-    /* Shows a warning message on the printed paper instead */
-    .print-warning-msg {
-      display: block !important;
-      text-align: center;
-      font-size: 24px;
-      color: red;
-      font-weight: bold;
-      margin-top: 100px;
-      border: 2px solid red;
-      padding: 20px;
-    }
-  }
-
-  /* Header */
   .abuzar-header {
     background: #b8860b;
     color: white;
@@ -885,144 +755,82 @@ html, body {
   }
   .abuzar-header h3 { margin: 0; font-size: 1.2rem; font-weight: bold; }
   .abuzar-header span { font-size: 0.9rem; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 4px; }
-
-  /* Entry Area */
-  .abuzar-entry-area {
-    padding: 15px 20px;
-    background: #fbf8f3;
-    border-bottom: 2px solid #ebdcc5;
-  }
-  .entry-row {
-    display: flex;
-    gap: 15px;
-    align-items: flex-end;
-  }
+  
+  .abuzar-entry-area { padding: 15px 20px; background: #fbf8f3; border-bottom: 2px solid #ebdcc5; }
+  .entry-row { display: flex; gap: 15px; align-items: flex-end; }
   .entry-col { display: flex; flex-direction: column; }
   .entry-col.search-col { flex: 2; position: relative; }
   .entry-col.qty-col { flex: 0.5; }
   .entry-col.btn-col { flex: 0.5; }
 
   .abuzar-label { font-size: 0.85rem; font-weight: bold; color: #555; margin-bottom: 5px; }
-  .abuzar-input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
-    text-align: left;
-  }
+  .abuzar-input { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; text-align: left; }
   .abuzar-input:focus { border-color: #b8860b; outline: none; background: #fffde7; }
   
   #search-results {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    left: 0;
-    background: #fff;
-    border: 1px solid #ccc;
-    max-height: 200px;
-    overflow-y: auto;
-    z-index: 100;
-    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    position: absolute; top: 100%; right: 0; left: 0;
+    background: #fff; border: 1px solid #ccc; max-height: 200px;
+    overflow-y: auto; z-index: 100; box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+  }
+
+  .search-result-item.pos-active-item {
+    background-color: #ebdcc5 !important;
+    color: #2c241b !important;
+    font-weight: bold !important;
+    outline: 2px solid #b8860b !important;
   }
 
   .abuzar-add-btn {
-    background: #4CAF50;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    height: 40px;
-  }
-  .abuzar-add-btn:hover { background: #45a049; }
-
-  #selected-item-name {
-    display: block;
-    margin-top: 8px;
-    font-size: 0.9rem;
-    color: #b8860b;
-    font-weight: bold;
+    background: #4CAF50; color: white; border: none; padding: 10px 15px;
+    border-radius: 4px; font-size: 1rem; font-weight: bold; cursor: pointer; height: 40px;
   }
 
-  /* Table / Bill Area */
-  .abuzar-table-area { padding: 15px 20px; min-height: 200px; }
-  
+  .abuzar-table-area { padding: 15px 20px; min-height: 180px; }
   .table-header-row {
-    display: grid;
-    grid-template-columns: 3fr 1fr 1.5fr 0.5fr;
-    background: #eee;
-    padding: 10px;
-    font-weight: bold;
-    color: #333;
-    border: 1px solid #ccc;
-    font-size: 0.9rem;
+    display: grid; grid-template-columns: 3fr 1fr 1.5fr 0.5fr;
+    background: #eee; padding: 10px; font-weight: bold; color: #333; border: 1px solid #ccc; font-size: 0.9rem;
   }
-
   #cart-list { border: 1px solid #ccc; border-top: none; }
   #cart-list > div {
-    display: grid !important;
-    grid-template-columns: 3fr 1fr 1.5fr 0.5fr !important;
-    padding: 10px !important;
-    border-bottom: 1px solid #eee;
-    align-items: center;
-    font-size: 0.95rem;
+    display: grid !important; grid-template-columns: 3fr 1fr 1.5fr 0.5fr !important;
+    padding: 10px !important; border-bottom: 1px solid #eee; align-items: center; font-size: 0.95rem;
   }
-  #cart-list > div:nth-child(even) { background: #fdfdfd; }
-  #cart-list > div:hover { background: #f5f5f5; }
 
-  /* Footer / Totals */
   .abuzar-footer {
-    background: #fbf8f3;
-    padding: 15px 20px;
-    border-top: 2px solid #ebdcc5;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-radius: 0 0 8px 8px;
+    background: #fbf8f3; padding: 15px 20px; border-top: 2px solid #ebdcc5;
+    display: flex; justify-content: space-between; align-items: center; border-radius: 0 0 8px 8px;
   }
-  .total-block {
-    background: #fff;
-    border: 2px solid #b8860b;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #333;
-  }
+  .total-block { background: #fff; border: 2px solid #b8860b; padding: 10px 20px; border-radius: 6px; font-size: 1.2rem; font-weight: bold; }
   #cart-total { color: #b8860b; font-size: 1.5rem; margin-left: 10px; font-weight: 900; }
-
+  
   .wa-btn {
-    background: #25d366;
-    color: white !important;
-    text-decoration: none;
-    padding: 12px 25px;
-    border-radius: 6px;
-    font-weight: bold;
-    font-size: 1.1rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: 0.3s;
+    background: #25d366; color: white !important; text-decoration: none;
+    padding: 12px 25px; border-radius: 6px; font-weight: bold; font-size: 1.1rem; display: flex; align-items: center;
   }
-  .wa-btn:hover { background: #1ebc59; transform: scale(1.02); }
 
-  @media (max-width: 600px) {
-    .entry-row { flex-direction: column; align-items: stretch; }
-    .abuzar-footer { flex-direction: column; gap: 15px; }
+  /* PRINT LOCK SECURITY */
+  .print-warning-msg { display: none; }
+  @media print {
+    .abuzar-pos-wrapper { display: none !important; }
+    .print-warning-msg { display: block !important; text-align: center; font-size: 24px; color: red; font-weight: bold; margin-top: 50px; border: 2px solid red; padding: 20px; }
+  }
+
+  /* MOBILE LAYOUT FIX */
+  @media (max-width: 768px) {
+    .abuzar-pos-wrapper { width: calc(100% - 16px) !important; margin: 10px 8px !important; }
+    .entry-row { flex-direction: column !important; align-items: stretch !important; gap: 10px !important; }
+    .entry-col { width: 100% !important; flex: none !important; }
+    .abuzar-input, .abuzar-add-btn, .wa-btn, .total-block { width: 100% !important; box-sizing: border-box !important; }
+    .abuzar-footer { flex-direction: column !important; gap: 12px !important; }
+    .table-header-row, #cart-list > div { grid-template-columns: 2fr 0.8fr 1.2fr 0.5fr !important; font-size: 0.8rem !important; }
   }
 </style>
 
-<!-- Warning Message ONLY Visible When Someone Tries to Print -->
 <div class="print-warning-msg">
-  ⚠️ NOT A VALID RECEIPT<br>
-  This is an online estimate tool. Printing this document as a bill is strictly prohibited.
+  ⚠️ NOT A VALID RECEIPT<br>This is an online estimate tool. Printing this bill is prohibited.
 </div>
 
-<!-- FAISAL PHARMACY POS TOOL -->
 <div class="abuzar-pos-wrapper">
-  
   <div class="abuzar-header">
     <h3>Sales Invoice - Apna Bill Khud Banayein</h3>
     <span>Faizal Pharmacy</span>
@@ -1030,33 +838,27 @@ html, body {
 
   <div class="abuzar-entry-area">
     <div class="entry-row">
-      <!-- Search Input -->
       <div class="entry-col search-col">
         <label class="abuzar-label" for="med-search">Product Name (دوا کا نام)</label>
         <input id="med-search" class="abuzar-input" type="text" autocomplete="off" placeholder="Enter Medicine Name...">
         <div id="search-results" style="display:none;"></div>
       </div>
 
-      <!-- Yeh zaroori hai original JS ke liye -->
       <div id="selected-item" style="display:none;"></div>
 
-      <!-- Qty Input -->
       <div class="entry-col qty-col">
         <label class="abuzar-label" for="med-qty">Qty (مقدار)</label>
         <input type="number" id="med-qty" class="abuzar-input" value="1" min="1">
       </div>
 
-      <!-- Add Button -->
       <div class="entry-col btn-col">
         <label class="abuzar-label">&nbsp;</label>
         <button id="add-item-btn" class="abuzar-add-btn" type="button">Add (Enter)</button>
       </div>
     </div>
-    <!-- Medicine selection text yahan show hoga -->
-    <span id="selected-item-name" style="display:block; margin-top:10px; color:#b8860b; font-weight:bold;"></span>
+    <span id="selected-item-name" style="display:block; margin-top:8px; color:#b8860b; font-weight:bold;"></span>
   </div>
 
-  <!-- Bill Table Area -->
   <div class="abuzar-table-area">
     <div class="table-header-row">
       <div>Product Description</div>
@@ -1067,12 +869,10 @@ html, body {
     <div id="cart-list"></div>
   </div>
 
-  <!-- Footer Area -->
   <div class="abuzar-footer">
     <div class="total-block">
       Total Amount: <span id="cart-total">0 Rs</span>
     </div>
-    <!-- href="#" ko hata kar javascript:void(0) kar diya taake URL change na ho -->
     <a id="whatsapp-order-btn" href="javascript:void(0)" class="wa-btn">
       Order on WhatsApp
     </a>
@@ -2482,94 +2282,112 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
 </script>
 <!-- Anti-Right-Click & Anti-Inspect Script -->
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-  const searchInput = document.getElementById("med-search");
-  const searchResults = document.getElementById("search-results");
-  const qtyInput = document.getElementById("med-qty");
-  const addBtn = document.getElementById("add-item-btn");
+(function() {
+  document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("med-search");
+    const searchResults = document.getElementById("search-results");
+    const qtyInput = document.getElementById("med-qty");
+    const addBtn = document.getElementById("add-item-btn");
+    const selectedName = document.getElementById("selected-item-name");
+    const selectedBox = document.getElementById("selected-item");
 
-  let currentFocus = -1;
+    if (!searchInput || !searchResults || !qtyInput || !addBtn) return;
 
-  if (!searchInput || !searchResults || !qtyInput || !addBtn) return;
+    let currentFocus = -1;
 
-  // Exact class ko target karna jo line 2019 mein bani hai
-  function getItems() {
-    return Array.from(searchResults.querySelectorAll(".search-result-item"));
-  }
-
-  function setActive(items) {
-    items.forEach(el => el.classList.remove("pos-active-item"));
-    if (!items.length) return;
-
-    if (currentFocus >= items.length) currentFocus = 0;
-    if (currentFocus < 0) currentFocus = items.length - 1;
-
-    const activeEl = items[currentFocus];
-    if (activeEl) {
-      activeEl.classList.add("pos-active-item");
-      activeEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
-  }
-
-  // 1. Search Box: Arrow Keys + Enter
-  searchInput.addEventListener("keydown", function (e) {
-    const items = getItems();
-
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      if (!items.length) return;
-      currentFocus++;
-      setActive(items);
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      if (!items.length) return;
-      currentFocus--;
-      setActive(items);
-    } else if (e.key === "Enter") {
-      e.preventDefault(); // Hash (#) ko roko
-      e.stopPropagation();
-
-      if (items.length > 0) {
-        if (currentFocus < 0) currentFocus = 0;
-        
-        const chosenItem = items[currentFocus];
-        if (chosenItem) {
-          // Line 2025 wale click event ko trigger karo (is se 'selected' fill ho jayega)
-          chosenItem.click();
-        }
-
-        // Qty field par jump karo
-        setTimeout(() => {
-          qtyInput.focus();
-          qtyInput.select();
-        }, 100);
+    // Helper: Active item ko highlight karna
+    function highlightItem(items) {
+      items.forEach(el => el.classList.remove("pos-active-item"));
+      if (items[currentFocus]) {
+        items[currentFocus].classList.add("pos-active-item");
+        items[currentFocus].scrollIntoView({ behavior: "smooth", block: "nearest" });
       }
     }
-  });
 
-  // Nayi typing par focus reset
-  searchInput.addEventListener("input", function () {
-    currentFocus = -1;
-  });
+    // Direct Add Function (Original system ke sath 100% connected)
+    function executeAddToCart() {
+      if (window.selected) {
+        var qty = parseInt(qtyInput.value, 10) || 1;
+        if (typeof window.cart !== "undefined") {
+          var existing = window.cart.find(function(i) { return i.name === window.selected[0]; });
+          if (existing) {
+            existing.qty += qty;
+          } else {
+            window.cart.push({ name: window.selected[0], price: window.selected[1], qty: qty });
+          }
+          if (typeof window.render === "function") {
+            window.render();
+          }
+          window.selected = null;
+          if (selectedBox) selectedBox.style.display = "none";
+          if (selectedName) selectedName.textContent = "";
+          searchInput.value = "";
+          qtyInput.value = 1;
+        }
+      }
 
-  // 2. Qty Box: Enter dabane par Bill mein Add
-  qtyInput.addEventListener("keydown", function (e) {
-    if (e.key === "Enter") {
-      e.preventDefault(); // Hash (#) ko roko
-      e.stopPropagation();
-
-      // Line 2024 wale Add Button click ko fire karo
-      addBtn.click();
-
-      // Cursor wapas Search Bar mein le aao
-      setTimeout(() => {
+      setTimeout(function() {
         searchInput.focus();
         searchInput.select();
         currentFocus = -1;
-      }, 120);
+      }, 100);
     }
+
+    // 1. Search Box Controls
+    searchInput.addEventListener("keydown", function (e) {
+      const items = Array.from(searchResults.querySelectorAll(".search-result-item"));
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        if (!items.length) return;
+        currentFocus++;
+        if (currentFocus >= items.length) currentFocus = 0;
+        highlightItem(items);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        if (!items.length) return;
+        currentFocus--;
+        if (currentFocus < 0) currentFocus = items.length - 1;
+        highlightItem(items);
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (items.length > 0) {
+          if (currentFocus < 0) currentFocus = 0;
+          
+          // Click item to trigger selection
+          items[currentFocus].click();
+
+          setTimeout(function() {
+            qtyInput.focus();
+            qtyInput.select();
+          }, 100);
+        }
+      }
+    });
+
+    searchInput.addEventListener("input", function() {
+      currentFocus = -1;
+    });
+
+    // 2. Qty Box Enter
+    qtyInput.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        e.stopPropagation();
+        executeAddToCart();
+      }
+    });
+
+    // 3. Add Button Click
+    addBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      executeAddToCart();
+    });
   });
-});
+})();
 </script>
 </body>
 </html>

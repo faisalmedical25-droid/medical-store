@@ -2978,78 +2978,356 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
   function entries(){ return session ? readJSON(logKey(session), []) : []; }
   function saveEntries(list){ return writeJSON(logKey(session), list); }
 
-  /* ---------------- AUTH ---------------- */
-  window.lbShowTab = function(which){
-    var isLogin = which === 'login';
-    el('lbLoginForm').style.display  = isLogin ? 'block' : 'none';
-    el('lbSignupForm').style.display = isLogin ? 'none'  : 'block';
-    el('lbTabLogin').classList.toggle('active', isLogin);
-    el('lbTabSignup').classList.toggle('active', !isLogin);
-    msg('lbLoginMsg',''); msg('lbSuMsg','');
-  };
+ window.lbSignup = function(){
+  var name  = (el('lbSuName').value || '').trim();
+  var phone = normPhone(el('lbSuPhone').value);
+  var pin   = (el('lbSuPin').value || '').trim();
+  var pin2  = (el('lbSuPin2').value || '').trim();
+  var optIn = (el('lbOptIn') && el('lbOptIn').checked) ? 1 : 0;
 
-  window.lbSignup = function(){
-    var name  = (el('lbSuName').value||'').trim();
-    var phone = normPhone(el('lbSuPhone').value);
-    var pin   = (el('lbSuPin').value||'').trim();
-    var pin2  = (el('lbSuPin2').value||'').trim();
+  if(name.length < 2)
+    return msg('lbSuMsg','براہِ کرم اپنا نام لکھیں۔');
 
-    if(name.length < 2)      return msg('lbSuMsg','براہِ کرم اپنا نام لکھیں۔');
-    if(phone.length < 10)    return msg('lbSuMsg','مکمل موبائل نمبر لکھیں (مثلاً 03001234567)۔');
-    if(!/^[0-9]{4}$/.test(pin)) return msg('lbSuMsg','پن کوڈ 4 ہندسوں کا ہونا چاہیے۔');
-    if(pin !== pin2)         return msg('lbSuMsg','دونوں پن ایک جیسے نہیں ہیں۔');
-    if(users[phone])         return msg('lbSuMsg','یہ نمبر پہلے سے رجسٹرڈ ہے۔ لاگ ان کریں۔');
+  if(phone.length < 10)
+    return msg('lbSuMsg','مکمل موبائل نمبر لکھیں (مثلاً 03001234567)۔');
 
-    users[phone] = { name:name, pin:hash(pin), created:new Date().toISOString() };
-    if(!writeJSON(UKEY, users)) return;
-    sessionPin = pin;
-    startSession(phone);
-    if(API){
-      api('/api/register', {
-        name: name, phone: phone, pin: pin,
-        marketing_opt_in: (el('lbOptIn') && el('lbOptIn').checked) ? 1 : 0
-      }).then(function(){ cloudSync(pin, true); }).catch(function(){});
-    }
-  };
+  if(!/^[0-9]{4}$/.test(pin))
+    return msg('lbSuMsg','پن کوڈ 4 ہندسوں کا ہونا چاہیے۔');
 
-  window.lbLogin = function(){
-    var phone = normPhone(el('lbLoginPhone').value);
-    var pin   = (el('lbLoginPin').value||'').trim();
-    var u = users[phone];
+  if(pin !== pin2)
+    return msg('lbSuMsg','دونوں پن ایک جیسے نہیں ہیں۔');
 
-    /* Is device par account maujood hai */
-    if(u){
-      if(u.pin !== hash(pin)) return msg('lbLoginMsg','پن کوڈ غلط ہے۔ دوبارہ کوشش کریں۔');
+  if(users[phone])
+    return msg('lbSuMsg','یہ نمبر پہلے سے رجسٹرڈ ہے۔ لاگ ان کریں۔');
+
+  /*
+   * Backend available ho to pehle cloud account banayein.
+   * Successful hone ke baad local account save hoga.
+   */
+  if(API){
+    msg('lbSuMsg','اکاؤنٹ بنایا جا رہا ہے...','ok');
+
+    api('/api/register', {
+      name: name,
+      phone: phone,
+      pin: pin,
+      marketing_opt_in: optIn
+    })
+    .then(function(){
+      users[phone] = {
+        name: name,
+        pin: hash(pin),
+        created: new Date().toISOString()
+      };
+
+      if(!writeJSON(UKEY, users)) return;
+
       sessionPin = pin;
+      msg('lbSuMsg','');
       startSession(phone);
-      scheduleSync();
+      cloudSync(pin, true);
+    })
+    .catch(function(err){
+      var e = String((err && err.message) || '');
+
+      if(
+        e.indexOf('pehle se registered') !== -1 ||
+        e.indexOf('registered') !== -1
+      ){
+        msg(
+          'lbSuMsg',
+          'یہ نمبر کلاؤڈ میں پہلے سے رجسٹرڈ ہے۔ لاگ ان کریں۔'
+        );
+        return;
+      }
+
+      msg(
+        'lbSuMsg',
+        'کلاؤڈ اکاؤنٹ نہیں بن سکا۔ انٹرنیٹ چیک کر کے دوبارہ کوشش کریں۔'
+      );
+    });
+
+    return;
+  }
+
+  /*
+   * API configured na ho to purana offline/local behaviour.
+   */
+  users[phone] = {
+    name: name,
+    pin: hash(pin),
+    created: new Date().toISOString()
+  };
+
+  if(!writeJSON(UKEY, users)) return;
+
+  sessionPin = pin;
+  startSession(phone);
+};
+
+
+window.lbSignup = function(){
+  var name  = (el('lbSuName').value || '').trim();
+  var phone = normPhone(el('lbSuPhone').value);
+  var pin   = (el('lbSuPin').value || '').trim();
+  var pin2  = (el('lbSuPin2').value || '').trim();
+  var optIn = (el('lbOptIn') && el('lbOptIn').checked) ? 1 : 0;
+
+  if(name.length < 2)
+    return msg('lbSuMsg','براہِ کرم اپنا نام لکھیں۔');
+
+  if(phone.length < 10)
+    return msg('lbSuMsg','مکمل موبائل نمبر لکھیں (مثلاً 03001234567)۔');
+
+  if(!/^[0-9]{4}$/.test(pin))
+    return msg('lbSuMsg','پن کوڈ 4 ہندسوں کا ہونا چاہیے۔');
+
+  if(pin !== pin2)
+    return msg('lbSuMsg','دونوں پن ایک جیسے نہیں ہیں۔');
+
+  if(users[phone])
+    return msg('lbSuMsg','یہ نمبر پہلے سے رجسٹرڈ ہے۔ لاگ ان کریں۔');
+
+  /*
+   * Backend available ho to pehle cloud account banayein.
+   * Successful hone ke baad local account save hoga.
+   */
+  if(API){
+    msg('lbSuMsg','اکاؤنٹ بنایا جا رہا ہے...','ok');
+
+    api('/api/register', {
+      name: name,
+      phone: phone,
+      pin: pin,
+      marketing_opt_in: optIn
+    })
+    .then(function(){
+      users[phone] = {
+        name: name,
+        pin: hash(pin),
+        created: new Date().toISOString()
+      };
+
+      if(!writeJSON(UKEY, users)) return;
+
+      sessionPin = pin;
+      msg('lbSuMsg','');
+      startSession(phone);
+      cloudSync(pin, true);
+    })
+    .catch(function(err){
+      var e = String((err && err.message) || '');
+
+      if(
+        e.indexOf('pehle se registered') !== -1 ||
+        e.indexOf('registered') !== -1
+      ){
+        msg(
+          'lbSuMsg',
+          'یہ نمبر کلاؤڈ میں پہلے سے رجسٹرڈ ہے۔ لاگ ان کریں۔'
+        );
+        return;
+      }
+
+      msg(
+        'lbSuMsg',
+        'کلاؤڈ اکاؤنٹ نہیں بن سکا۔ انٹرنیٹ چیک کر کے دوبارہ کوشش کریں۔'
+      );
+    });
+
+    return;
+  }
+
+  /*
+   * API configured na ho to purana offline/local behaviour.
+   */
+  users[phone] = {
+    name: name,
+    pin: hash(pin),
+    created: new Date().toISOString()
+  };
+
+  if(!writeJSON(UKEY, users)) return;
+
+  sessionPin = pin;
+  startSession(phone);
+};
+
+
+window.lbLogin = function(){
+  var phone = normPhone(el('lbLoginPhone').value);
+  var pin   = (el('lbLoginPin').value || '').trim();
+  var u     = users[phone];
+
+  if(phone.length < 10)
+    return msg(
+      'lbLoginMsg',
+      'مکمل موبائل نمبر لکھیں (مثلاً 03001234567)۔'
+    );
+
+  if(!/^[0-9]{4}$/.test(pin))
+    return msg(
+      'lbLoginMsg',
+      'پن کوڈ 4 ہندسوں کا ہونا چاہیے۔'
+    );
+
+  /*
+   * Local account maujood hai.
+   */
+  if(u){
+    if(u.pin !== hash(pin))
+      return msg(
+        'lbLoginMsg',
+        'پن کوڈ غلط ہے۔ دوبارہ کوشش کریں۔'
+      );
+
+    sessionPin = pin;
+
+    /*
+     * Backend configured nahi hai:
+     * purana offline login.
+     */
+    if(!API){
+      startSession(phone);
       return;
     }
 
-    /* Naya phone — server se account laane ki koshish */
-    if(!API) return msg('lbLoginMsg','یہ نمبر اس فون پر رجسٹرڈ نہیں۔ پہلے "نیا اکاؤنٹ بنائیں"۔');
-    msg('lbLoginMsg','چیک کیا جا رہا ہے...','ok');
-    api('/api/login', { phone: phone, pin: pin })
-      .then(function(d){
-        users[phone] = { name: d.name || '', pin: hash(pin), created: new Date().toISOString() };
+    /*
+     * Pehle cloud login try karein.
+     */
+    msg('lbLoginMsg','کلاؤڈ اکاؤنٹ چیک کیا جا رہا ہے...','ok');
+
+    api('/api/login', {
+      phone: phone,
+      pin: pin
+    })
+    .then(function(d){
+      if(d && d.name){
+        u.name = d.name;
+        users[phone] = u;
         writeJSON(UKEY, users);
-        sessionPin = pin;
+      }
+
+      msg('lbLoginMsg','');
+      startSession(phone);
+      cloudSync(pin, true);
+    })
+    .catch(function(err){
+      /*
+       * Ye local-only account ho sakta hai jo purane version
+       * mein cloud failure ke bawajood save ho gaya tha.
+       *
+       * Isko existing local name ke sath cloud par repair
+       * karne ki koshish karte hain.
+       */
+      var localName = (u && u.name) ? u.name : '';
+
+      if(!localName){
+        msg(
+          'lbLoginMsg',
+          'کلاؤڈ اکاؤنٹ نہیں ملا۔ نیا اکاؤنٹ بنائیں۔'
+        );
+        return;
+      }
+
+      msg('lbLoginMsg','کلاؤڈ بیک اپ بحال کیا جا رہا ہے...','ok');
+
+      api('/api/register', {
+        name: localName,
+        phone: phone,
+        pin: pin,
+        marketing_opt_in: 0
+      })
+      .then(function(){
         msg('lbLoginMsg','');
+        sessionPin = pin;
         startSession(phone);
         cloudSync(pin, true);
       })
-      .catch(function(err){
-        msg('lbLoginMsg', String(err.message) === 'offline'
-          ? 'یہ نمبر اس فون پر رجسٹرڈ نہیں۔'
-          : 'نمبر یا پن غلط ہے۔');
-      });
-  };
+      .catch(function(regErr){
+        var e = String((regErr && regErr.message) || '');
 
-  function startSession(phone){
-    session = phone;
-    try{ LS().setItem(SKEY, phone); }catch(e){}
-    showApp();
+        /*
+         * Agar server par number already registered hai lekin
+         * PIN match nahi hua, local PIN ko server par overwrite
+         * nahi karna.
+         */
+        if(
+          e.indexOf('pehle se registered') !== -1 ||
+          e.indexOf('registered') !== -1
+        ){
+          msg(
+            'lbLoginMsg',
+            'یہ نمبر کلاؤڈ میں پہلے سے موجود ہے، مگر پن میچ نہیں ہوا۔ اپنا درست پن استعمال کریں۔'
+          );
+          return;
+        }
+
+        /*
+         * Cloud unavailable ho to local data khatam na ho.
+         * User ko local logbook use karne dete hain.
+         */
+        msg(
+          'lbLoginMsg',
+          'کلاؤڈ سے رابطہ نہیں ہو سکا۔ ریکارڈ اس فون پر محفوظ رہے گا۔'
+        );
+
+        sessionPin = pin;
+        startSession(phone);
+      });
+    });
+
+    return;
   }
+
+  /*
+   * Is device par account nahi hai:
+   * cloud se login karke local copy restore karein.
+   */
+  if(!API)
+    return msg(
+      'lbLoginMsg',
+      'یہ نمبر اس فون پر رجسٹرڈ نہیں۔ پہلے "نیا اکاؤنٹ بنائیں"۔'
+    );
+
+  msg('lbLoginMsg','چیک کیا جا رہا ہے...','ok');
+
+  api('/api/login', {
+    phone: phone,
+    pin: pin
+  })
+  .then(function(d){
+    users[phone] = {
+      name: d.name || '',
+      pin: hash(pin),
+      created: new Date().toISOString()
+    };
+
+    writeJSON(UKEY, users);
+
+    sessionPin = pin;
+    msg('lbLoginMsg','');
+
+    startSession(phone);
+    cloudSync(pin, true);
+  })
+  .catch(function(err){
+    var e = String((err && err.message) || '');
+
+    if(e === 'offline'){
+      msg(
+        'lbLoginMsg',
+        'کلاؤڈ سے رابطہ نہیں ہو سکا۔ انٹرنیٹ چیک کریں۔'
+      );
+      return;
+    }
+
+    msg(
+      'lbLoginMsg',
+      'نمبر یا پن غلط ہے۔'
+    );
+  });
+};
 
   window.lbLogout = function(){
     if(!confirm('کیا آپ لاگ آؤٹ کرنا چاہتے ہیں؟ آپ کا ریکارڈ محفوظ رہے گا۔')) return;

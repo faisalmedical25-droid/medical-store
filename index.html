@@ -1,12 +1,6 @@
 <!DOCTYPE html>
 <html lang="ur" dir="rtl">
 <head>
-  <script>
-window.FP_CONFIG = {
-  API: "https://faizal-backend.faisalmedical25.workers.dev",
-  WHATSAPP: "923218861265"
-};
-</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Faizal Pharmacy – Medical Store Lahore | Pharmacy Near Me, Home Delivery</title>
@@ -20,14 +14,14 @@ window.FP_CONFIG = {
   gtag('js', new Date());
   gtag('config', 'G-C9DMQ0K94B');
 </script>
-<meta name="description" content="Looking for a pharmacy near me in Lahore? Faizal Pharmacy is a trusted medical store in Lahore offering home delivery of medicines and wholesale medical supplies. WhatsApp your order today.">
+<meta name="description" content="Looking for a pharmacy near me in Lahore? Faizal Pharmacy is a trusted medical store in Lahore offering home delivery of genuine medicines, free AI prescription reader, medicine finder and a health log book for sugar and blood pressure. WhatsApp your order today.">
 <meta name="keywords" content="pharmacy near me, pharmacy, medical store lahore, medical store near me, top medical store in lahore, medical store, lahore medical store, best medical store in lahore, best medical store in pakistan">
 <link rel="canonical" href="https://lahoremedicalstore.com/">
 
 <!-- Open Graph / social preview -->
 <meta property="og:type" content="business.business">
 <meta property="og:title" content="Faizal Pharmacy – Medical Store Lahore | Pharmacy Near Me, Home Delivery">
-<meta property="og:description" content="Faizal Pharmacy is a trusted medical store in Lahore for pharmacy near me searches — home delivery of medicines plus wholesale medical supplies.">
+<meta property="og:description" content="Faizal Pharmacy is a trusted medical store in Lahore for pharmacy near me searches — home delivery of genuine medicines, AI prescription reader and a free health log book.">
 <meta property="og:url" content="https://lahoremedicalstore.com/">
 <meta property="og:locale" content="ur_PK">
 
@@ -57,7 +51,11 @@ window.FP_CONFIG = {
     },
     {
       "@type": "Offer",
-      "itemOffered": { "@type": "Service", "name": "Wholesale supply of surgical drapes, gloves, ultrasound rolls and gel" }
+      "itemOffered": { "@type": "Service", "name": "Free AI prescription reader and medicine price finder" }
+    },
+    {
+      "@type": "Offer",
+      "itemOffered": { "@type": "Service", "name": "Free health log book for daily diabetes and blood pressure record" }
     }
   ]
 }
@@ -225,7 +223,7 @@ window.FP_CONFIG = {
     color:var(--brass-light);
   }
 
-  /* ---------- Split: Retail / Wholesale ---------- */
+  /* ---------- Split: Retail / Online Tools ---------- */
   .split-section{padding:88px 0;}
   .split-head{
     max-width:56ch;
@@ -570,6 +568,115 @@ window.FP_CONFIG = {
     cursor:pointer;
     padding:0;
   }
+
+  /* ================= TOOL PANELS + SLIDE-OUT SHEET ================= */
+  .tool-panel{ display:none; }
+  #toolStore{ display:none !important; }
+
+  .tool-overlay{
+    position:fixed; inset:0; z-index:120;
+    background:rgba(20,32,28,0.55);
+    display:none;
+    backdrop-filter:blur(2px);
+  }
+  .tool-overlay.open{ display:block; }
+
+  .tool-sheet{
+    position:absolute;
+    top:0; bottom:0; left:0;
+    width:min(760px, 100%);
+    background:#fff;
+    display:flex; flex-direction:column;
+    box-shadow:0 0 50px rgba(0,0,0,0.35);
+    transform:translateX(-100%);
+    transition:transform .28s ease;
+  }
+  .tool-overlay.open .tool-sheet{ transform:translateX(0); }
+
+  .tool-sheet-head{
+    flex:0 0 auto;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:12px;
+    padding:14px 18px;
+    background:var(--green-deep);
+    color:var(--cream);
+    position:sticky; top:0; z-index:5;
+  }
+  .tool-sheet-title{ font-size:1.15rem; font-weight:600; }
+  .tool-sheet-close{
+    border:none; cursor:pointer;
+    background:var(--brass); color:var(--green-deep-2);
+    font-family:inherit; font-size:1rem; font-weight:700;
+    padding:10px 18px; border-radius:24px;
+    min-height:44px;
+  }
+  .tool-sheet-close:hover{ background:var(--brass-light); }
+  .tool-sheet-body{
+    flex:1 1 auto;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    background:#fff;
+  }
+  .tool-sheet-body .tool-panel{ display:block; }
+  .tool-sheet-body .tool-panel{ padding-top:18px !important; padding-bottom:40px !important; }
+
+  /* readability boost for 40+ users, inside tools only */
+  .tool-sheet-body input,
+  .tool-sheet-body select,
+  .tool-sheet-body textarea,
+  .tool-sheet-body button,
+  .tool-sheet-body .wa-btn{
+    font-size:16px !important;
+  }
+  .tool-sheet-body input,
+  .tool-sheet-body select{ min-height:46px !important; }
+
+  body.tool-open{ overflow:hidden; }
+
+  @media (max-width:800px){
+    .tool-sheet{ width:100%; }
+    .tool-sheet-title{ font-size:1rem; }
+  }
+
+  /* ---- bigger, clearer floating tools button ---- */
+  .float-tools-toggle{
+    width:auto !important; height:auto !important;
+    border-radius:32px !important;
+    padding:12px 20px !important;
+    gap:9px;
+    font-size:1.02rem !important;
+    font-weight:600;
+    font-family:inherit;
+  }
+  .float-tools.open .float-tools-toggle{ transform:none !important; }
+  .float-tools-toggle .ft-icon{ font-size:1.25rem; line-height:1; }
+  .float-tools-menu{ margin-bottom:6px; }
+  .float-tools-menu .ft-item{
+    display:flex; align-items:center; gap:10px;
+    background:var(--cream);
+    color:var(--ink);
+    border:1px solid var(--line);
+    padding:12px 18px;
+    border-radius:26px;
+    font-size:0.95rem;
+    font-family:inherit;
+    white-space:nowrap;
+    box-shadow:0 4px 14px rgba(0,0,0,0.13);
+    text-decoration:none;
+    cursor:pointer;
+    text-align:right;
+    min-height:46px;
+  }
+  .float-tools-menu .ft-item:hover{ background:#fff; border-color:var(--brass); }
+  .float-tools-menu .ft-item.ft-primary{
+    background:var(--brass); border-color:var(--brass); font-weight:700;
+  }
+  .float-tools-menu .ft-item .ft-em{ font-size:1.15rem; }
+  @media (max-width:480px){
+    .float-tools-toggle{ padding:11px 16px !important; font-size:0.95rem !important; }
+    .float-tools-menu .ft-item{ font-size:0.9rem; padding:11px 15px; }
+    .float-wa{ padding:11px 16px; font-size:0.85rem; }
+  }
   .banner-dots button.active{background:var(--brass);}
   @media (max-width:800px){
     .banner-slider{aspect-ratio:1/1; max-height:340px;}
@@ -579,12 +686,22 @@ window.FP_CONFIG = {
 </head>
 <body>
 
+<!-- ============================================================
+     BACKEND SETTINGS — sirf ye 2 lines badalni hoti hain
+     API khali "" chhor dein to website pehle ki tarah offline chalti rahegi.
+     ============================================================ -->
+<script>
+  window.FP_CONFIG = {
+    API: "",                                   // <-- yahan apna worker URL daalein, e.g. "https://api.lahoremedicalstore.com"
+    WHATSAPP: "923218861265"
+  };
+</script>
+
 <header>
   <div class="nav">
     <div class="brand" style="direction:ltr; unicode-bidi:embed;">Faizal <span>Pharmacy</span></div>
     <nav class="nav-links">
       <a href="#retail">خردہ فروخت</a>
-      <a href="#wholesale">ہول سیل</a>
       <a href="#products">سرجیکل آئٹمز</a>
       <a href="#gallery">تصاویر</a>
       <a href="#reviews">ریویوز</a>
@@ -597,7 +714,7 @@ window.FP_CONFIG = {
 <!-- ============================================== -->
 <!-- GROQ AI UI CODE - YEH WALI PASTE KAREIN -->
 <!-- ============================================== -->
-<section id="prescription-reader-section" style="padding: 35px 0; background: #ffffff; font-family: 'Segoe UI', Tahoma, sans-serif;">
+<section id="prescription-reader-section" class="tool-panel" style="padding: 35px 0; background: #ffffff; font-family: 'Segoe UI', Tahoma, sans-serif;">
   <div style="max-width: 800px; margin: 0 auto; padding: 0 20px;">
 
     <!-- Tool Header -->
@@ -609,132 +726,366 @@ window.FP_CONFIG = {
       <p style="font-size: 14px; color: #555; max-width: 600px; margin: 0 auto; line-height: 1.5;">Prescription ya Bill ki photo upload karein, AI parh kar dawaiyan bataye ga.</p>
     </div>
 
-    <!-- Upload Card -->
-    <div id="rxUploadCard" style="background: #fff; border-radius: 14px; border: 1px solid #e0e0e0; box-shadow: 0 4px 15px rgba(0,0,0,0.05); padding: 20px; margin-bottom: 20px;">
-      <div id="rxUploadZone" onclick="document.getElementById('rxFileInput').click();" style="border: 2px dashed #81C784; border-radius: 12px; padding: 30px 20px; text-align: center; cursor: pointer; background: #fafffe;">
+        <!-- Upload Card -->
+    <div id="rxUploadCard" style="background:#fff; border-radius:14px; border:1px solid #e0e0e0; box-shadow:0 4px 15px rgba(0,0,0,0.05); padding:20px; margin-bottom:20px;">
+      <div id="rxUploadZone" onclick="document.getElementById('rxFileInput').click();" style="border:2px dashed #81C784; border-radius:12px; padding:30px 20px; text-align:center; cursor:pointer; background:#fafffe;">
         <input type="file" id="rxFileInput" accept="image/*" style="display:none;" onchange="if(this.files.length) rxHandleFile(this.files[0]);">
-        <div style="font-size: 36px; margin-bottom: 8px;">📷</div>
-        <p style="font-size:15px; font-weight:600; color:#333; margin:0 0 4px;">Photo Upload Karein</p>
-        <p style="font-size:12px; color:#777; margin:0;">Click karein ya file yahan drop karein</p>
+        <div style="font-size:38px; margin-bottom:8px;">📷</div>
+        <p style="font-size:17px; font-weight:700; color:#333; margin:0 0 4px;">نسخے کی تصویر منتخب کریں</p>
+        <p style="font-size:14px; color:#777; margin:0;">تصویر لگاتے ہی AI خود پڑھنا شروع کر دے گا</p>
       </div>
-      <div style="margin-top: 10px;">
-        <button type="button" onclick="document.getElementById('rxCameraInput').click();" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px; padding:12px; border:1px solid #4CAF50; border-radius:10px; background:#f0fff0; cursor:pointer; font-size:14px; font-weight:600; color:#2E7D32;">
-          📸 Camera Se Photo Lein
+      <div style="margin-top:10px;">
+        <button type="button" onclick="document.getElementById('rxCameraInput').click();" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px; padding:15px; border:2px solid #4CAF50; border-radius:10px; background:#f0fff0; cursor:pointer; font-size:17px; font-weight:700; color:#2E7D32; min-height:52px;">
+          📸 کیمرے سے تصویر لیں
         </button>
         <input type="file" id="rxCameraInput" accept="image/*" capture="environment" style="display:none;" onchange="if(this.files.length) rxHandleFile(this.files[0]);">
       </div>
       <div id="rxPreviewArea" style="display:none; margin-top:15px;">
-        <img id="rxPreviewImg" src="" style="width:100%; max-height:350px; object-fit:contain; border-radius:10px; border:1px solid #ddd;">
+        <img id="rxPreviewImg" src="" alt="" style="width:100%; max-height:300px; object-fit:contain; border-radius:10px; border:1px solid #ddd; background:#f7f7f7;">
         <div style="display:flex; gap:10px; margin-top:12px;">
-          <button type="button" onclick="rxAnalyze();" id="rxAnalyzeBtn" style="flex:1; padding:13px; border:none; border-radius:10px; background:linear-gradient(135deg,#4CAF50,#2E7D32); color:#fff; font-size:15px; font-weight:600; cursor:pointer;">
-            🔍 Parhein (Analyze)
+          <button type="button" onclick="rxAnalyze();" id="rxAnalyzeBtn" style="flex:1; padding:14px; border:none; border-radius:10px; background:linear-gradient(135deg,#4CAF50,#2E7D32); color:#fff; font-size:16px; font-weight:700; cursor:pointer; min-height:50px;">
+            🔍 دوبارہ پڑھیں
           </button>
-          <button type="button" onclick="rxClearImage();" style="padding:13px 18px; border:1px solid #ccc; border-radius:10px; background:#fff; cursor:pointer;">❌</button>
+          <button type="button" onclick="rxClearImage();" title="ہٹا دیں" style="padding:14px 18px; border:1px solid #ccc; border-radius:10px; background:#fff; cursor:pointer; font-size:16px;">❌</button>
         </div>
+        <p id="rxSizeInfo" style="font-size:12.5px; color:#8b978f; margin:8px 0 0; text-align:center;"></p>
       </div>
     </div>
 
     <!-- Loading Screen -->
-    <div id="rxLoading" style="display:none; background:#fff; border-radius:14px; border:1px solid #e0e0e0; padding:35px 20px; text-align:center;">
-      <div style="width:36px; height:36px; border:3px solid #e8f5e9; border-top-color:#4CAF50; border-radius:50%; margin:0 auto 12px; animation:rxSpin 1s linear infinite;"></div>
-      <p style="font-size:16px; font-weight:600; color:#2E7D32; margin:0 0 4px;">AI Parh Raha Hai...</p>
+    <div id="rxLoading" style="display:none; background:#fff; border-radius:14px; border:1px solid #e0e0e0; padding:32px 20px; text-align:center; margin-bottom:20px;">
+      <div style="width:38px; height:38px; border:3px solid #e8f5e9; border-top-color:#4CAF50; border-radius:50%; margin:0 auto 14px; animation:rxSpin .9s linear infinite;"></div>
+      <p style="font-size:18px; font-weight:700; color:#2E7D32; margin:0 0 6px;">AI پڑھ رہا ہے...</p>
+      <p id="rxStage" style="font-size:14.5px; color:#6b7b73; margin:0;">تصویر تیار کی جا رہی ہے</p>
     </div>
 
     <!-- Error Screen -->
-    <div id="rxError" style="display:none; background:#ffebee; border:1px solid #ffcdd2; border-radius:14px; padding:20px; text-align:center;">
-      <p style="font-size:14px; color:#c62828; font-weight:600;" id="rxErrMsg"></p>
-      <button onclick="rxRetry()" style="margin-top:10px; background:#4CAF50; color:#fff; border:none; padding:8px 15px; border-radius:8px;">Dobara Koshish</button>
+    <div id="rxError" style="display:none; background:#ffebee; border:1px solid #ffcdd2; border-radius:14px; padding:20px; text-align:center; margin-bottom:20px;">
+      <p style="font-size:15.5px; color:#c62828; font-weight:600; line-height:1.9; margin:0;" id="rxErrMsg"></p>
+      <button type="button" onclick="rxAnalyze()" style="margin-top:12px; background:#4CAF50; color:#fff; border:none; padding:12px 22px; border-radius:9px; font-size:16px; font-weight:700; cursor:pointer; min-height:48px;">🔄 دوبارہ کوشش کریں</button>
+      <a href="https://wa.me/923218861265" target="_blank" rel="noopener" style="display:block; margin-top:10px; font-size:15px; color:#2E7D32; font-weight:700;">یا نسخہ براہِ راست واٹس ایپ کریں →</a>
     </div>
 
     <!-- Results Area -->
     <div id="rxResults" style="display:none;">
-      <div id="rxMedList" style="background:#fff; border:1px solid #e0e0e0; border-left:4px solid #4CAF50; border-radius:10px; padding:16px; white-space:pre-line; font-size:14px; line-height:1.6;"></div>
+      <div id="rxMatchBox" style="display:none; margin-bottom:16px;"></div>
+      <div id="rxMedList" style="background:#fff; border:1px solid #e0e0e0; border-left:4px solid #4CAF50; border-radius:10px; padding:16px; white-space:pre-line; font-size:16px; line-height:2;"></div>
       <div style="margin-top:15px;">
-        <a id="rxWhatsappBtn" href="#" target="_blank" style="display:block; text-align:center; padding:14px; border-radius:10px; background:#25D366; color:#fff; text-decoration:none; font-weight:700;">
-          📱 Pharmacist Se Confirm Karein (WhatsApp)
+        <a id="rxWhatsappBtn" href="#" target="_blank" rel="noopener" style="display:block; text-align:center; padding:16px; border-radius:10px; background:#25D366; color:#fff; text-decoration:none; font-weight:700; font-size:17px;">
+          📱 فارماسسٹ سے تصدیق کروائیں (واٹس ایپ)
         </a>
       </div>
-      <button onclick="rxNewScan()" style="width:100%; margin-top:10px; padding:10px; border:1px solid #ccc; border-radius:8px; background:#fff;">🔄 Nayi Scan</button>
+      <button type="button" onclick="rxNewScan()" style="width:100%; margin-top:10px; padding:14px; border:2px solid #cfd8d3; border-radius:9px; background:#fff; font-size:16px; font-weight:700; cursor:pointer; min-height:50px;">🔄 نئی تصویر</button>
+      <p style="font-size:14px; color:#6d4c41; background:#fff8e1; border:1px solid #ffe082; border-radius:10px; padding:12px 14px; line-height:1.95; margin-top:14px;">
+        ⚠️ AI سے پڑھی گئی معلومات میں غلطی ہو سکتی ہے۔ دوا لینے سے پہلے فارماسسٹ یا ڈاکٹر سے تصدیق ضرور کریں۔
+      </p>
     </div>
 
   </div>
 </section>
 
-<style> @keyframes rxSpin { to { transform: rotate(360deg); } } </style>
+<style>
+  @keyframes rxSpin { to { transform: rotate(360deg); } }
+  .rx-match{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:#fff; border:1px solid #e0e6e2; border-radius:11px;
+    padding:11px 13px; margin-bottom:8px; font-size:16px;
+  }
+  .rx-match b{ color:#22332c; }
+  .rx-match-add{
+    border:none; background:#2E7D32; color:#fff; border-radius:9px;
+    padding:9px 15px; font-size:15px; font-weight:700; cursor:pointer;
+    font-family:inherit; white-space:nowrap; min-height:42px;
+  }
+  .rx-match-add.done{ background:#8aa79a; }
+</style>
 
 <script>
-// Cloudflare Worker URL
-const WORKER_URL = "https://rx-reader-proxy.faisalmedical25.workers.dev/";
+(function(){
+  "use strict";
 
-let rxImageBase64 = null;
+  var WORKER_URL = "https://rx-reader-proxy.faisalmedical25.workers.dev/";
+  var MAX_DIM    = 1400;   // long edge after resize — enough for handwriting, small enough to be fast
+  var QUALITY    = 0.72;
+  var TIMEOUT_MS = 55000;
 
-function rxHandleFile(file) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        rxImageBase64 = e.target.result;
-        document.getElementById('rxPreviewImg').src = rxImageBase64;
-        document.getElementById('rxPreviewArea').style.display = 'block';
-        document.getElementById('rxUploadZone').style.display = 'none';
-    };
-    reader.readAsDataURL(file);
-}
+  var rxImageBase64 = null;   // compressed data URL
+  var rxBusy = false;
+  var rxTried = 0;
 
-function rxClearImage() {
-    rxImageBase64 = null;
-    document.getElementById('rxPreviewArea').style.display = 'none';
-    document.getElementById('rxUploadZone').style.display = 'block';
-}
+  function el(id){ return document.getElementById(id); }
+  function show(id, on){ var n = el(id); if(n) n.style.display = on ? 'block' : 'none'; }
+  function stage(t){ var n = el('rxStage'); if(n) n.textContent = t; }
 
-async function rxAnalyze() {
-    if (!rxImageBase64) return;
+  /* ---------- 1. Fast client-side compression ---------- */
+  function compress(file){
+    return new Promise(function(resolve, reject){
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function(){
+        try{
+          var w = img.naturalWidth, hgt = img.naturalHeight;
+          var scale = Math.min(1, MAX_DIM / Math.max(w, hgt));
+          var cw = Math.round(w * scale), ch = Math.round(hgt * scale);
 
-    document.getElementById('rxLoading').style.display = 'block';
-    document.getElementById('rxResults').style.display = 'none';
-    document.getElementById('rxError').style.display = 'none';
+          var c = document.createElement('canvas');
+          c.width = cw; c.height = ch;
+          var ctx = c.getContext('2d');
+          ctx.fillStyle = '#fff';
+          ctx.fillRect(0, 0, cw, ch);
+          ctx.drawImage(img, 0, 0, cw, ch);
 
-    try {
-        const base64Data = rxImageBase64.split(',')[1];
-
-        const resp = await fetch(WORKER_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ imageBase64: base64Data })
-        });
-
-        const data = await resp.json();
-
-        if (!resp.ok || data.error) {
-            throw new Error(data.error ? (typeof data.error === 'object' ? JSON.stringify(data.error) : data.error) : "Server Error");
+          var out = c.toDataURL('image/jpeg', QUALITY);
+          URL.revokeObjectURL(url);
+          resolve({ dataUrl: out, w: cw, h: ch, before: file.size, after: Math.round(out.length * 0.75) });
+        }catch(err){
+          URL.revokeObjectURL(url);
+          reject(err);
         }
+      };
+      img.onerror = function(){ URL.revokeObjectURL(url); reject(new Error('image')); };
+      img.src = url;
+    });
+  }
 
-        // OpenRouter / AI Standard Response Format
-        if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-            throw new Error("AI Response Format Invalid");
-        }
+  function kb(n){ return (n/1024) < 1024 ? Math.round(n/1024) + ' KB' : (n/1048576).toFixed(1) + ' MB'; }
 
-        const textResponse = data.choices[0].message.content;
-        
-        // Show result
-        document.getElementById('rxMedList').innerText = textResponse;
-        
-        const encodedMsg = encodeURIComponent("Assalam-o-Alaikum! AI Prescription Result:\n\n" + textResponse);
-        document.getElementById('rxWhatsappBtn').href = `https://wa.me/923218861265?text=${encodedMsg}`;
-        
-        document.getElementById('rxResults').style.display = 'block';
-
-    } catch(err) {
-        console.error("Prescription Error:", err);
-        document.getElementById('rxErrMsg').innerHTML = "<b>Error:</b><br>" + err.message;
-        document.getElementById('rxError').style.display = 'block';
-    } finally {
-        document.getElementById('rxLoading').style.display = 'none';
+  window.rxHandleFile = function(file){
+    if(!file) return;
+    if(!/^image\//.test(file.type)){
+      showError('براہِ کرم تصویر (photo) منتخب کریں۔');
+      return;
     }
-}
+    show('rxError', false);
+    show('rxResults', false);
+    show('rxLoading', true);
+    stage('تصویر تیار کی جا رہی ہے...');
 
-function rxNewScan() { location.reload(); }
-function rxRetry() { rxAnalyze(); }
+    compress(file).then(function(r){
+      rxImageBase64 = r.dataUrl;
+      rxTried = 0;
+      el('rxPreviewImg').src = r.dataUrl;
+      el('rxPreviewArea').style.display = 'block';
+      el('rxUploadZone').style.display = 'none';
+      el('rxSizeInfo').textContent = 'تصویر ' + kb(r.before) + ' سے ' + kb(r.after) + ' کر دی گئی — تیزی کے لیے';
+      rxAnalyze();            // auto-start, no extra click
+    }).catch(function(){
+      show('rxLoading', false);
+      showError('تصویر کھل نہیں سکی۔ دوسری تصویر آزمائیں۔');
+    });
+  };
+
+  window.rxClearImage = function(){
+    rxImageBase64 = null;
+    el('rxPreviewArea').style.display = 'none';
+    el('rxUploadZone').style.display = 'block';
+    el('rxFileInput').value = '';
+    el('rxCameraInput').value = '';
+    show('rxResults', false);
+    show('rxError', false);
+    show('rxLoading', false);
+  };
+
+  function showError(t){
+    el('rxErrMsg').innerHTML = t;
+    show('rxError', true);
+    show('rxLoading', false);
+  }
+
+  /* ---------- 2. Analyze with timeout + one silent retry ---------- */
+  window.rxAnalyze = function(){
+    if(!rxImageBase64 || rxBusy) return;
+    rxBusy = true;
+
+    show('rxError', false);
+    show('rxResults', false);
+    show('rxLoading', true);
+    stage('AI سرور کو بھیجا جا رہا ہے...');
+
+    var ctrl = ('AbortController' in window) ? new AbortController() : null;
+    var timer = setTimeout(function(){ if(ctrl) ctrl.abort(); }, TIMEOUT_MS);
+    var t0 = Date.now();
+    var tick = setInterval(function(){
+      var s = Math.round((Date.now() - t0)/1000);
+      if(s > 3 && s <= 9)  stage('نسخہ پڑھا جا رہا ہے... (' + s + ' سیکنڈ)');
+      else if(s > 9)       stage('تقریباً تیار ہے... (' + s + ' سیکنڈ)');
+    }, 1000);
+
+    function finish(){ clearTimeout(timer); clearInterval(tick); rxBusy = false; show('rxLoading', false); }
+
+    var opts = {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ imageBase64: rxImageBase64.split(',')[1] })
+    };
+    if(ctrl) opts.signal = ctrl.signal;
+
+    fetch(WORKER_URL, opts)
+      .then(function(resp){ return resp.json().then(function(d){ return {ok:resp.ok, data:d}; }); })
+      .then(function(r){
+        var data = r.data;
+        if(!r.ok || (data && data.error)){
+          var em = data && data.error;
+          throw new Error(em ? (typeof em === 'object' ? (em.message || JSON.stringify(em)) : em) : 'Server Error');
+        }
+        var text = data && data.choices && data.choices[0] && data.choices[0].message
+                 ? data.choices[0].message.content : null;
+        if(!text) throw new Error('AI Response Format Invalid');
+        finish();
+        renderResult(text);
+      })
+      .catch(function(err){
+        finish();
+        var aborted = (err && (err.name === 'AbortError'));
+        if(rxTried < 1 && !aborted){
+          rxTried++;
+          stage('دوبارہ کوشش...');
+          setTimeout(window.rxAnalyze, 700);
+          return;
+        }
+        if(aborted){
+          showError('<b>وقت زیادہ لگ گیا۔</b><br>انٹرنیٹ سست ہو سکتا ہے۔ دوبارہ کوشش کریں یا نسخہ واٹس ایپ کر دیں۔');
+        }else{
+          showError('<b>مسئلہ ہو گیا:</b><br>' + String(err && err.message ? err.message : err));
+        }
+      });
+  };
+
+  /* ---------- 3. Match detected medicines against the shop price list ---------- */
+  function rxNorm(s){
+    return String(s||'').toUpperCase()
+      .replace(/[^A-Z0-9 ]/g,' ')
+      .replace(/(\d)\s+(MG|ML|MCG|GM|IU)\b/g,'$1$2')
+      .replace(/\bTABLETS?\b/g,'TAB').replace(/\bCAPSULES?\b/g,'CAP')
+      .replace(/\bSYRUP\b/g,'SYP').replace(/\bINJECTIONS?\b/g,'INJ')
+      .replace(/\bDROPS\b/g,'DROP').replace(/\bSUSPENSION\b/g,'SUSP')
+      .replace(/\s+/g,' ').trim();
+  }
+  var RX_STRENGTH = /^\d+(MG|ML|MCG|GM|IU)$/;
+  var RX_FORMS = ['INHALER','SYP','INJ','CREAM','OINT','DROP','CAP','TAB','SACHET','GEL','SPRAY','LOTION','SUSP'];
+
+  function rxFindInStock(name){
+    if(typeof PRODUCTS === 'undefined' || !PRODUCTS.length) return null;
+    var key = rxNorm(name);
+    if(key.length < 3) return null;
+    var toks = key.split(' ');
+    var brand = toks[0];
+    if(brand.length < 3) return null;
+    var rest = toks.slice(1);
+    var strengths = rest.filter(function(t){ return RX_STRENGTH.test(t); });
+    var forms     = rest.filter(function(t){ return RX_FORMS.indexOf(t) !== -1; });
+
+    var best = null, bestScore = -1e9;
+    for(var i=0; i<PRODUCTS.length; i++){
+      var pn = rxNorm(PRODUCTS[i][0]);
+      var pt = pn.split(' ');
+      if(pt[0] !== brand && pt.indexOf(brand) === -1) continue;
+
+      var sc = (pt[0] === brand) ? 6 : 1;
+      rest.forEach(function(t){ if(pt.indexOf(t) !== -1) sc += 8; });
+      if(strengths.length && !strengths.some(function(t){ return pt.indexOf(t) !== -1; })) sc -= 40;
+      if(forms.length     && !forms.some(function(t){ return pt.indexOf(t) !== -1; }))     sc -= 25;
+      if(!forms.length && pt.indexOf('TAB') !== -1) sc += 2;
+      sc -= pn.length * 0.04;
+
+      if(sc > bestScore){ bestScore = sc; best = PRODUCTS[i]; }
+    }
+    if(!best) return null;
+
+    var bt = rxNorm(best[0]).split(' ');
+    var exact = (!strengths.length || strengths.some(function(t){ return bt.indexOf(t) !== -1; })) &&
+                (!forms.length     || forms.some(function(t){ return bt.indexOf(t) !== -1; }));
+    return { row: best, exact: exact };
+  }
+
+  function rxExtractNames(text){
+    var out = [], seen = {};
+    String(text).split(/\r?\n/).forEach(function(raw){
+      var line = raw.replace(/^[\s\-\*\u2022\u2023\u25cf\d\.\)\:]+/, '').trim();
+      if(!line || line.length > 70) return;
+      if(!/[A-Za-z]{3}/.test(line)) return;
+      var name = line.split(/[\(\:\u2013\u2014\|,]/)[0].trim();
+      name = name.replace(/\s+[-\u2013]\s+.*$/, '').trim();
+      if(name.length < 3 || name.length > 40) return;
+      if(name.split(/\s+/).length > 4) return;
+      if(/^(note|warning|disclaimer|medicine|medicines|prescription|nuskha|dawa|dawai|total|dosage|doctor|instruction|instructions|tablet|tab|syrup|capsule|advice|diagnosis)\b/i.test(name)) return;
+      var k = name.toUpperCase();
+      if(seen[k]) return;
+      seen[k] = 1;
+      out.push(name);
+    });
+    return out.slice(0, 12);
+  }
+
+  function renderResult(text){
+    el('rxMedList').innerText = text;
+
+    var box = el('rxMatchBox');
+    var names = rxExtractNames(text);
+    var rows = [];
+    names.forEach(function(n){
+      var p = rxFindInStock(n);
+      if(p) rows.push({ query:n, name:p.row[0], price:p.row[1], exact:p.exact });
+    });
+
+    if(rows.length){
+      var html = '<div style="background:#e8f5e9; border:1px solid #c8e6c9; border-radius:12px; padding:14px;">' +
+        '<div style="font-size:17px; font-weight:700; color:#1b5e20; margin-bottom:10px;">✅ یہ دوائیں ہمارے ریٹ لسٹ میں مل گئیں</div>';
+      rows.forEach(function(r, i){
+        html += '<div class="rx-match">' +
+          '<span><b>' + r.name.replace(/</g,'&lt;') + '</b><br>' +
+          '<span style="font-size:14.5px;color:#6b7b73;">قیمت: Rs. ' + r.price + '</span>' +
+          (r.exact ? '' : '<br><span style="font-size:13.5px;color:#b26a00;">≈ نسخے میں "' + r.query.replace(/</g,'&lt;') + '" لکھا ہے — طاقت/پیکنگ تصدیق کروا لیں</span>') +
+          '</span>' +
+          '<button type="button" class="rx-match-add" data-i="' + i + '">بل میں ڈالیں</button>' +
+          '</div>';
+      });
+      html += '<div style="font-size:14px;color:#4b5a52;margin-top:6px;line-height:1.9;">قیمتیں بدل سکتی ہیں — آخری تصدیق فارماسسٹ سے کر لیں۔</div></div>';
+      box.innerHTML = html;
+      box.style.display = 'block';
+
+      Array.prototype.forEach.call(box.querySelectorAll('.rx-match-add'), function(btn){
+        btn.addEventListener('click', function(){
+          var r = rows[parseInt(btn.getAttribute('data-i'), 10)];
+          if(typeof window.addToCalculatorCart === 'function'){
+            window.addToCalculatorCart(r.name, r.price, 1);
+            btn.textContent = '✔ شامل ہو گئی';
+            btn.classList.add('done');
+          }
+        });
+      });
+    }else{
+      box.style.display = 'none';
+      box.innerHTML = '';
+    }
+
+    el('rxWhatsappBtn').href = 'https://wa.me/923218861265?text=' +
+      encodeURIComponent('السلام علیکم! AI نے میرا نسخہ یوں پڑھا:\n\n' + text + '\n\nبراہِ کرم تصدیق اور قیمت بتا دیں۔');
+
+    show('rxResults', true);
+  }
+
+  window.rxNewScan = function(){ rxClearImage(); };
+  window.rxRetry   = function(){ rxAnalyze(); };
+
+  /* drag & drop */
+  document.addEventListener('DOMContentLoaded', function(){
+    var zone = el('rxUploadZone');
+    if(!zone) return;
+    ['dragenter','dragover'].forEach(function(ev){
+      zone.addEventListener(ev, function(e){ e.preventDefault(); zone.style.background = '#e8f5e9'; });
+    });
+    ['dragleave','drop'].forEach(function(ev){
+      zone.addEventListener(ev, function(e){ e.preventDefault(); zone.style.background = '#fafffe'; });
+    });
+    zone.addEventListener('drop', function(e){
+      if(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) rxHandleFile(e.dataTransfer.files[0]);
+    });
+  });
+})();
 </script>
-<section class="order-section" id="estimate" style="background:var(--cream);">
+
+<section class="order-section tool-panel" id="estimate" style="background:var(--cream);">
   <div class="wrap">
 <!-- FAISAL PHARMACY POS TERMINAL -->
 <style>
@@ -886,12 +1237,14 @@ function rxRetry() { rxAnalyze(); }
     </a>
   </div>
 </div>
+  </div>
+</section>
 <!-- ============================================== -->
 <!-- DELIVERY AREA CHECKER - UPDATED - START -->
 <!-- ============================================== -->
 <link href="https://fonts.cdnfonts.com/css/jameel-noori-nastaleeq" rel="stylesheet">
 
-<section id="da-section" style="padding: 35px 0; background: #ffffff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; width: 100%; box-sizing: border-box;">
+<section id="da-section" class="tool-panel" style="padding: 35px 0; background: #ffffff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; width: 100%; box-sizing: border-box;">
   <div style="max-width: 800px; margin: 0 auto; padding: 0 15px; box-sizing: border-box;">
 
     <!-- Header -->
@@ -1442,7 +1795,7 @@ function rxRetry() { rxAnalyze(); }
 <!-- ============================================== -->
 <link href="https://fonts.cdnfonts.com/css/jameel-noori-nastaleeq" rel="stylesheet">
 
-<section id="med-finder-section" style="padding: 35px 0; background: #fafafa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; width: 100%; box-sizing: border-box; overflow: hidden;">
+<section id="med-finder-section" class="tool-panel" style="padding: 35px 0; background: #fafafa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; width: 100%; box-sizing: border-box; overflow: hidden;">
   <div style="max-width: 800px; margin: 0 auto; padding: 0 15px; box-sizing: border-box;">
 
     <!-- Header -->
@@ -1994,7 +2347,7 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
   <div class="wrap">
     <div>
       <h1>اصلی ادویات اور میڈیکل سامان، لاہور بھر میں گھر بیٹھے ڈیلیوری۔</h1>
-      <p class="lede">Faizal Pharmacy گھرانوں کو ادویات اور صحت کی اشیاء گھر بیٹھے فراہم کرتا ہے، اور ڈائیگناسٹک و الٹراساؤنڈ سینٹرز کو روزمرہ استعمال کا سامان بھی فراہم کرتا ہے۔</p>
+      <p class="lede">Faizal Pharmacy لاہور کے گھرانوں کو اصلی ادویات، صحت کی اشیاء اور گھر کی دیکھ بھال کا سامان گھر بیٹھے فراہم کرتا ہے۔</p>
       <div class="hero-ctas">
         <a class="btn btn-primary" href="https://wa.me/923218861265" target="_blank" rel="noopener">گھر ڈیلیوری کے لیے آرڈر کریں</a>
         <a class="btn btn-outline" href="https://wa.me/923218861265" target="_blank" rel="noopener">پرسکرپشن واٹس ایپ کریں</a>
@@ -2014,7 +2367,7 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
   <div class="wrap">
     <span class="item">صرف DRAP رجسٹرڈ مصنوعات</span>
     <span class="item">لاہور بھر میں اسی دن ڈیلیوری</span>
-    <span class="item">مقامی کلینکس اور ڈائیگناسٹک سینٹرز کا اعتماد</span>
+    <span class="item">تجربہ کار فارماسسٹ کی رہنمائی</span>
   </div>
 </div>
 
@@ -2059,8 +2412,8 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
 <section class="split-section" id="retail">
   <div class="wrap">
     <div class="split-head">
-      <h2>ہم لاہور کی دو طرح خدمت کرتے ہیں</h2>
-      <p>چاہے آپ کو گھر پر دوا چاہیے یا آپ کا کلینک ایک قابلِ اعتماد سپلائر ڈھونڈ رہا ہے — Faizal Pharmacy دونوں کام سنبھالتا ہے۔</p>
+      <h2>آپ کے گھر کے لیے مکمل میڈیکل سروس</h2>
+      <p>دوا سے لے کر گھر کی دیکھ بھال کے سامان تک — سب کچھ ایک ہی جگہ، اور وٹس ایپ پر آرڈر۔</p>
     </div>
     <div class="split-grid">
       <div class="split-col" id="retail-col">
@@ -2075,15 +2428,16 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
         <p class="note">اپنا نسخہ یا ادویات کی فہرست واٹس ایپ پر بھیجیں — ہم اسی دن قیمت اور ڈیلیوری وقت کنفرم کر دیتے ہیں۔</p>
       </div>
       <div class="divider"></div>
-      <div class="split-col" id="wholesale">
-        <span class="kicker">آپ کے کاروبار کے لیے</span>
-        <h3>ہول سیل سپلائی</h3>
+      <div class="split-col" id="freetools">
+        <span class="kicker">مفت آن لائن سہولت</span>
+        <h3>آن لائن ٹولز</h3>
         <ul>
-          <li>سرجیکل ڈریپس اور کٹس</li>
-          <li>ایگزامینیشن گلووز</li>
-          <li>الٹراساؤنڈ رولز اور جیل — تھوک ریٹ پر</li>
+          <li>نسخہ کی تصویر سے AI دوائیں پڑھے</li>
+          <li>دوا کی قیمت اور دستیابی تلاش کریں</li>
+          <li>بل کیلکیولیٹر اور ڈیلیوری چیکر</li>
+          <li>ہیلتھ لاگ بک — روزانہ شوگر اور بلڈ پریشر کا ریکارڈ</li>
         </ul>
-        <p class="note">لاہور بھر کے ڈائیگناسٹک اور الٹراساؤنڈ سینٹرز کو مستقل سٹاک اور مناسب قیمت پر سپلائی۔ اپنی ماہانہ ضرورت بتائیں، ہم اسی حساب سے قیمت دیں گے۔</p>
+        <p class="note">سکرین کے بائیں جانب نیچے والے سبز بٹن <b>ٹولز</b> پر کلک کریں — تمام ٹولز وہیں ملیں گے۔ لاگ بک کے علاوہ کسی ٹول کے لیے اکاؤنٹ کی ضرورت نہیں۔</p>
       </div>
     </div>
   </div>
@@ -2168,7 +2522,7 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
       <div class="step">
         <span class="num">1</span>
         <h4>ہمیں پیغام بھیجیں</h4>
-        <p>اپنی ادویات کی فہرست، نسخہ، یا ہول سیل ضرورت واٹس ایپ پر بھیجیں۔</p>
+        <p>اپنی ادویات کی فہرست یا نسخے کی تصویر واٹس ایپ پر بھیجیں۔</p>
       </div>
       <div class="step">
         <span class="num">2</span>
@@ -2213,15 +2567,1262 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
 <footer>
   <div class="wrap">
     <span>© 2026 Faizal Pharmacy، لاہور۔</span>
-    <span>خردہ اور ہول سیل میڈیکل سپلائی۔</span>
+    <span>ریٹیل میڈیکل سٹور — گھر ڈیلیوری۔</span>
   </div>
 </footer>
+<!-- ============================================== -->
+<!-- HEALTH LOG BOOK (SUGAR + BP) - START -->
+<!-- ============================================== -->
+<section id="logbook-section" class="tool-panel" dir="rtl">
+  <div class="lb-wrap">
+
+    <!-- ===== HEADER ===== -->
+    <div class="lb-head">
+      <div class="lb-head-icon">📋</div>
+      <h2 class="lb-h2">ہیلتھ لاگ بک</h2>
+      <p class="lb-sub">اپنی شوگر اور بلڈ پریشر روزانہ یہاں لکھیں۔ ڈاکٹر کو دکھانے کے لیے پوری رپورٹ ایک کلک میں تیار۔</p>
+    </div>
+
+    <!-- ===== AUTH VIEW ===== -->
+    <div id="lbAuth">
+
+      <div class="lb-note lb-note-info">
+        <b>صرف لاگ بک کے لیے اکاؤنٹ ضروری ہے۔</b><br>
+        باقی سارے ٹولز (دوا تلاش، نسخہ پڑھنا، بل کیلکولیٹر، ڈیلیوری چیک) بغیر اکاؤنٹ کے چلتے ہیں۔
+      </div>
+
+      <div class="lb-card">
+        <div class="lb-tabs">
+          <button type="button" class="lb-tab active" id="lbTabLogin" onclick="lbShowTab('login')">لاگ ان کریں</button>
+          <button type="button" class="lb-tab" id="lbTabSignup" onclick="lbShowTab('signup')">نیا اکاؤنٹ بنائیں</button>
+        </div>
+
+        <!-- LOGIN -->
+        <div id="lbLoginForm">
+          <label class="lb-label">موبائل نمبر</label>
+          <input type="tel" id="lbLoginPhone" class="lb-input" inputmode="numeric" placeholder="03001234567" autocomplete="tel">
+
+          <label class="lb-label">4 ہندسوں کا پن کوڈ</label>
+          <input type="password" id="lbLoginPin" class="lb-input" inputmode="numeric" maxlength="4" placeholder="••••">
+
+          <div id="lbLoginMsg" class="lb-msg"></div>
+          <button type="button" class="lb-btn lb-btn-green" onclick="lbLogin()">لاگ ان کریں</button>
+          <p class="lb-tiny">پن بھول گئے؟ نیچے واٹس ایپ پر رابطہ کریں، یا نیا اکاؤنٹ بنا لیں۔</p>
+        </div>
+
+        <!-- SIGNUP -->
+        <div id="lbSignupForm" style="display:none;">
+          <label class="lb-label">آپ کا نام</label>
+          <input type="text" id="lbSuName" class="lb-input" placeholder="مثلاً: محمد اسلم">
+
+          <label class="lb-label">موبائل نمبر</label>
+          <input type="tel" id="lbSuPhone" class="lb-input" inputmode="numeric" placeholder="03001234567" autocomplete="tel">
+
+          <label class="lb-label">4 ہندسوں کا پن کوڈ بنائیں</label>
+          <input type="password" id="lbSuPin" class="lb-input" inputmode="numeric" maxlength="4" placeholder="••••">
+
+          <label class="lb-label">پن دوبارہ لکھیں</label>
+          <input type="password" id="lbSuPin2" class="lb-input" inputmode="numeric" maxlength="4" placeholder="••••">
+
+          <label class="lb-check">
+            <input type="checkbox" id="lbOptIn" checked>
+            <span>مجھے واٹس ایپ پر ڈسکاؤنٹ، آفرز اور دوا ختم ہونے کی یاد دہانی بھیجیں
+            (اختیاری — کبھی بھی بند کروا سکتے ہیں)</span>
+          </label>
+
+          <div id="lbSuMsg" class="lb-msg"></div>
+          <button type="button" class="lb-btn lb-btn-green" onclick="lbSignup()">اکاؤنٹ بنائیں</button>
+          <p class="lb-tiny">
+            🔒 آپ کا ڈیٹا آپ کے اپنے موبائل/کمپیوٹر میں محفوظ رہتا ہے۔ ہم اسے کہیں نہیں بھیجتے۔
+            براہِ کرم وقتاً فوقتاً <b>بیک اپ</b> ضرور محفوظ کریں۔
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== APP VIEW ===== -->
+    <div id="lbApp" style="display:none;">
+
+      <div class="lb-userbar">
+        <span>السلام علیکم، <b id="lbUserName"></b></span>
+        <button type="button" class="lb-btn-mini" onclick="lbLogout()">لاگ آؤٹ</button>
+      </div>
+
+      <!-- NEW ENTRY -->
+      <div class="lb-card">
+        <h3 class="lb-h3">➕ آج کی نئی انٹری</h3>
+
+        <div class="lb-row2">
+          <div>
+            <label class="lb-label">تاریخ</label>
+            <input type="date" id="lbDate" class="lb-input">
+          </div>
+          <div>
+            <label class="lb-label">وقت</label>
+            <input type="time" id="lbTime" class="lb-input">
+          </div>
+        </div>
+
+        <div class="lb-block lb-block-sugar">
+          <div class="lb-block-title">🩸 شوگر (Blood Sugar)</div>
+          <div class="lb-row2">
+            <div>
+              <label class="lb-label">ریڈنگ (mg/dL)</label>
+              <input type="number" id="lbSugar" class="lb-input" inputmode="numeric" placeholder="مثلاً: 120">
+            </div>
+            <div>
+              <label class="lb-label">کب چیک کی؟</label>
+              <select id="lbSugarType" class="lb-input">
+                <option value="fasting">نہار منہ (خالی پیٹ)</option>
+                <option value="after">کھانے کے 2 گھنٹے بعد</option>
+                <option value="random">کسی بھی وقت (رینڈم)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="lb-block lb-block-bp">
+          <div class="lb-block-title">❤️ بلڈ پریشر (Blood Pressure)</div>
+          <div class="lb-row3">
+            <div>
+              <label class="lb-label">اوپر والا (Systolic)</label>
+              <input type="number" id="lbSys" class="lb-input" inputmode="numeric" placeholder="120">
+            </div>
+            <div>
+              <label class="lb-label">نیچے والا (Diastolic)</label>
+              <input type="number" id="lbDia" class="lb-input" inputmode="numeric" placeholder="80">
+            </div>
+            <div>
+              <label class="lb-label">نبض (Pulse)</label>
+              <input type="number" id="lbPulse" class="lb-input" inputmode="numeric" placeholder="75">
+            </div>
+          </div>
+        </div>
+
+        <label class="lb-label">وزن (کلو) — اختیاری</label>
+        <input type="number" id="lbWeight" class="lb-input" inputmode="decimal" placeholder="مثلاً: 72">
+
+        <label class="lb-label">نوٹ — اختیاری</label>
+        <input type="text" id="lbNote" class="lb-input" placeholder="مثلاً: دوا لی، سر میں درد تھا">
+
+        <div id="lbEntryMsg" class="lb-msg"></div>
+        <button type="button" class="lb-btn lb-btn-green lb-btn-big" onclick="lbAddEntry()">✔ محفوظ کریں</button>
+        <p class="lb-tiny">شوگر یا بلڈ پریشر — جو چیک کی ہو صرف وہی بھر دیں، دونوں لکھنا ضروری نہیں۔</p>
+      </div>
+
+      <!-- SUMMARY -->
+      <div id="lbSummary"></div>
+
+      <!-- CHARTS -->
+      <div id="lbCharts"></div>
+
+      <!-- HISTORY -->
+      <div class="lb-card">
+        <h3 class="lb-h3">📖 پرانا ریکارڈ</h3>
+        <div id="lbHistory"></div>
+      </div>
+
+      <!-- EXPORT -->
+      <div class="lb-card">
+        <h3 class="lb-h3">📤 رپورٹ اور بیک اپ</h3>
+        <div id="lbCloudBox" style="display:none;">
+          <button type="button" class="lb-btn lb-btn-outline" onclick="lbSyncNow()">☁️ ابھی کلاؤڈ میں محفوظ کریں</button>
+          <div class="lb-cloud" id="lbCloudStatus"></div>
+        </div>
+        <button type="button" class="lb-btn lb-btn-wa" onclick="lbWhatsAppReport()">📱 واٹس ایپ پر رپورٹ بھیجیں</button>
+        <button type="button" class="lb-btn lb-btn-outline" onclick="lbPrintReport()">🖨️ رپورٹ پرنٹ / PDF بنائیں</button>
+        <button type="button" class="lb-btn lb-btn-outline" onclick="lbExportCSV()">⬇️ ایکسل (CSV) فائل</button>
+        <button type="button" class="lb-btn lb-btn-outline" onclick="lbBackup()">💾 بیک اپ محفوظ کریں</button>
+        <button type="button" class="lb-btn lb-btn-outline" onclick="document.getElementById('lbRestoreFile').click()">♻️ بیک اپ واپس لائیں</button>
+        <input type="file" id="lbRestoreFile" accept=".json,application/json" style="display:none" onchange="lbRestore(this)">
+        <p class="lb-tiny">
+          ⚠️ ریکارڈ آپ کے اسی موبائل/کمپیوٹر میں محفوظ ہے۔ اگر براؤزر کا ڈیٹا صاف کریں یا فون بدلیں تو ریکارڈ ختم ہو سکتا ہے —
+          اس لیے مہینے میں ایک بار <b>بیک اپ</b> ضرور محفوظ کریں۔
+        </p>
+      </div>
+
+      <div class="lb-note lb-note-warn">
+        <b>ضروری نوٹ:</b> یہ لاگ بک صرف آپ کا ریکارڈ رکھنے کے لیے ہے۔ یہ ڈاکٹر کے مشورے، تشخیص یا علاج کا متبادل نہیں۔
+        ریڈنگ بہت زیادہ یا بہت کم ہو، یا طبیعت خراب لگے، تو فوراً اپنے ڈاکٹر سے رجوع کریں۔
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  #logbook-section{ padding:30px 0; background:#f7f9f8; font-family:inherit; }
+  .lb-wrap{ max-width:760px; margin:0 auto; padding:0 16px; box-sizing:border-box; }
+
+  .lb-head{ text-align:center; margin-bottom:18px; }
+  .lb-head-icon{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:58px; height:58px; font-size:28px;
+    background:linear-gradient(135deg,#4CAF50,#2E7D32);
+    border-radius:16px; margin-bottom:10px;
+    box-shadow:0 6px 18px rgba(76,175,80,.25);
+  }
+  .lb-h2{ font-size:24px; font-weight:700; color:#2E7D32; margin:0 0 6px; }
+  .lb-sub{ font-size:16px; color:#4a4a4a; line-height:1.9; margin:0; }
+
+  .lb-card{
+    background:#fff; border:1px solid #e3e7e5; border-radius:16px;
+    padding:18px; margin-bottom:16px;
+    box-shadow:0 4px 15px rgba(0,0,0,.05);
+  }
+  .lb-h3{ font-size:19px; font-weight:700; color:#22332c; margin:0 0 14px; }
+
+  .lb-label{ display:block; font-size:16px; color:#333; margin:12px 0 6px; font-weight:600; }
+  .lb-input{
+    width:100%; box-sizing:border-box;
+    padding:13px 14px; border-radius:11px;
+    border:2px solid #d7ded9; background:#fcfefd;
+    font-size:17px; font-family:inherit; color:#1d1d1d;
+    outline:none; min-height:50px;
+  }
+  .lb-input:focus{ border-color:#2E7D32; background:#fff; }
+
+  .lb-row2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .lb-row3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+  @media (max-width:560px){
+    .lb-row3{ grid-template-columns:1fr 1fr; }
+    .lb-row3 > div:last-child{ grid-column:1 / -1; }
+  }
+
+  .lb-block{ border-radius:13px; padding:12px 14px 16px; margin:16px 0; border:1px solid #e6ebe8; }
+  .lb-block-sugar{ background:#fff7f5; border-color:#f6ded7; }
+  .lb-block-bp{ background:#f4f8ff; border-color:#dbe6f7; }
+  .lb-block-title{ font-size:18px; font-weight:700; color:#333; margin-bottom:4px; }
+
+  .lb-btn{
+    width:100%; display:block; margin-top:12px;
+    padding:15px; border-radius:12px; border:none;
+    font-size:17px; font-weight:700; font-family:inherit;
+    cursor:pointer; min-height:52px;
+  }
+  .lb-btn-big{ font-size:19px; padding:17px; }
+  .lb-btn-green{ background:linear-gradient(135deg,#4CAF50,#2E7D32); color:#fff; }
+  .lb-btn-wa{ background:#25D366; color:#fff; }
+  .lb-btn-outline{ background:#fff; color:#22332c; border:2px solid #cfd8d3; }
+  .lb-btn-outline:hover{ background:#f3f6f4; }
+  .lb-btn-mini{
+    background:#fff; border:1px solid #cfd8d3; border-radius:20px;
+    padding:8px 16px; font-size:15px; font-family:inherit; cursor:pointer; min-height:40px;
+  }
+
+  .lb-tabs{ display:flex; gap:8px; margin-bottom:8px; }
+  .lb-tab{
+    flex:1; padding:13px; border-radius:11px; border:2px solid #d7ded9;
+    background:#f7f9f8; color:#555; font-size:16px; font-weight:600;
+    font-family:inherit; cursor:pointer; min-height:50px;
+  }
+  .lb-tab.active{ background:#2E7D32; border-color:#2E7D32; color:#fff; }
+
+  .lb-msg{ font-size:15px; margin-top:10px; line-height:1.8; display:none; padding:10px 12px; border-radius:9px; }
+  .lb-msg.err{ display:block; background:#ffebee; color:#c62828; border:1px solid #ffcdd2; }
+  .lb-msg.ok{ display:block; background:#e8f5e9; color:#2E7D32; border:1px solid #c8e6c9; }
+
+  .lb-check{ display:flex; gap:10px; align-items:flex-start; margin-top:18px; font-size:15px;
+             line-height:1.85; color:#4a5a52; cursor:pointer; }
+  .lb-check input{ width:22px; height:22px; margin-top:2px; flex:0 0 auto; }
+  .lb-cloud{ font-size:14px; color:#6b7b73; text-align:center; margin-top:10px; line-height:1.8; }
+  .lb-cloud b{ color:#2E7D32; }
+  .lb-tiny{ font-size:14px; color:#6b7b73; line-height:1.9; margin:10px 0 0; }
+
+  .lb-note{ border-radius:13px; padding:14px 16px; font-size:15.5px; line-height:1.95; margin-bottom:16px; }
+  .lb-note-info{ background:#e8f5e9; border:1px solid #c8e6c9; color:#1b5e20; }
+  .lb-note-warn{ background:#fff8e1; border:1px solid #ffe082; color:#6d4c41; }
+
+  .lb-userbar{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:#fff; border:1px solid #e3e7e5; border-radius:14px;
+    padding:12px 16px; margin-bottom:16px; font-size:17px;
+  }
+
+  .lb-stats{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media (max-width:520px){ .lb-stats{ grid-template-columns:1fr; } }
+  .lb-stat{
+    background:#fff; border:1px solid #e3e7e5; border-radius:14px; padding:14px 16px;
+  }
+  .lb-stat-lab{ font-size:15px; color:#6b7b73; margin-bottom:4px; }
+  .lb-stat-val{ font-size:26px; font-weight:800; color:#22332c; line-height:1.3; }
+  .lb-stat-sub{ font-size:14px; color:#7c8a83; margin-top:4px; }
+
+  .lb-badge{
+    display:inline-block; padding:4px 11px; border-radius:20px;
+    font-size:14px; font-weight:700; margin-top:7px;
+  }
+  .lb-b-good{ background:#e8f5e9; color:#2E7D32; }
+  .lb-b-mid{  background:#fff8e1; color:#e65100; }
+  .lb-b-bad{  background:#ffebee; color:#c62828; }
+  .lb-b-none{ background:#eceff1; color:#607d8b; }
+
+  .lb-hist-day{ margin-bottom:14px; }
+  .lb-hist-date{
+    font-size:16px; font-weight:700; color:#2E7D32;
+    border-bottom:2px solid #e8f5e9; padding-bottom:6px; margin-bottom:8px;
+  }
+  .lb-hist-item{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+    background:#fafcfb; border:1px solid #eef2f0; border-radius:11px;
+    padding:11px 13px; margin-bottom:7px; font-size:16px; line-height:1.95;
+  }
+  .lb-hist-del{
+    border:none; background:#fff; color:#c62828; cursor:pointer;
+    font-size:17px; border-radius:8px; padding:5px 9px; flex:0 0 auto;
+  }
+  .lb-empty{ text-align:center; color:#8b978f; font-size:16px; padding:22px 0; line-height:1.9; }
+
+  .lb-chart-card{ background:#fff; border:1px solid #e3e7e5; border-radius:16px; padding:16px; margin-bottom:16px; }
+  .lb-chart-title{ font-size:17px; font-weight:700; color:#22332c; margin:0 0 10px; }
+  .lb-legend{ font-size:14px; color:#6b7b73; margin-top:8px; }
+  .lb-legend i{ display:inline-block; width:11px; height:11px; border-radius:3px; margin-left:5px; }
+</style>
+
+<script>
+(function(){
+  "use strict";
+
+  var UKEY = 'fp_users_v1';
+  var SKEY = 'fp_session_v1';
+  var API  = (window.FP_CONFIG && window.FP_CONFIG.API) || '';
+  var syncTimer = null;
+
+  /* ---- cloud helpers: local data hamesha asli hai, cloud sirf backup ---- */
+  function api(path, payload){
+    if(!API) return Promise.reject(new Error('offline'));
+    return fetch(API + path, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    }).then(function(r){ return r.json().then(function(d){
+      if(d && d.error) throw new Error(d.error);
+      return d;
+    }); });
+  }
+
+  function setCloudStatus(t, good){
+    var n = document.getElementById('lbCloudStatus');
+    if(n) n.innerHTML = good ? '<b>' + t + '</b>' : t;
+  }
+
+  /* Push local readings up and pull anything this device is missing. */
+  function cloudSync(pin, silent){
+    if(!API || !session) return;
+    var p = pin || sessionPin;
+    if(!p) return;
+    if(!silent) setCloudStatus('\u06a9\u0644\u0627\u0624\u0688 \u0645\u06cc\u06ba \u0645\u062d\u0641\u0648\u0638 \u06c1\u0648 \u0631\u06c1\u0627 \u06c1\u06d2...');
+    api('/api/logbook/sync', { phone: session, pin: p, entries: entries() })
+      .then(function(d){
+        if(d && Array.isArray(d.entries)){
+          var cur = entries(), ids = {};
+          cur.forEach(function(e){ ids[e.id] = 1; });
+          var added = 0;
+          d.entries.forEach(function(e){
+            if(e && e.id && !ids[e.id]){ cur.push(e); added++; }
+          });
+          if(added){ saveEntries(cur); render(); }
+        }
+        setCloudStatus('\u2601\ufe0f \u06a9\u0644\u0627\u0624\u0688 \u0645\u06cc\u06ba \u0645\u062d\u0641\u0648\u0638 \u06c1\u06d2', true);
+      })
+      .catch(function(){
+        setCloudStatus('\u26a0\ufe0f \u06a9\u0644\u0627\u0624\u0688 \u0628\u06cc\u06a9 \u0627\u067e \u0646\u06c1\u06cc\u06ba \u06c1\u0648 \u0633\u06a9\u0627 \u2014 \u0631\u06cc\u06a9\u0627\u0631\u0688 \u0627\u0633\u06cc \u0641\u0648\u0646 \u0645\u06cc\u06ba \u0645\u062d\u0641\u0648\u0638 \u06c1\u06d2');
+      });
+  }
+  function scheduleSync(){
+    if(!API) return;
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(function(){ cloudSync(null, true); }, 2500);
+  }
+  var sessionPin = null;
+  window.lbSyncNow = function(){ cloudSync(null, false); };
+
+  function LS(){ try{ return window.localStorage; }catch(e){ return null; } }
+  function readJSON(k, def){
+    try{ var s = LS() && LS().getItem(k); return s ? JSON.parse(s) : def; }
+    catch(e){ return def; }
+  }
+  function writeJSON(k, v){
+    try{ LS().setItem(k, JSON.stringify(v)); return true; }
+    catch(e){ alert('ڈیٹا محفوظ نہیں ہو سکا۔ براؤزر کی سٹوریج بھری ہوئی یا بند ہو سکتی ہے۔'); return false; }
+  }
+  function hash(s){
+    var h = 5381, i;
+    for(i=0;i<s.length;i++){ h = ((h*33) ^ s.charCodeAt(i)) >>> 0; }
+    return 'p' + h.toString(36);
+  }
+  function normPhone(p){ return (p||'').replace(/[^0-9]/g,''); }
+  function esc(s){
+    return String(s==null?'':s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function el(id){ return document.getElementById(id); }
+  function msg(id, text, type){
+    var n = el(id); if(!n) return;
+    n.className = 'lb-msg ' + (type||'err');
+    n.innerHTML = text;
+    if(!text) n.className = 'lb-msg';
+  }
+
+  var users = readJSON(UKEY, {});
+  var session = null;
+  try{ session = LS() && LS().getItem(SKEY); }catch(e){}
+
+  function logKey(phone){ return 'fp_log_' + phone; }
+  function entries(){ return session ? readJSON(logKey(session), []) : []; }
+  function saveEntries(list){ return writeJSON(logKey(session), list); }
+
+  /* ---------------- AUTH ---------------- */
+  window.lbShowTab = function(which){
+    var isLogin = which === 'login';
+    el('lbLoginForm').style.display  = isLogin ? 'block' : 'none';
+    el('lbSignupForm').style.display = isLogin ? 'none'  : 'block';
+    el('lbTabLogin').classList.toggle('active', isLogin);
+    el('lbTabSignup').classList.toggle('active', !isLogin);
+    msg('lbLoginMsg',''); msg('lbSuMsg','');
+  };
+
+  window.lbSignup = function(){
+    var name  = (el('lbSuName').value||'').trim();
+    var phone = normPhone(el('lbSuPhone').value);
+    var pin   = (el('lbSuPin').value||'').trim();
+    var pin2  = (el('lbSuPin2').value||'').trim();
+
+    if(name.length < 2)      return msg('lbSuMsg','براہِ کرم اپنا نام لکھیں۔');
+    if(phone.length < 10)    return msg('lbSuMsg','مکمل موبائل نمبر لکھیں (مثلاً 03001234567)۔');
+    if(!/^[0-9]{4}$/.test(pin)) return msg('lbSuMsg','پن کوڈ 4 ہندسوں کا ہونا چاہیے۔');
+    if(pin !== pin2)         return msg('lbSuMsg','دونوں پن ایک جیسے نہیں ہیں۔');
+    if(users[phone])         return msg('lbSuMsg','یہ نمبر پہلے سے رجسٹرڈ ہے۔ لاگ ان کریں۔');
+
+    users[phone] = { name:name, pin:hash(pin), created:new Date().toISOString() };
+    if(!writeJSON(UKEY, users)) return;
+    sessionPin = pin;
+    startSession(phone);
+    if(API){
+      api('/api/register', {
+        name: name, phone: phone, pin: pin,
+        marketing_opt_in: (el('lbOptIn') && el('lbOptIn').checked) ? 1 : 0
+      }).then(function(){ cloudSync(pin, true); }).catch(function(){});
+    }
+  };
+
+  window.lbLogin = function(){
+    var phone = normPhone(el('lbLoginPhone').value);
+    var pin   = (el('lbLoginPin').value||'').trim();
+    var u = users[phone];
+
+    /* Is device par account maujood hai */
+    if(u){
+      if(u.pin !== hash(pin)) return msg('lbLoginMsg','پن کوڈ غلط ہے۔ دوبارہ کوشش کریں۔');
+      sessionPin = pin;
+      startSession(phone);
+      scheduleSync();
+      return;
+    }
+
+    /* Naya phone — server se account laane ki koshish */
+    if(!API) return msg('lbLoginMsg','یہ نمبر اس فون پر رجسٹرڈ نہیں۔ پہلے "نیا اکاؤنٹ بنائیں"۔');
+    msg('lbLoginMsg','چیک کیا جا رہا ہے...','ok');
+    api('/api/login', { phone: phone, pin: pin })
+      .then(function(d){
+        users[phone] = { name: d.name || '', pin: hash(pin), created: new Date().toISOString() };
+        writeJSON(UKEY, users);
+        sessionPin = pin;
+        msg('lbLoginMsg','');
+        startSession(phone);
+        cloudSync(pin, true);
+      })
+      .catch(function(err){
+        msg('lbLoginMsg', String(err.message) === 'offline'
+          ? 'یہ نمبر اس فون پر رجسٹرڈ نہیں۔'
+          : 'نمبر یا پن غلط ہے۔');
+      });
+  };
+
+  function startSession(phone){
+    session = phone;
+    try{ LS().setItem(SKEY, phone); }catch(e){}
+    showApp();
+  }
+
+  window.lbLogout = function(){
+    if(!confirm('کیا آپ لاگ آؤٹ کرنا چاہتے ہیں؟ آپ کا ریکارڈ محفوظ رہے گا۔')) return;
+    session = null;
+    sessionPin = null;
+    try{ LS().removeItem(SKEY); }catch(e){}
+    el('lbApp').style.display  = 'none';
+    el('lbAuth').style.display = 'block';
+    el('lbLoginPin').value = '';
+  };
+
+  function showApp(){
+    el('lbAuth').style.display = 'none';
+    el('lbApp').style.display  = 'block';
+    if(API && el('lbCloudBox')) el('lbCloudBox').style.display = 'block';
+    el('lbUserName').textContent = (users[session] && users[session].name) || '';
+    resetForm();
+    render();
+  }
+
+  /* ---------------- ENTRY ---------------- */
+  function todayISO(){
+    var d = new Date(), p = function(n){ return (n<10?'0':'')+n; };
+    return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());
+  }
+  function nowHM(){
+    var d = new Date(), p = function(n){ return (n<10?'0':'')+n; };
+    return p(d.getHours())+':'+p(d.getMinutes());
+  }
+  function resetForm(){
+    el('lbDate').value = todayISO();
+    el('lbTime').value = nowHM();
+    ['lbSugar','lbSys','lbDia','lbPulse','lbWeight','lbNote'].forEach(function(id){ el(id).value=''; });
+  }
+
+  window.lbAddEntry = function(){
+    var sugar = parseFloat(el('lbSugar').value);
+    var sys   = parseFloat(el('lbSys').value);
+    var dia   = parseFloat(el('lbDia').value);
+    var pulse = parseFloat(el('lbPulse').value);
+    var wt    = parseFloat(el('lbWeight').value);
+
+    var hasSugar = !isNaN(sugar) && sugar > 0;
+    var hasBP    = !isNaN(sys) && !isNaN(dia) && sys > 0 && dia > 0;
+
+    if(!hasSugar && !hasBP && isNaN(wt))
+      return msg('lbEntryMsg','کم از کم شوگر یا بلڈ پریشر کی ریڈنگ لکھیں۔');
+    if(hasSugar && (sugar < 20 || sugar > 800))
+      return msg('lbEntryMsg','شوگر کی ریڈنگ درست نہیں لگ رہی۔ دوبارہ چیک کریں۔');
+    if(hasBP && (sys < 50 || sys > 300 || dia < 30 || dia > 200))
+      return msg('lbEntryMsg','بلڈ پریشر کی ریڈنگ درست نہیں لگ رہی۔ دوبارہ چیک کریں۔');
+    if(hasBP && dia >= sys)
+      return msg('lbEntryMsg','اوپر والا نمبر نیچے والے سے بڑا ہونا چاہیے۔');
+
+    var e = {
+      id: Date.now() + '' + Math.floor(Math.random()*999),
+      date: el('lbDate').value || todayISO(),
+      time: el('lbTime').value || nowHM(),
+      sugar: hasSugar ? sugar : null,
+      sugarType: hasSugar ? el('lbSugarType').value : null,
+      sys: hasBP ? sys : null,
+      dia: hasBP ? dia : null,
+      pulse: (!isNaN(pulse) && pulse>0) ? pulse : null,
+      weight: (!isNaN(wt) && wt>0) ? wt : null,
+      note: (el('lbNote').value||'').trim()
+    };
+
+    var list = entries();
+    list.push(e);
+    if(!saveEntries(list)) return;
+
+    msg('lbEntryMsg','✔ محفوظ ہو گیا۔','ok');
+    setTimeout(function(){ msg('lbEntryMsg',''); }, 2600);
+    resetForm();
+    render();
+    scheduleSync();
+  };
+
+  window.lbDeleteEntry = function(id){
+    if(!confirm('کیا یہ انٹری ختم کر دیں؟')) return;
+    saveEntries(entries().filter(function(e){ return e.id !== id; }));
+    render();
+  };
+
+  /* ---------------- STATUS RANGES ---------------- */
+  function sugarStatus(v, type){
+    if(v == null) return null;
+    if(v < 70) return {cls:'lb-b-bad',  t:'کم (Low)'};
+    if(type === 'fasting'){
+      if(v <= 100) return {cls:'lb-b-good', t:'نارمل'};
+      if(v <= 125) return {cls:'lb-b-mid',  t:'بارڈر لائن'};
+      return {cls:'lb-b-bad', t:'زیادہ'};
+    }
+    if(v < 140) return {cls:'lb-b-good', t:'نارمل'};
+    if(v < 200) return {cls:'lb-b-mid',  t:'بارڈر لائن'};
+    return {cls:'lb-b-bad', t:'زیادہ'};
+  }
+  function bpStatus(s, d){
+    if(s == null || d == null) return null;
+    if(s >= 180 || d >= 120) return {cls:'lb-b-bad', t:'بہت زیادہ — فوراً ڈاکٹر سے رابطہ'};
+    if(s >= 140 || d >= 90)  return {cls:'lb-b-bad', t:'زیادہ'};
+    if(s >= 130 || d >= 80)  return {cls:'lb-b-mid', t:'کچھ زیادہ'};
+    if(s < 90  || d < 60)    return {cls:'lb-b-mid', t:'کم'};
+    return {cls:'lb-b-good', t:'نارمل'};
+  }
+  var TYPE_UR = { fasting:'نہار منہ', after:'کھانے کے بعد', random:'رینڈم' };
+
+  function sortedDesc(list){
+    return list.slice().sort(function(a,b){
+      var A = a.date + 'T' + (a.time||'00:00');
+      var B = b.date + 'T' + (b.time||'00:00');
+      return A < B ? 1 : (A > B ? -1 : 0);
+    });
+  }
+  function urDate(iso){
+    var p = (iso||'').split('-');
+    if(p.length !== 3) return iso || '';
+    var M = ['جنوری','فروری','مارچ','اپریل','مئی','جون','جولائی','اگست','ستمبر','اکتوبر','نومبر','دسمبر'];
+    return parseInt(p[2],10) + ' ' + (M[parseInt(p[1],10)-1] || p[1]) + ' ' + p[0];
+  }
+  function avg(nums){
+    if(!nums.length) return null;
+    return Math.round(nums.reduce(function(a,b){return a+b;},0) / nums.length);
+  }
+  function lastNDays(list, n){
+    var cut = new Date(); cut.setDate(cut.getDate() - n);
+    var cutISO = cut.toISOString().slice(0,10);
+    return list.filter(function(e){ return e.date >= cutISO; });
+  }
+
+  /* ---------------- RENDER ---------------- */
+  function render(){
+    var all = entries();
+    renderSummary(all);
+    renderCharts(all);
+    renderHistory(all);
+  }
+
+  function renderSummary(all){
+    var box = el('lbSummary');
+    if(!all.length){ box.innerHTML = ''; return; }
+
+    var sorted = sortedDesc(all);
+    var lastSugar = null, lastBP = null, i;
+    for(i=0;i<sorted.length;i++){ if(sorted[i].sugar != null){ lastSugar = sorted[i]; break; } }
+    for(i=0;i<sorted.length;i++){ if(sorted[i].sys   != null){ lastBP    = sorted[i]; break; } }
+
+    var w = lastNDays(all, 7);
+    var aS = avg(w.filter(function(e){return e.sugar!=null;}).map(function(e){return e.sugar;}));
+    var aSy= avg(w.filter(function(e){return e.sys!=null;}).map(function(e){return e.sys;}));
+    var aDi= avg(w.filter(function(e){return e.dia!=null;}).map(function(e){return e.dia;}));
+
+    function card(lab, val, sub, st){
+      return '<div class="lb-stat"><div class="lb-stat-lab">'+lab+'</div>'+
+             '<div class="lb-stat-val">'+val+'</div>'+
+             (sub ? '<div class="lb-stat-sub">'+sub+'</div>' : '') +
+             (st ? '<span class="lb-badge '+st.cls+'">'+st.t+'</span>' : '') + '</div>';
+    }
+
+    var html = '<div class="lb-stats" style="margin-bottom:16px;">';
+    html += lastSugar
+      ? card('آخری شوگر', lastSugar.sugar + ' <span style="font-size:15px;color:#7c8a83">mg/dL</span>',
+             urDate(lastSugar.date) + ' • ' + (TYPE_UR[lastSugar.sugarType]||''),
+             sugarStatus(lastSugar.sugar, lastSugar.sugarType))
+      : card('آخری شوگر', '—', 'ابھی کوئی ریڈنگ نہیں', null);
+    html += lastBP
+      ? card('آخری بلڈ پریشر', lastBP.sys + '/' + lastBP.dia,
+             urDate(lastBP.date) + (lastBP.pulse ? ' • نبض ' + lastBP.pulse : ''),
+             bpStatus(lastBP.sys, lastBP.dia))
+      : card('آخری بلڈ پریشر', '—', 'ابھی کوئی ریڈنگ نہیں', null);
+    html += card('7 دن کی اوسط شوگر', aS ? aS + ' <span style="font-size:15px;color:#7c8a83">mg/dL</span>' : '—',
+                 w.filter(function(e){return e.sugar!=null;}).length + ' ریڈنگز', null);
+    html += card('7 دن کی اوسط BP', (aSy && aDi) ? aSy + '/' + aDi : '—',
+                 w.filter(function(e){return e.sys!=null;}).length + ' ریڈنگز', null);
+    html += '</div>';
+    box.innerHTML = html;
+  }
+
+  function lineChart(series, opts){
+    var W = 640, H = 170, PL = 42, PR = 12, PT = 14, PB = 26;
+    var allVals = [];
+    series.forEach(function(s){ s.data.forEach(function(v){ allVals.push(v); }); });
+    if(allVals.length < 2) return '';
+
+    var mn = Math.min.apply(null, allVals), mx = Math.max.apply(null, allVals);
+    var pad = Math.max(6, (mx - mn) * 0.18);
+    mn = Math.floor(mn - pad); mx = Math.ceil(mx + pad);
+    if(mx === mn) mx = mn + 10;
+
+    var n = series[0].data.length;
+    var x = function(i){ return PL + (n === 1 ? (W-PL-PR)/2 : i * (W-PL-PR)/(n-1)); };
+    var y = function(v){ return PT + (mx - v) * (H-PT-PB) / (mx - mn); };
+
+    var svg = '<svg viewBox="0 0 '+W+' '+H+'" width="100%" height="'+H+'" preserveAspectRatio="none" style="direction:ltr;display:block;">';
+    [0,0.5,1].forEach(function(f){
+      var v = mn + (mx-mn)*f, yy = y(v);
+      svg += '<line x1="'+PL+'" y1="'+yy+'" x2="'+(W-PR)+'" y2="'+yy+'" stroke="#e8edea" stroke-width="1"/>';
+      svg += '<text x="'+(PL-6)+'" y="'+(yy+4)+'" font-size="12" fill="#9aa8a1" text-anchor="end">'+Math.round(v)+'</text>';
+    });
+    series.forEach(function(s){
+      var pts = s.data.map(function(v,i){ return x(i)+','+y(v); }).join(' ');
+      svg += '<polyline points="'+pts+'" fill="none" stroke="'+s.color+'" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
+      s.data.forEach(function(v,i){
+        svg += '<circle cx="'+x(i)+'" cy="'+y(v)+'" r="3.5" fill="'+s.color+'"/>';
+      });
+    });
+    if(opts && opts.labels){
+      var step = Math.ceil(n/5);
+      opts.labels.forEach(function(lab,i){
+        if(i % step !== 0 && i !== n-1) return;
+        svg += '<text x="'+x(i)+'" y="'+(H-7)+'" font-size="11" fill="#9aa8a1" text-anchor="middle">'+lab+'</text>';
+      });
+    }
+    svg += '</svg>';
+    return svg;
+  }
+
+  function renderCharts(all){
+    var box = el('lbCharts');
+    var asc = sortedDesc(all).slice().reverse();
+    var html = '';
+
+    var sg = asc.filter(function(e){ return e.sugar != null; }).slice(-14);
+    if(sg.length >= 2){
+      html += '<div class="lb-chart-card"><h3 class="lb-chart-title">🩸 شوگر کا رجحان (آخری '+sg.length+' ریڈنگز)</h3>' +
+        lineChart([{data:sg.map(function(e){return e.sugar;}), color:'#e05d44'}],
+                  {labels: sg.map(function(e){ return (e.date||'').slice(8,10)+'/'+(e.date||'').slice(5,7); })}) +
+        '<div class="lb-legend"><i style="background:#e05d44"></i> شوگر mg/dL</div></div>';
+    }
+
+    var bp = asc.filter(function(e){ return e.sys != null; }).slice(-14);
+    if(bp.length >= 2){
+      html += '<div class="lb-chart-card"><h3 class="lb-chart-title">❤️ بلڈ پریشر کا رجحان (آخری '+bp.length+' ریڈنگز)</h3>' +
+        lineChart([
+          {data:bp.map(function(e){return e.sys;}), color:'#2f6fd0'},
+          {data:bp.map(function(e){return e.dia;}), color:'#7aa7e8'}
+        ], {labels: bp.map(function(e){ return (e.date||'').slice(8,10)+'/'+(e.date||'').slice(5,7); })}) +
+        '<div class="lb-legend"><i style="background:#2f6fd0"></i> اوپر والا &nbsp;&nbsp; <i style="background:#7aa7e8"></i> نیچے والا</div></div>';
+    }
+    box.innerHTML = html;
+  }
+
+  function renderHistory(all){
+    var box = el('lbHistory');
+    if(!all.length){
+      box.innerHTML = '<div class="lb-empty">ابھی کوئی ریکارڈ نہیں۔<br>اوپر اپنی پہلی ریڈنگ لکھ کر "محفوظ کریں" دبائیں۔</div>';
+      return;
+    }
+    var sorted = sortedDesc(all).slice(0, 60);
+    var groups = {}, order = [];
+    sorted.forEach(function(e){
+      if(!groups[e.date]){ groups[e.date] = []; order.push(e.date); }
+      groups[e.date].push(e);
+    });
+
+    var html = '';
+    order.forEach(function(d){
+      html += '<div class="lb-hist-day"><div class="lb-hist-date">'+esc(urDate(d))+'</div>';
+      groups[d].forEach(function(e){
+        var parts = [];
+        if(e.sugar != null){
+          var ss = sugarStatus(e.sugar, e.sugarType);
+          parts.push('🩸 شوگر <b>'+e.sugar+'</b> <span style="font-size:14px;color:#7c8a83">('+(TYPE_UR[e.sugarType]||'')+')</span> <span class="lb-badge '+ss.cls+'" style="margin:0 4px;">'+ss.t+'</span>');
+        }
+        if(e.sys != null){
+          var bs = bpStatus(e.sys, e.dia);
+          parts.push('❤️ بی پی <b>'+e.sys+'/'+e.dia+'</b>' + (e.pulse ? ' • نبض '+e.pulse : '') + ' <span class="lb-badge '+bs.cls+'" style="margin:0 4px;">'+bs.t+'</span>');
+        }
+        if(e.weight != null) parts.push('⚖️ وزن <b>'+e.weight+'</b> کلو');
+        if(e.note) parts.push('📝 '+esc(e.note));
+
+        html += '<div class="lb-hist-item"><div><div style="font-size:14px;color:#8b978f;margin-bottom:3px;">🕐 '+esc(e.time||'')+'</div>'+
+                parts.join('<br>')+'</div>'+
+                '<button type="button" class="lb-hist-del" title="ختم کریں" onclick="lbDeleteEntry(\''+e.id+'\')">🗑️</button></div>';
+      });
+      html += '</div>';
+    });
+    box.innerHTML = html;
+  }
+
+  /* ---------------- EXPORT ---------------- */
+  function reportText(limit){
+    var all = sortedDesc(entries()).slice(0, limit || 30);
+    var name = (users[session] && users[session].name) || '';
+    var out = 'ہیلتھ لاگ بک رپورٹ\nنام: ' + name + '\nموبائل: ' + session + '\n\n';
+    if(!all.length) return out + 'کوئی ریکارڈ نہیں۔';
+    all.forEach(function(e){
+      var line = urDate(e.date) + ' ' + (e.time||'') + ' — ';
+      var bits = [];
+      if(e.sugar != null) bits.push('شوگر ' + e.sugar + ' (' + (TYPE_UR[e.sugarType]||'') + ')');
+      if(e.sys != null)   bits.push('بی پی ' + e.sys + '/' + e.dia + (e.pulse ? ' نبض ' + e.pulse : ''));
+      if(e.weight != null)bits.push('وزن ' + e.weight + ' کلو');
+      if(e.note)          bits.push('نوٹ: ' + e.note);
+      out += line + bits.join(' | ') + '\n';
+    });
+    var w = lastNDays(entries(), 7);
+    var aS = avg(w.filter(function(e){return e.sugar!=null;}).map(function(e){return e.sugar;}));
+    var aSy= avg(w.filter(function(e){return e.sys!=null;}).map(function(e){return e.sys;}));
+    var aDi= avg(w.filter(function(e){return e.dia!=null;}).map(function(e){return e.dia;}));
+    out += '\n— 7 دن کی اوسط —\n';
+    out += 'شوگر: ' + (aS || '—') + '\n';
+    out += 'بلڈ پریشر: ' + ((aSy && aDi) ? aSy + '/' + aDi : '—') + '\n';
+    return out;
+  }
+
+  window.lbWhatsAppReport = function(){
+    if(!entries().length) return alert('ابھی کوئی ریکارڈ نہیں۔');
+    window.open('https://wa.me/923218861265?text=' + encodeURIComponent(reportText(30)), '_blank');
+  };
+
+  function download(filename, content, mime){
+    try{
+      var blob = new Blob([ '\ufeff' + content ], {type: mime});
+      var url  = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click();
+      document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 1500);
+    }catch(e){ alert('فائل محفوظ نہیں ہو سکی۔'); }
+  }
+
+  window.lbExportCSV = function(){
+    var all = sortedDesc(entries());
+    if(!all.length) return alert('ابھی کوئی ریکارڈ نہیں۔');
+    var rows = [['Date','Time','Sugar','Sugar Type','Systolic','Diastolic','Pulse','Weight','Note']];
+    all.forEach(function(e){
+      rows.push([e.date, e.time||'', e.sugar==null?'':e.sugar, e.sugarType||'',
+                 e.sys==null?'':e.sys, e.dia==null?'':e.dia, e.pulse==null?'':e.pulse,
+                 e.weight==null?'':e.weight, (e.note||'').replace(/"/g,'""')]);
+    });
+    var csv = rows.map(function(r){
+      return r.map(function(c){ return '"' + String(c) + '"'; }).join(',');
+    }).join('\r\n');
+    download('health-logbook-' + todayISO() + '.csv', csv, 'text/csv;charset=utf-8;');
+  };
+
+  window.lbBackup = function(){
+    var data = { v:1, user: users[session], phone: session, entries: entries(), exported: new Date().toISOString() };
+    download('logbook-backup-' + session + '-' + todayISO() + '.json', JSON.stringify(data), 'application/json');
+  };
+
+  window.lbRestore = function(input){
+    var f = input.files && input.files[0];
+    input.value = '';
+    if(!f) return;
+    var r = new FileReader();
+    r.onload = function(ev){
+      try{
+        var d = JSON.parse(ev.target.result);
+        if(!d || !Array.isArray(d.entries)) throw new Error('bad');
+        if(!confirm('بیک اپ میں ' + d.entries.length + ' انٹریاں ہیں۔ انہیں موجودہ ریکارڈ میں شامل کر دیں؟')) return;
+        var cur = entries();
+        var ids = {};
+        cur.forEach(function(e){ ids[e.id] = 1; });
+        d.entries.forEach(function(e){ if(e && e.id && !ids[e.id]) cur.push(e); });
+        saveEntries(cur);
+        render();
+        alert('بیک اپ کامیابی سے واپس آ گیا۔');
+      }catch(err){ alert('یہ فائل درست بیک اپ نہیں لگ رہی۔'); }
+    };
+    r.readAsText(f);
+  };
+
+  window.lbPrintReport = function(){
+    if(!entries().length) return alert('ابھی کوئی ریکارڈ نہیں۔');
+    var w = window.open('', '_blank');
+    if(!w) return alert('پرنٹ ونڈو نہیں کھل سکی۔');
+    var body = esc(reportText(120)).replace(/\n/g,'<br>');
+    w.document.write('<!DOCTYPE html><html dir="rtl"><head><meta charset="utf-8">' +
+      '<title>Health Log Book Report</title><style>' +
+      'body{font-family:"Segoe UI",Tahoma,sans-serif;padding:26px;line-height:2.1;font-size:15px;color:#222;}' +
+      'h1{font-size:20px;color:#2E7D32;border-bottom:2px solid #2E7D32;padding-bottom:8px;}' +
+      '.f{margin-top:26px;font-size:12px;color:#777;border-top:1px solid #ddd;padding-top:8px;}' +
+      '</style></head><body><h1>Faizal Pharmacy — ہیلتھ لاگ بک</h1><div>' + body +
+      '</div><div class="f">یہ رپورٹ صرف ریکارڈ کے لیے ہے، طبی مشورہ نہیں۔ Faizal Pharmacy, Lahore — 0321-8861265</div></body></html>');
+    w.document.close();
+    setTimeout(function(){ try{ w.print(); }catch(e){} }, 450);
+  };
+
+  /* ---------------- BOOT ---------------- */
+  function boot(){
+    if(session && users[session]) showApp();
+    else { session = null; el('lbDate') && resetForm(); }
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+</script>
+<!-- ============================================== -->
+<!-- HEALTH LOG BOOK - END -->
+<!-- ============================================== -->
+
+<!-- ============================================== -->
+<!-- ASK THE PHARMACIST (AI TRIAGE) - START -->
+<!-- ============================================== -->
+<section id="consult-section" class="tool-panel" dir="rtl">
+  <div class="cs-wrap">
+
+    <div class="cs-head">
+      <div class="cs-icon">💬</div>
+      <h2 class="cs-h2">فارماسسٹ سے پوچھیں</h2>
+      <p class="cs-sub">اپنا مسئلہ لکھ کر بھیجیں۔ ہمارا رجسٹرڈ فارماسسٹ خود پڑھ کر جواب دے گا — عام طور پر دکان کے اوقات میں چند گھنٹوں کے اندر۔</p>
+    </div>
+
+    <div class="cs-note cs-warn">
+      <b>⚠️ یہ ایمرجنسی سروس نہیں ہے۔</b><br>
+      اگر سینے میں درد، سانس کی تنگی، بے ہوشی، شدید خون بہنا، یا فالج کی علامات ہوں تو یہاں نہ لکھیں —
+      فوراً قریبی ہسپتال کی ایمرجنسی یا <b>ریسکیو 1122</b> پر رابطہ کریں۔
+    </div>
+
+    <div class="cs-card">
+      <div class="cs-tabs">
+        <button type="button" class="cs-tab active" id="csTabNew" onclick="csShowTab('new')">نیا سوال بھیجیں</button>
+        <button type="button" class="cs-tab" id="csTabCheck" onclick="csShowTab('check')">جواب دیکھیں</button>
+      </div>
+
+      <!-- ===== NEW QUESTION ===== -->
+      <div id="csNewForm">
+        <div class="cs-row2">
+          <div>
+            <label class="cs-label">آپ کا نام</label>
+            <input type="text" id="csName" class="cs-input" placeholder="مثلاً: محمد اسلم">
+          </div>
+          <div>
+            <label class="cs-label">موبائل نمبر</label>
+            <input type="tel" id="csPhone" class="cs-input" inputmode="numeric" placeholder="03001234567">
+          </div>
+        </div>
+
+        <div class="cs-row2">
+          <div>
+            <label class="cs-label">عمر</label>
+            <input type="number" id="csAge" class="cs-input" inputmode="numeric" placeholder="45">
+          </div>
+          <div>
+            <label class="cs-label">مرد / عورت</label>
+            <select id="csGender" class="cs-input">
+              <option value="">منتخب کریں</option>
+              <option value="male">مرد</option>
+              <option value="female">عورت</option>
+            </select>
+          </div>
+        </div>
+
+        <label class="cs-label">آپ کا مسئلہ کیا ہے؟ <span class="cs-req">ضروری</span></label>
+        <textarea id="csProblem" class="cs-input cs-area" placeholder="تفصیل سے لکھیں — کیا تکلیف ہے، کہاں ہے، کیسی ہے۔ جتنا کھل کر لکھیں گے، جواب اتنا بہتر ملے گا۔"></textarea>
+
+        <label class="cs-label">کتنے دن سے ہے؟</label>
+        <input type="text" id="csDuration" class="cs-input" placeholder="مثلاً: 3 دن سے / ایک ہفتے سے">
+
+        <label class="cs-label">کوئی پرانی بیماری؟</label>
+        <input type="text" id="csConditions" class="cs-input" placeholder="مثلاً: شوگر، بلڈ پریشر، دل کا مرض">
+
+        <label class="cs-label">اس وقت کون سی دوائیں چل رہی ہیں؟</label>
+        <input type="text" id="csMeds" class="cs-input" placeholder="مثلاً: Glucophage 500, Tenormin 50">
+
+        <label class="cs-label">کسی دوا سے الرجی؟</label>
+        <input type="text" id="csAllergy" class="cs-input" placeholder="مثلاً: Penicillin — یا 'کوئی نہیں'">
+
+        <label class="cs-check">
+          <input type="checkbox" id="csOptIn">
+          <span>مجھے واٹس ایپ پر ڈسکاؤنٹ اور آفرز کے پیغام بھیج سکتے ہیں (اختیاری — کبھی بھی بند کروا سکتے ہیں)</span>
+        </label>
+
+        <div id="csMsg" class="cs-msg"></div>
+        <button type="button" class="cs-btn cs-btn-green cs-btn-big" id="csSendBtn" onclick="csSend()">📨 فارماسسٹ کو بھیجیں</button>
+
+        <p class="cs-tiny">
+          🔒 آپ کی معلومات صرف ہمارے فارماسسٹ تک جاتی ہیں۔ یہ تشخیص (diagnosis) نہیں ہے —
+          ضرورت ہوئی تو فارماسسٹ آپ کو ڈاکٹر کے پاس جانے کا مشورہ دے گا۔
+        </p>
+      </div>
+
+      <!-- ===== CHECK ANSWER ===== -->
+      <div id="csCheckForm" style="display:none;">
+        <div class="cs-row2">
+          <div>
+            <label class="cs-label">ٹکٹ نمبر</label>
+            <input type="text" id="csTicket" class="cs-input" placeholder="FP-XXXXX" style="direction:ltr;text-align:left;">
+          </div>
+          <div>
+            <label class="cs-label">موبائل نمبر</label>
+            <input type="tel" id="csCheckPhone" class="cs-input" inputmode="numeric" placeholder="03001234567">
+          </div>
+        </div>
+        <div id="csCheckMsg" class="cs-msg"></div>
+        <button type="button" class="cs-btn cs-btn-green" onclick="csCheck()">🔍 جواب دیکھیں</button>
+        <div id="csThread"></div>
+      </div>
+    </div>
+
+    <!-- ===== RESULT AFTER SENDING ===== -->
+    <div id="csSent" style="display:none;"></div>
+
+  </div>
+</section>
+
+<style>
+  #consult-section{ padding:30px 0; background:#f7f9f8; }
+  .cs-wrap{ max-width:760px; margin:0 auto; padding:0 16px; box-sizing:border-box; }
+  .cs-head{ text-align:center; margin-bottom:16px; }
+  .cs-icon{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:58px; height:58px; font-size:28px;
+    background:linear-gradient(135deg,#4CAF50,#2E7D32);
+    border-radius:16px; margin-bottom:10px; box-shadow:0 6px 18px rgba(76,175,80,.25);
+  }
+  .cs-h2{ font-size:24px; font-weight:700; color:#2E7D32; margin:0 0 6px; }
+  .cs-sub{ font-size:16px; color:#4a4a4a; line-height:1.9; margin:0; }
+
+  .cs-card{ background:#fff; border:1px solid #e3e7e5; border-radius:16px; padding:18px; margin-bottom:16px; box-shadow:0 4px 15px rgba(0,0,0,.05); }
+  .cs-label{ display:block; font-size:16px; color:#333; margin:14px 0 6px; font-weight:600; }
+  .cs-req{ background:#ffebee; color:#c62828; font-size:12.5px; padding:2px 8px; border-radius:10px; font-weight:700; }
+  .cs-input{
+    width:100%; box-sizing:border-box; padding:13px 14px; border-radius:11px;
+    border:2px solid #d7ded9; background:#fcfefd; font-size:17px; font-family:inherit;
+    color:#1d1d1d; outline:none; min-height:50px;
+  }
+  .cs-input:focus{ border-color:#2E7D32; background:#fff; }
+  .cs-area{ min-height:120px; line-height:1.9; resize:vertical; }
+  .cs-row2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media (max-width:520px){ .cs-row2{ grid-template-columns:1fr; } }
+
+  .cs-check{ display:flex; gap:10px; align-items:flex-start; margin-top:18px; font-size:15px; line-height:1.85; color:#4a5a52; cursor:pointer; }
+  .cs-check input{ width:22px; height:22px; margin-top:2px; flex:0 0 auto; }
+
+  .cs-btn{ width:100%; display:block; margin-top:14px; padding:15px; border-radius:12px; border:none;
+    font-size:17px; font-weight:700; font-family:inherit; cursor:pointer; min-height:52px; }
+  .cs-btn-big{ font-size:19px; padding:17px; }
+  .cs-btn-green{ background:linear-gradient(135deg,#4CAF50,#2E7D32); color:#fff; }
+  .cs-btn-green:disabled{ background:#9bb5a6; cursor:not-allowed; }
+  .cs-btn-wa{ background:#25D366; color:#fff; }
+  .cs-btn-outline{ background:#fff; color:#22332c; border:2px solid #cfd8d3; }
+
+  .cs-tabs{ display:flex; gap:8px; margin-bottom:6px; }
+  .cs-tab{ flex:1; padding:13px; border-radius:11px; border:2px solid #d7ded9; background:#f7f9f8;
+    color:#555; font-size:16px; font-weight:600; font-family:inherit; cursor:pointer; min-height:50px; }
+  .cs-tab.active{ background:#2E7D32; border-color:#2E7D32; color:#fff; }
+
+  .cs-msg{ font-size:15px; margin-top:12px; line-height:1.85; display:none; padding:11px 13px; border-radius:9px; }
+  .cs-msg.err{ display:block; background:#ffebee; color:#c62828; border:1px solid #ffcdd2; }
+  .cs-msg.ok{ display:block; background:#e8f5e9; color:#2E7D32; border:1px solid #c8e6c9; }
+
+  .cs-tiny{ font-size:14px; color:#6b7b73; line-height:1.9; margin:12px 0 0; }
+  .cs-note{ border-radius:13px; padding:14px 16px; font-size:15.5px; line-height:1.95; margin-bottom:16px; }
+  .cs-warn{ background:#fff8e1; border:1px solid #ffe082; color:#6d4c41; }
+  .cs-emerg{ background:#ffebee; border:2px solid #ef9a9a; color:#b71c1c; font-size:17px; font-weight:600; }
+
+  .cs-ticket{ background:#e8f5e9; border:1px solid #c8e6c9; border-radius:14px; padding:18px; text-align:center; }
+  .cs-ticket .num{ font-size:30px; font-weight:800; color:#1b5e20; letter-spacing:2px; direction:ltr; margin:8px 0; }
+
+  .cs-bubble{ border-radius:12px; padding:12px 14px; margin:9px 0; font-size:16px; line-height:1.95; white-space:pre-wrap; }
+  .cs-b-p{ background:#eef2f0; }
+  .cs-b-r{ background:#e8f5e9; border:1px solid #c8e6c9; }
+  .cs-bubble .who{ font-size:13.5px; color:#6b7b73; display:block; margin-bottom:4px; font-weight:700; }
+</style>
+
+<script>
+(function(){
+  "use strict";
+  var API = (window.FP_CONFIG && window.FP_CONFIG.API) || '';
+  var WA  = '923218861265';
+
+  function el(id){ return document.getElementById(id); }
+  function msg(id, t, type){
+    var n = el(id); if(!n) return;
+    n.className = t ? ('cs-msg ' + (type||'err')) : 'cs-msg';
+    n.innerHTML = t || '';
+  }
+  function esc(s){
+    return String(s==null?'':s).replace(/[&<>"]/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
+    });
+  }
+  function normPhone(p){ return (p||'').replace(/[^0-9]/g,''); }
+
+  window.csShowTab = function(w){
+    var isNew = w === 'new';
+    el('csNewForm').style.display   = isNew ? 'block' : 'none';
+    el('csCheckForm').style.display = isNew ? 'none'  : 'block';
+    el('csTabNew').classList.toggle('active', isNew);
+    el('csTabCheck').classList.toggle('active', !isNew);
+    msg('csMsg',''); msg('csCheckMsg','');
+    if(!isNew){
+      var saved = null;
+      try{ saved = JSON.parse(localStorage.getItem('fp_last_ticket')||'null'); }catch(e){}
+      if(saved){ el('csTicket').value = saved.ticket; el('csCheckPhone').value = saved.phone; }
+    }
+  };
+
+  /* ---------- send a new question ---------- */
+  window.csSend = function(){
+    if(!API) return msg('csMsg','سسٹم ابھی تیار نہیں۔ براہِ کرم واٹس ایپ پر رابطہ کریں۔');
+
+    var phone   = normPhone(el('csPhone').value);
+    var problem = (el('csProblem').value||'').trim();
+
+    if(phone.length < 10) return msg('csMsg','مکمل موبائل نمبر لکھیں (مثلاً 03001234567)۔');
+    if(problem.length < 10) return msg('csMsg','اپنا مسئلہ تھوڑی تفصیل سے لکھیں تاکہ فارماسسٹ صحیح مدد کر سکے۔');
+
+    var btn = el('csSendBtn');
+    btn.disabled = true; btn.textContent = 'بھیجا جا رہا ہے...';
+    msg('csMsg','');
+
+    fetch(API + '/api/consult', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        name: (el('csName').value||'').trim(),
+        phone: phone,
+        age: parseInt(el('csAge').value,10) || null,
+        gender: el('csGender').value || null,
+        problem: problem,
+        duration: (el('csDuration').value||'').trim(),
+        existing_conditions: (el('csConditions').value||'').trim(),
+        current_meds: (el('csMeds').value||'').trim(),
+        allergies: (el('csAllergy').value||'').trim(),
+        marketing_opt_in: el('csOptIn').checked ? 1 : 0
+      })
+    })
+    .then(function(r){ return r.json().then(function(d){ return {ok:r.ok, d:d}; }); })
+    .then(function(r){
+      btn.disabled = false; btn.textContent = '📨 فارماسسٹ کو بھیجیں';
+      if(!r.ok || r.d.error) return msg('csMsg', esc(r.d.error || 'کچھ مسئلہ ہو گیا۔ دوبارہ کوشش کریں۔'));
+
+      try{ localStorage.setItem('fp_last_ticket', JSON.stringify({ticket:r.d.ticket, phone:phone})); }catch(e){}
+      showSent(r.d, problem, phone);
+    })
+    .catch(function(){
+      btn.disabled = false; btn.textContent = '📨 فارماسسٹ کو بھیجیں';
+      msg('csMsg','انٹرنیٹ کا مسئلہ لگ رہا ہے۔ دوبارہ کوشش کریں یا واٹس ایپ پر بھیج دیں۔');
+    });
+  };
+
+  function showSent(d, problem, phone){
+    el('csNewForm').style.display = 'none';
+    el('csCheckForm').style.display = 'none';
+    document.querySelector('#consult-section .cs-tabs').style.display = 'none';
+
+    var html = '';
+    if(d.notice){
+      html += '<div class="cs-note cs-emerg">🚨 ' + esc(d.notice) + '</div>';
+    }
+    html += '<div class="cs-ticket">' +
+      '<div style="font-size:17px;color:#2E7D32;font-weight:700;">✅ آپ کا سوال بھیج دیا گیا</div>' +
+      '<div class="num">' + esc(d.ticket) + '</div>' +
+      '<div style="font-size:15px;color:#33553f;line-height:1.95;">یہ ٹکٹ نمبر سنبھال کر رکھیں۔ اسی سے آپ جواب دیکھ سکیں گے۔<br>' +
+      'فارماسسٹ کا جواب یہیں بھی آئے گا اور واٹس ایپ پر بھی۔</div>' +
+      '<button type="button" class="cs-btn cs-btn-outline" onclick="csGoCheck()">🔍 جواب چیک کریں</button>' +
+      '<a class="cs-btn cs-btn-wa" style="text-decoration:none;" target="_blank" rel="noopener" ' +
+      'href="https://wa.me/' + WA + '?text=' + encodeURIComponent('السلام علیکم! میں نے ویب سائٹ سے سوال بھیجا ہے۔ ٹکٹ: ' + d.ticket) + '">' +
+      '📱 واٹس ایپ پر یاد دہانی کروائیں</a>' +
+      '</div>';
+
+    var box = el('csSent');
+    box.innerHTML = html;
+    box.style.display = 'block';
+    box.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  window.csGoCheck = function(){
+    el('csSent').style.display = 'none';
+    document.querySelector('#consult-section .cs-tabs').style.display = 'flex';
+    csShowTab('check');
+    setTimeout(csCheck, 120);
+  };
+
+  /* ---------- check for the pharmacist's answer ---------- */
+  window.csCheck = function(){
+    if(!API) return;
+    var ticket = (el('csTicket').value||'').trim().toUpperCase();
+    var phone  = normPhone(el('csCheckPhone').value);
+    if(!ticket || phone.length < 10) return msg('csCheckMsg','ٹکٹ نمبر اور موبائل نمبر دونوں لکھیں۔');
+    msg('csCheckMsg','');
+    el('csThread').innerHTML = '<p style="text-align:center;color:#6b7b73;font-size:16px;padding:14px;">دیکھا جا رہا ہے...</p>';
+
+    fetch(API + '/api/consult/status', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ ticket: ticket, phone: phone })
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d.error){ el('csThread').innerHTML=''; return msg('csCheckMsg', esc(d.error)); }
+      renderThread(d, ticket, phone);
+    })
+    .catch(function(){
+      el('csThread').innerHTML='';
+      msg('csCheckMsg','انٹرنیٹ کا مسئلہ۔ دوبارہ کوشش کریں۔');
+    });
+  };
+
+  function renderThread(d, ticket, phone){
+    var answered = (d.messages||[]).some(function(m){ return m.sender === 'pharmacist'; });
+    var html = '<div style="margin-top:18px;border-top:2px solid #eef2f0;padding-top:14px;">';
+    html += '<div style="font-size:15px;color:#6b7b73;margin-bottom:8px;">ٹکٹ ' + esc(d.ticket) +
+            ' • ' + (answered ? '✅ جواب آ گیا' : '⏳ فارماسسٹ کے پاس ہے') + '</div>';
+
+    (d.messages||[]).forEach(function(m){
+      html += '<div class="cs-bubble ' + (m.sender==='patient' ? 'cs-b-p' : 'cs-b-r') + '">' +
+              '<span class="who">' + (m.sender==='patient' ? 'آپ' : '👨‍⚕️ فارماسسٹ') + '</span>' +
+              esc(m.body) + '</div>';
+    });
+
+    if(!answered){
+      html += '<p style="font-size:15px;color:#6b7b73;line-height:1.95;text-align:center;padding:10px;">' +
+              'ابھی جواب نہیں آیا۔ دکان کے اوقات میں عام طور پر چند گھنٹے لگتے ہیں۔<br>' +
+              'تھوڑی دیر بعد دوبارہ "جواب دیکھیں" دبائیں۔</p>';
+    }
+
+    html += '<label class="cs-label">مزید کچھ پوچھنا ہے؟</label>' +
+            '<textarea id="csFollow" class="cs-input cs-area" style="min-height:90px;" placeholder="یہاں لکھیں..."></textarea>' +
+            '<button type="button" class="cs-btn cs-btn-outline" onclick="csFollowUp()">بھیجیں</button>' +
+            '<div id="csFollowMsg" class="cs-msg"></div></div>';
+
+    el('csThread').innerHTML = html;
+    el('csThread').setAttribute('data-ticket', ticket);
+    el('csThread').setAttribute('data-phone', phone);
+  }
+
+  window.csFollowUp = function(){
+    var t = el('csThread');
+    var body = (el('csFollow').value||'').trim();
+    if(body.length < 2) return msg('csFollowMsg','کچھ لکھیں۔');
+    fetch(API + '/api/consult/reply', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ ticket: t.getAttribute('data-ticket'), phone: t.getAttribute('data-phone'), body: body })
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d.error) return msg('csFollowMsg', esc(d.error));
+      msg('csFollowMsg','✔ بھیج دیا گیا۔','ok');
+      setTimeout(csCheck, 700);
+    })
+    .catch(function(){ msg('csFollowMsg','انٹرنیٹ کا مسئلہ۔'); });
+  };
+})();
+</script>
+<!-- ============================================== -->
+<!-- ASK THE PHARMACIST - END -->
+<!-- ============================================== -->
+
+<!-- ================= TOOL STORE (hidden holder for tool panels) ================= -->
+<div id="toolStore"></div>
+
+<!-- ================= TOOL SHEET (slide-out panel) ================= -->
+<div class="tool-overlay" id="toolOverlay" role="dialog" aria-modal="true" aria-labelledby="toolSheetTitle">
+  <div class="tool-sheet">
+    <div class="tool-sheet-head">
+      <span class="tool-sheet-title" id="toolSheetTitle">ٹول</span>
+      <button type="button" class="tool-sheet-close" id="toolSheetClose">✕ بند کریں</button>
+    </div>
+    <div class="tool-sheet-body" id="toolSheetBody"></div>
+  </div>
+</div>
+
+<!-- ================= FLOATING TOOLS MENU ================= -->
 <div class="float-tools" id="float-tools">
-  <button class="float-tools-toggle" id="float-tools-toggle" aria-label="Tools">✏️</button>
+  <button class="float-tools-toggle" id="float-tools-toggle" aria-label="ٹولز کھولیں">
+    <span class="ft-icon">🧰</span><span class="ft-label">ٹولز</span>
+  </button>
   <div class="float-tools-menu">
-<a href="#med-finder-section">🔍 دوا تلاش کریں</a>
- <a href="#da-section">📍 ڈلیوری چیک کریں</a>
-    <a href="#estimate">💊 بل کیلکولیٹر</a>
+    <button type="button" class="ft-item ft-primary" data-tool="logbook-section" data-title="📋 ہیلتھ لاگ بک">
+      <span class="ft-em">📋</span><span>ہیلتھ لاگ بک (شوگر / بی پی)</span>
+    </button>
+    <button type="button" class="ft-item ft-primary" data-tool="consult-section" data-title="💬 فارماسسٹ سے پوچھیں">
+      <span class="ft-em">💬</span><span>فارماسسٹ سے پوچھیں</span>
+    </button>
+    <button type="button" class="ft-item" data-tool="prescription-reader-section" data-title="📸 AI نسخہ ریڈر">
+      <span class="ft-em">📸</span><span>نسخہ پڑھیں (AI)</span>
+    </button>
+    <button type="button" class="ft-item" data-tool="med-finder-section" data-title="🔍 دوا تلاش کریں">
+      <span class="ft-em">🔍</span><span>دوا تلاش کریں</span>
+    </button>
+    <button type="button" class="ft-item" data-tool="estimate" data-title="💊 بل کیلکولیٹر">
+      <span class="ft-em">💊</span><span>بل کیلکولیٹر</span>
+    </button>
+    <button type="button" class="ft-item" data-tool="da-section" data-title="📍 ڈیلیوری چیک کریں">
+      <span class="ft-em">📍</span><span>ڈیلیوری چیک کریں</span>
+    </button>
   </div>
 </div>
 
@@ -2229,19 +3830,130 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
 
 <script>
 (function(){
+  "use strict";
+
   var floatTools = document.getElementById('float-tools');
-  var toggleBtn = document.getElementById('float-tools-toggle');
-  toggleBtn.addEventListener('click', function(){
+  var toggleBtn  = document.getElementById('float-tools-toggle');
+  var overlay    = document.getElementById('toolOverlay');
+  var sheetBody  = document.getElementById('toolSheetBody');
+  var sheetTitle = document.getElementById('toolSheetTitle');
+  var closeBtn   = document.getElementById('toolSheetClose');
+  var store      = document.getElementById('toolStore');
+
+  var currentId = null;
+
+  /* Park every tool panel in the hidden store on load. */
+  function park(){
+    var panels = document.querySelectorAll('.tool-panel');
+    Array.prototype.forEach.call(panels, function(p){ store.appendChild(p); });
+  }
+
+  function openTool(id, title){
+    if(!id) return;
+    if(currentId === id && overlay.classList.contains('open')) return;
+    closeTool(true);
+
+    var panel = document.getElementById(id);
+    if(!panel) return;
+
+    sheetTitle.textContent = title || 'ٹول';
+    sheetBody.appendChild(panel);
+    sheetBody.scrollTop = 0;
+    overlay.classList.add('open');
+    document.body.classList.add('tool-open');
+    currentId = id;
+    floatTools.classList.remove('open');
+
+    try{ if(window.gtag) gtag('event','tool_open',{tool_name:id}); }catch(e){}
+
+    /* autofocus the main input of the tool, but not on touch (keyboard pop-up is annoying) */
+    if(!('ontouchstart' in window)){
+      setTimeout(function(){
+        var f = panel.querySelector('input[type="text"],input[type="tel"],input[type="number"],input[type="search"]');
+        if(f) try{ f.focus(); }catch(e){}
+      }, 320);
+    }
+  }
+
+  function closeTool(silent){
+    if(currentId){
+      var panel = document.getElementById(currentId);
+      if(panel) store.appendChild(panel);
+      currentId = null;
+    }
+    if(!silent){
+      overlay.classList.remove('open');
+      document.body.classList.remove('tool-open');
+    }
+  }
+
+  /* expose so other scripts can open tools */
+  window.openTool  = openTool;
+  window.closeTool = function(){ closeTool(false); };
+
+  toggleBtn.addEventListener('click', function(e){
+    e.stopPropagation();
     floatTools.classList.toggle('open');
   });
-  floatTools.querySelectorAll('.float-tools-menu a').forEach(function(link){
-    link.addEventListener('click', function(){
-      floatTools.classList.remove('open');
+
+  Array.prototype.forEach.call(floatTools.querySelectorAll('.ft-item'), function(btn){
+    btn.addEventListener('click', function(){
+      openTool(btn.getAttribute('data-tool'), btn.getAttribute('data-title'));
     });
   });
-  document.addEventListener('click', function(e){
-    if(!floatTools.contains(e.target)){ floatTools.classList.remove('open'); }
+
+  closeBtn.addEventListener('click', function(){ closeTool(false); });
+  overlay.addEventListener('click', function(e){
+    if(e.target === overlay) closeTool(false);
   });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && overlay.classList.contains('open')) closeTool(false);
+  });
+  document.addEventListener('click', function(e){
+    if(!floatTools.contains(e.target)) floatTools.classList.remove('open');
+  });
+
+  /* Any link like href="#estimate" anywhere on the page opens the tool instead of scrolling */
+  document.addEventListener('click', function(e){
+    var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if(!a) return;
+    var id = a.getAttribute('href').slice(1);
+    var map = {
+      'estimate':'💊 بل کیلکولیٹر',
+      'med-finder-section':'🔍 دوا تلاش کریں',
+      'da-section':'📍 ڈیلیوری چیک کریں',
+      'prescription-reader-section':'📸 AI نسخہ ریڈر',
+      'logbook-section':'📋 ہیلتھ لاگ بک',
+      'consult-section':'💬 فارماسسٹ سے پوچھیں'
+    };
+    if(map[id]){ e.preventDefault(); openTool(id, map[id]); }
+  });
+
+  function boot(){
+    park();
+    /* The bill calculator used to scroll the page; now it opens the sheet. */
+    var original = window.addToCalculatorCart;
+    if(typeof original === 'function'){
+      window.addToCalculatorCart = function(name, price, qty){
+        openTool('estimate', '💊 بل کیلکولیٹر');
+        try{ original(name, price, qty); }catch(e){}
+      };
+    }
+    /* open a tool directly via URL hash, e.g. ...com/#logbook-section */
+    var h = (location.hash || '').slice(1);
+    var titles = {
+      'estimate':'💊 بل کیلکولیٹر',
+      'med-finder-section':'🔍 دوا تلاش کریں',
+      'da-section':'📍 ڈیلیوری چیک کریں',
+      'prescription-reader-section':'📸 AI نسخہ ریڈر',
+      'logbook-section':'📋 ہیلتھ لاگ بک',
+      'consult-section':'💬 فارماسسٹ سے پوچھیں'
+    };
+    if(titles[h]) setTimeout(function(){ openTool(h, titles[h]); }, 260);
+  }
+
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
 })();
 </script>
 </body>

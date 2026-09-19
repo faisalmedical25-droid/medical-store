@@ -692,17 +692,6 @@ window.FP_CONFIG = {
 </head>
 <body>
 
-<!-- ============================================================
-     BACKEND SETTINGS — sirf ye 2 lines badalni hoti hain
-     API khali "" chhor dein to website pehle ki tarah offline chalti rahegi.
-     ============================================================ -->
-<script>
-  window.FP_CONFIG = {
-    API: "",                                   // <-- yahan apna worker URL daalein, e.g. "https://api.lahoremedicalstore.com"
-    WHATSAPP: "923218861265"
-  };
-</script>
-
 <header>
   <div class="nav">
     <div class="brand" style="direction:ltr; unicode-bidi:embed;">Faizal <span>Pharmacy</span></div>
@@ -2639,8 +2628,9 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
           <div id="lbSuMsg" class="lb-msg"></div>
           <button type="button" class="lb-btn lb-btn-green" onclick="lbSignup()">اکاؤنٹ بنائیں</button>
           <p class="lb-tiny">
-            🔒 آپ کا ڈیٹا آپ کے اپنے موبائل/کمپیوٹر میں محفوظ رہتا ہے۔ ہم اسے کہیں نہیں بھیجتے۔
-            براہِ کرم وقتاً فوقتاً <b>بیک اپ</b> ضرور محفوظ کریں۔
+            🔒 آپ کا ریکارڈ پہلے اسی موبائل/کمپیوٹر میں محفوظ ہوتا ہے، اور جب انٹرنیٹ دستیاب ہو تو
+            یہ خودکار طور پر فارمیسی کے محفوظ سسٹم میں بھی بیک اپ ہو جاتا ہے — تاکہ فون بدلنے پر بھی ریکارڈ نہ کھوئے۔
+            یہ ڈیٹا صرف آپ کی صحت کا ریکارڈ رکھنے اور فارماسسٹ کی مدد کے لیے استعمال ہوتا ہے۔
           </p>
         </div>
       </div>
@@ -2742,8 +2732,9 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
         <button type="button" class="lb-btn lb-btn-outline" onclick="document.getElementById('lbRestoreFile').click()">♻️ بیک اپ واپس لائیں</button>
         <input type="file" id="lbRestoreFile" accept=".json,application/json" style="display:none" onchange="lbRestore(this)">
         <p class="lb-tiny">
-          ⚠️ ریکارڈ آپ کے اسی موبائل/کمپیوٹر میں محفوظ ہے۔ اگر براؤزر کا ڈیٹا صاف کریں یا فون بدلیں تو ریکارڈ ختم ہو سکتا ہے —
-          اس لیے مہینے میں ایک بار <b>بیک اپ</b> ضرور محفوظ کریں۔
+          ⚠️ ریکارڈ اس موبائل/کمپیوٹر میں محفوظ ہے، اور انٹرنیٹ دستیاب ہونے پر خودکار طور پر
+          فارمیسی کے سسٹم میں بھی بیک اپ ہو جاتا ہے۔ اگر انٹرنیٹ نہ ملے تو ریکارڈ صرف اسی فون پر رہتا ہے —
+          اس لیے وقتاً فوقتاً <b>بیک اپ فائل</b> بھی محفوظ کر لینا بہتر ہے۔
         </p>
       </div>
 
@@ -2978,6 +2969,28 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
   function entries(){ return session ? readJSON(logKey(session), []) : []; }
   function saveEntries(list){ return writeJSON(logKey(session), list); }
 
+  /* Ye function missing thi — isi liye "نیا اکاؤنٹ بنائیں" tab par click
+     karne se kuch nahi hota tha (onclick="lbShowTab('signup')" kisi
+     undefined function ko call kar raha tha, chup chaap fail ho jata tha). */
+  window.lbShowTab = function(which){
+    var isLogin = which === 'login';
+    el('lbLoginForm').style.display  = isLogin ? 'block' : 'none';
+    el('lbSignupForm').style.display = isLogin ? 'none'  : 'block';
+    el('lbTabLogin').classList.toggle('active', isLogin);
+    el('lbTabSignup').classList.toggle('active', !isLogin);
+    msg('lbLoginMsg','');
+    msg('lbSuMsg','');
+  };
+
+  /* Ye function bhi missing thi — 7 jagah call ho rahi thi lekin kahin
+     define nahi thi, is liye signup/login click karte hi browser mein
+     "startSession is not defined" error aa kar poora process ruk jata tha. */
+  function startSession(phone){
+    session = phone;
+    try{ LS().setItem(SKEY, phone); }catch(e){}
+    showApp();
+  }
+
  window.lbSignup = function(){
   var name  = (el('lbSuName').value || '').trim();
   var phone = normPhone(el('lbSuPhone').value);
@@ -3064,95 +3077,6 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
   sessionPin = pin;
   startSession(phone);
 };
-
-
-window.lbSignup = function(){
-  var name  = (el('lbSuName').value || '').trim();
-  var phone = normPhone(el('lbSuPhone').value);
-  var pin   = (el('lbSuPin').value || '').trim();
-  var pin2  = (el('lbSuPin2').value || '').trim();
-  var optIn = (el('lbOptIn') && el('lbOptIn').checked) ? 1 : 0;
-
-  if(name.length < 2)
-    return msg('lbSuMsg','براہِ کرم اپنا نام لکھیں۔');
-
-  if(phone.length < 10)
-    return msg('lbSuMsg','مکمل موبائل نمبر لکھیں (مثلاً 03001234567)۔');
-
-  if(!/^[0-9]{4}$/.test(pin))
-    return msg('lbSuMsg','پن کوڈ 4 ہندسوں کا ہونا چاہیے۔');
-
-  if(pin !== pin2)
-    return msg('lbSuMsg','دونوں پن ایک جیسے نہیں ہیں۔');
-
-  if(users[phone])
-    return msg('lbSuMsg','یہ نمبر پہلے سے رجسٹرڈ ہے۔ لاگ ان کریں۔');
-
-  /*
-   * Backend available ho to pehle cloud account banayein.
-   * Successful hone ke baad local account save hoga.
-   */
-  if(API){
-    msg('lbSuMsg','اکاؤنٹ بنایا جا رہا ہے...','ok');
-
-    api('/api/register', {
-      name: name,
-      phone: phone,
-      pin: pin,
-      marketing_opt_in: optIn
-    })
-    .then(function(){
-      users[phone] = {
-        name: name,
-        pin: hash(pin),
-        created: new Date().toISOString()
-      };
-
-      if(!writeJSON(UKEY, users)) return;
-
-      sessionPin = pin;
-      msg('lbSuMsg','');
-      startSession(phone);
-      cloudSync(pin, true);
-    })
-    .catch(function(err){
-      var e = String((err && err.message) || '');
-
-      if(
-        e.indexOf('pehle se registered') !== -1 ||
-        e.indexOf('registered') !== -1
-      ){
-        msg(
-          'lbSuMsg',
-          'یہ نمبر کلاؤڈ میں پہلے سے رجسٹرڈ ہے۔ لاگ ان کریں۔'
-        );
-        return;
-      }
-
-      msg(
-        'lbSuMsg',
-        'کلاؤڈ اکاؤنٹ نہیں بن سکا۔ انٹرنیٹ چیک کر کے دوبارہ کوشش کریں۔'
-      );
-    });
-
-    return;
-  }
-
-  /*
-   * API configured na ho to purana offline/local behaviour.
-   */
-  users[phone] = {
-    name: name,
-    pin: hash(pin),
-    created: new Date().toISOString()
-  };
-
-  if(!writeJSON(UKEY, users)) return;
-
-  sessionPin = pin;
-  startSession(phone);
-};
-
 
 window.lbLogin = function(){
   var phone = normPhone(el('lbLoginPhone').value);

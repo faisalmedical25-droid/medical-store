@@ -695,6 +695,7 @@ window.FP_CONFIG = {
 <header>
   <div class="nav">
     <div class="brand" style="direction:ltr; unicode-bidi:embed;">Faizal <span>Pharmacy</span></div>
+    <span id="shopStatusBadge" class="shop-status" dir="rtl"></span>
     <nav class="nav-links">
       <a href="#retail">خردہ فروخت</a>
       <a href="#products">سرجیکل آئٹمز</a>
@@ -706,6 +707,337 @@ window.FP_CONFIG = {
     <a class="nav-cta" href="https://wa.me/923218861265" target="_blank" rel="noopener">واٹس ایپ پر پیغام بھیجیں</a>
   </div>
 </header>
+
+<style>
+  .shop-status{
+    display:inline-flex; align-items:center; gap:5px;
+    font-size:0.74rem; font-weight:700; padding:4px 10px; border-radius:12px;
+    white-space:nowrap; margin-inline-start:8px;
+  }
+  .shop-status.open{ background:#E5F5EC; color:#1F7A43; }
+  .shop-status.closed{ background:#FBEAEA; color:#A23B3B; }
+  .shop-status .dot{ width:6px; height:6px; border-radius:50%; background:currentColor; }
+  @media (max-width:760px){ .shop-status{ font-size:0.68rem; padding:3px 8px; } }
+</style>
+
+<script>
+(function(){
+  "use strict";
+  var el = document.getElementById('shopStatusBadge');
+  if(!el) return;
+  /* Shop hours are 8:00 AM to 1:00 AM PKT, every day (see the info row
+     lower on the page) — closed only between 1:00 AM and 8:00 AM. Computed
+     from UTC so it's correct regardless of the visitor's own device timezone. */
+  function updateStatus(){
+    var d = new Date();
+    var pktHour = (d.getUTCHours() + 5) % 24;
+    var isOpen = !(pktHour >= 1 && pktHour < 8);
+    el.className = 'shop-status ' + (isOpen ? 'open' : 'closed');
+    el.innerHTML = '<span class="dot"></span>' +
+      (isOpen ? 'ابھی کھلا ہے' : 'ابھی بند ہے — صبح 8 بجے کھلے گا');
+  }
+  updateStatus();
+  setInterval(updateStatus, 60000);
+})();
+</script>
+
+<!-- ============================================== -->
+<!-- QUICK TOOLS — website khulte hi sabse pehle nazar aaye -->
+<!-- ============================================== -->
+<section id="qt-section" dir="rtl">
+  <div class="qt-wrap">
+    <div class="qt-head">
+      <span class="qt-line"></span>
+      <h2>ہمارے مفت آن لائن ٹولز</h2>
+      <span class="qt-line"></span>
+    </div>
+
+    <button type="button" class="qt-share-btn" id="qtShareBtn" aria-label="ویب سائٹ شیئر کریں">
+      <span>🔗</span><span>شیئر کریں</span>
+    </button>
+
+    <div class="qt-grid">
+
+      <button type="button" class="qt-card qt-featured" data-qt="1"
+        onclick="if(window.openTool) openTool('prescription-reader-section','📸 AI نسخہ ریڈر')">
+        <span class="qt-badge">نیا! AI</span>
+        <span class="qt-icon">📸</span>
+        <span class="qt-label">AI نسخہ ریڈر</span>
+        <span class="qt-sub">تصویر بھیجیں، فوراً پڑھیں</span>
+      </button>
+
+      <button type="button" class="qt-card qt-c2" data-qt="2"
+        onclick="if(window.openTool) openTool('estimate','💊 بل کیلکولیٹر')">
+        <span class="qt-icon-circle"><span class="qt-icon">💊</span></span>
+        <span class="qt-label">بل کیلکولیٹر</span>
+      </button>
+
+      <button type="button" class="qt-card qt-c3" data-qt="3"
+        onclick="if(window.openTool) openTool('logbook-section','📋 ہیلتھ لاگ بک')">
+        <span class="qt-icon-circle"><span class="qt-icon">📋</span></span>
+        <span class="qt-label">ہیلتھ لاگ بک</span>
+      </button>
+
+      <button type="button" class="qt-card qt-c4" data-qt="4"
+        onclick="if(window.openTool) openTool('consult-section','💬 فارماسسٹ سے پوچھیں')">
+        <span class="qt-icon-circle"><span class="qt-icon">💬</span></span>
+        <span class="qt-label">فارماسسٹ سے پوچھیں</span>
+      </button>
+
+      <button type="button" class="qt-card qt-c5" data-qt="5"
+        onclick="if(window.openTool) openTool('da-section','📍 ڈیلیوری چیک کریں')">
+        <span class="qt-icon-circle"><span class="qt-icon">📍</span></span>
+        <span class="qt-label">ڈیلیوری چیک کریں</span>
+      </button>
+
+      <button type="button" class="qt-card qt-c6" data-qt="6"
+        onclick="if(window.openTool) openTool('med-finder-section','🔍 دوا تلاش کریں')">
+        <span class="qt-icon-circle"><span class="qt-icon">🔍</span></span>
+        <span class="qt-label">دوا تلاش کریں</span>
+      </button>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  #qt-section{ background:linear-gradient(180deg,#F2ECDF 0%, #fff 100%); padding:22px 0 26px; position:relative; }
+  .qt-wrap{ max-width:980px; margin:0 auto; padding:0 16px; box-sizing:border-box; position:relative; }
+  .qt-head{ display:flex; align-items:center; gap:12px; justify-content:center; margin-bottom:16px; }
+  .qt-head h2{ font-size:1.15rem; font-weight:700; color:var(--green-deep); margin:0; white-space:nowrap; }
+  .qt-line{ flex:1; height:1px; background:var(--line); max-width:80px; }
+
+  .qt-share-btn{
+    position:absolute; top:0; left:0;
+    display:flex; align-items:center; gap:6px;
+    background:#fff; border:1.5px solid var(--line); color:var(--green-deep);
+    padding:8px 14px; border-radius:20px; font-family:inherit;
+    font-size:0.82rem; font-weight:700; cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,0.06);
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .qt-share-btn:hover{ border-color:var(--brass); transform:translateY(-2px); box-shadow:0 5px 14px rgba(0,0,0,0.1); }
+  .qt-share-btn:active{ transform:translateY(0); }
+  @media (max-width:640px){
+    .qt-share-btn{ position:static; margin:0 auto 12px; }
+  }
+
+  .qt-grid{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:12px;
+  }
+  .qt-card{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:6px; padding:16px 8px; border-radius:16px;
+    background:#fff; border:1.5px solid var(--line);
+    cursor:pointer; font-family:inherit; position:relative;
+    box-shadow:0 3px 10px rgba(0,0,0,0.05);
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    animation:qtPulse 3.4s ease-in-out infinite;
+  }
+  .qt-card:hover{ transform:translateY(-3px); box-shadow:0 8px 20px rgba(0,0,0,0.1); border-color:var(--brass); }
+  .qt-card:active{ transform:translateY(0) scale(.97); }
+
+  /* Every tool now gets the same bold, filled treatment as the featured
+     AI card — solid colour, white text — just a different colour per tool
+     so they stay easy to tell apart at a glance. */
+  .qt-icon-circle{
+    width:46px; height:46px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(255,255,255,0.22);
+  }
+  .qt-c2, .qt-c3, .qt-c4, .qt-c5, .qt-c6{ border:none; box-shadow:0 6px 16px var(--qt-shadow, rgba(0,0,0,0.18)); }
+  .qt-c2, .qt-c3, .qt-c4, .qt-c5, .qt-c6{ color:#fff; }
+  .qt-c2 .qt-label, .qt-c3 .qt-label, .qt-c4 .qt-label, .qt-c5 .qt-label, .qt-c6 .qt-label{
+    color:#fff; text-shadow:0 1px 3px rgba(0,0,0,0.35);
+  }
+
+  .qt-c2{ background:linear-gradient(135deg, #C79A3E 0%, #8A641F 100%); --qt-shadow:rgba(138,100,31,0.4); }
+  .qt-c3{ background:linear-gradient(135deg, #4A7FBF 0%, #274B73 100%); --qt-shadow:rgba(39,75,115,0.4); }
+  .qt-c4{ background:linear-gradient(135deg, #D0754E 0%, #93482C 100%); --qt-shadow:rgba(147,72,44,0.4); }
+  .qt-c5{ background:linear-gradient(135deg, #E8963A 0%, #A8631A 100%); --qt-shadow:rgba(168,99,26,0.4); }
+  .qt-c6{ background:linear-gradient(135deg, #38B4A3 0%, #1F6D62 100%); --qt-shadow:rgba(31,109,98,0.4); }
+
+  .qt-c2:hover, .qt-c3:hover, .qt-c4:hover, .qt-c5:hover, .qt-c6:hover{
+    box-shadow:0 10px 24px var(--qt-shadow, rgba(0,0,0,0.28)); border-color:transparent;
+  }
+
+  /* staggered "attention wave" — each card pulses a beat after the last one,
+     instead of all six shaking together (which would look chaotic) */
+  .qt-card[data-qt="1"]{ animation-delay:0s;   }
+  .qt-card[data-qt="2"]{ animation-delay:.35s; }
+  .qt-card[data-qt="3"]{ animation-delay:.7s;  }
+  .qt-card[data-qt="4"]{ animation-delay:1.05s;}
+  .qt-card[data-qt="5"]{ animation-delay:1.4s; }
+  .qt-card[data-qt="6"]{ animation-delay:1.75s;}
+
+  @keyframes qtPulse{
+    0%, 82%, 100% { transform:scale(1); box-shadow:0 3px 10px rgba(0,0,0,0.05); }
+    88% { transform:scale(1.045); box-shadow:0 8px 22px rgba(184,134,46,0.28); }
+    94% { transform:scale(1); box-shadow:0 3px 10px rgba(0,0,0,0.05); }
+  }
+
+  .qt-icon{ font-size:1.9rem; line-height:1; }
+  .qt-icon-circle .qt-icon{ font-size:1.4rem; }
+  .qt-label{ font-size:0.92rem; font-weight:700; color:var(--ink); text-align:center; }
+  .qt-sub{ font-size:0.74rem; color:var(--ink-soft); text-align:center; }
+
+  .qt-featured{
+    background:linear-gradient(135deg, var(--green-deep) 0%, var(--green-deep-2) 100%);
+    border-color:var(--green-deep);
+    box-shadow:0 6px 18px rgba(31,61,51,0.25);
+  }
+  .qt-featured .qt-label{ color:#fff; font-size:1rem; }
+  .qt-featured .qt-sub{ color:rgba(242,236,223,0.85); }
+  .qt-featured .qt-icon{ font-size:2.3rem; }
+  .qt-featured:hover{ box-shadow:0 10px 26px rgba(31,61,51,0.35); }
+  .qt-featured.qt-card{ animation:qtPulseFeatured 3.4s ease-in-out infinite; }
+
+  @keyframes qtPulseFeatured{
+    0%, 82%, 100% { transform:scale(1); box-shadow:0 6px 18px rgba(31,61,51,0.25); }
+    88% { transform:scale(1.06); box-shadow:0 12px 30px rgba(184,134,46,0.45); }
+    94% { transform:scale(1); box-shadow:0 6px 18px rgba(31,61,51,0.25); }
+  }
+
+  .qt-badge{
+    position:absolute; top:-9px; left:50%; transform:translateX(-50%);
+    background:var(--brass); color:var(--green-deep-2);
+    font-size:0.68rem; font-weight:800; padding:3px 10px; border-radius:12px;
+    white-space:nowrap; box-shadow:0 2px 6px rgba(0,0,0,0.2);
+  }
+
+  @media (max-width:640px){
+    .qt-icon{ font-size:1.6rem; }
+    .qt-featured .qt-icon{ font-size:2rem; }
+    .qt-icon-circle{ width:38px; height:38px; }
+    .qt-icon-circle .qt-icon{ font-size:1.15rem; }
+    .qt-label{ font-size:0.82rem; }
+    .qt-featured .qt-label{ font-size:0.9rem; }
+    .qt-sub{ font-size:0.68rem; }
+    .qt-card{ padding:13px 6px; }
+    .qt-grid{ gap:9px; }
+  }
+
+  /* Respect people who've asked their OS/browser to reduce motion */
+  @media (prefers-reduced-motion: reduce){
+    .qt-card, .qt-featured.qt-card{ animation:none; }
+  }
+</style>
+
+<script>
+(function(){
+  "use strict";
+  /* Log which quick-tool cards actually get used, separately from the
+     floating menu, so it's possible to see later whether this header
+     placement is worth keeping. */
+  var grid = document.getElementById('qt-section');
+  if(!grid) return;
+  var qtNames = {
+    '1':'prescription-reader-section', '2':'estimate', '3':'logbook-section',
+    '4':'consult-section', '5':'da-section', '6':'med-finder-section'
+  };
+  grid.addEventListener('click', function(e){
+    var btn = e.target.closest ? e.target.closest('.qt-card') : null;
+    if(!btn) return;
+    var name = qtNames[btn.getAttribute('data-qt')] || 'unknown';
+    try{ if(window.gtag) gtag('event','tool_open',{tool_name:name, source:'header_grid'}); }catch(err){}
+  });
+
+  /* ---------------- Share button ---------------- */
+  var shareBtn = document.getElementById('qtShareBtn');
+  if(!shareBtn) return;
+
+  var shareData = {
+    title: 'Faizal Pharmacy — لاہور',
+    text: 'Faizal Pharmacy: اصلی ادویات، مفت گھر بیٹھے ڈیلیوری، AI نسخہ ریڈر اور مفت ہیلتھ ٹولز۔',
+    url: location.href
+  };
+
+  function trackShare(method){
+    try{ if(window.gtag) gtag('event','share_click',{method:method}); }catch(err){}
+  }
+
+  function closeSharePopup(){
+    var p = document.getElementById('qtSharePopup');
+    if(p) p.remove();
+    document.removeEventListener('click', onOutsideClick, true);
+  }
+  function onOutsideClick(e){
+    var p = document.getElementById('qtSharePopup');
+    if(p && !p.contains(e.target) && e.target !== shareBtn && !shareBtn.contains(e.target)) closeSharePopup();
+  }
+
+  function openSharePopup(){
+    closeSharePopup();
+    var wa = 'https://wa.me/?text=' + encodeURIComponent(shareData.text + ' ' + shareData.url);
+    var fb = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(shareData.url);
+    var tw = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(shareData.text) + '&url=' + encodeURIComponent(shareData.url);
+
+    var pop = document.createElement('div');
+    pop.id = 'qtSharePopup';
+    pop.className = 'qt-share-popup';
+    pop.innerHTML =
+      '<a href="'+wa+'" target="_blank" rel="noopener" data-m="whatsapp"><span>💬</span>واٹس ایپ پر بھیجیں</a>' +
+      '<a href="'+fb+'" target="_blank" rel="noopener" data-m="facebook"><span>📘</span>فیس بک پر شیئر کریں</a>' +
+      '<a href="'+tw+'" target="_blank" rel="noopener" data-m="twitter"><span>🐦</span>ٹویٹر پر شیئر کریں</a>' +
+      '<button type="button" data-m="copy"><span>🔗</span>لنک کاپی کریں</button>';
+    shareBtn.insertAdjacentElement('afterend', pop);
+
+    pop.addEventListener('click', function(e){
+      var t = e.target.closest('[data-m]');
+      if(!t) return;
+      trackShare(t.getAttribute('data-m'));
+      if(t.getAttribute('data-m') === 'copy'){
+        e.preventDefault();
+        var done = function(){
+          t.innerHTML = '<span>✔️</span>کاپی ہو گیا';
+          setTimeout(closeSharePopup, 900);
+        };
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(shareData.url).then(done).catch(function(){
+            window.prompt('یہ لنک کاپی کریں:', shareData.url);
+          });
+        } else {
+          window.prompt('یہ لنک کاپی کریں:', shareData.url);
+        }
+      } else {
+        closeSharePopup();
+      }
+    });
+
+    setTimeout(function(){ document.addEventListener('click', onOutsideClick, true); }, 0);
+  }
+
+  shareBtn.addEventListener('click', function(){
+    if(navigator.share){
+      trackShare('native');
+      navigator.share(shareData).catch(function(){ /* user cancelled — fine */ });
+    } else {
+      openSharePopup();
+    }
+  });
+})();
+</script>
+
+<style>
+  .qt-share-popup{
+    position:absolute; top:38px; left:0; z-index:40;
+    background:#fff; border:1px solid var(--line); border-radius:14px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.15); padding:8px;
+    display:flex; flex-direction:column; gap:2px; min-width:200px;
+  }
+  .qt-share-popup a, .qt-share-popup button{
+    display:flex; align-items:center; gap:10px;
+    padding:10px 12px; border-radius:9px; border:none; background:none;
+    font-family:inherit; font-size:0.88rem; color:var(--ink); text-decoration:none;
+    cursor:pointer; text-align:right; width:100%;
+  }
+  .qt-share-popup a:hover, .qt-share-popup button:hover{ background:var(--cream); }
+  .qt-share-popup span{ font-size:1.05rem; }
+  @media (max-width:640px){
+    .qt-share-popup{ top:44px; left:50%; transform:translateX(-50%); }
+  }
+</style>
+
 <!-- ============================================== -->
 <!-- GROQ AI UI CODE - YEH WALI PASTE KAREIN -->
 <!-- ============================================== -->
@@ -734,6 +1066,34 @@ window.FP_CONFIG = {
           📸 کیمرے سے تصویر لیں
         </button>
         <input type="file" id="rxCameraInput" accept="image/*" capture="environment" style="display:none;" onchange="if(this.files.length) rxHandleFile(this.files[0]);">
+      </div>
+
+      <div id="rxSampleHint" style="display:flex; gap:10px; margin-top:14px;">
+        <div style="flex:1; text-align:center;">
+          <svg viewBox="0 0 120 90" width="100%" style="max-width:150px;">
+            <rect x="14" y="8" width="92" height="74" rx="6" fill="#fff" stroke="#4CAF50" stroke-width="2"/>
+            <line x1="26" y1="24" x2="94" y2="24" stroke="#888" stroke-width="3" stroke-linecap="round"/>
+            <line x1="26" y1="36" x2="86" y2="36" stroke="#888" stroke-width="3" stroke-linecap="round"/>
+            <line x1="26" y1="48" x2="90" y2="48" stroke="#888" stroke-width="3" stroke-linecap="round"/>
+            <line x1="26" y1="60" x2="70" y2="60" stroke="#888" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="94" cy="70" r="11" fill="#4CAF50"/>
+            <path d="M89 70l3.5 3.5L99 66" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <p style="font-size:12.5px; color:#2E7D32; font-weight:700; margin:2px 0 0;">صاف، سیدھی، روشنی میں</p>
+        </div>
+        <div style="flex:1; text-align:center;">
+          <svg viewBox="0 0 120 90" width="100%" style="max-width:150px;">
+            <g transform="rotate(-9 60 45)" opacity="0.55">
+              <rect x="14" y="8" width="92" height="74" rx="6" fill="#f2f2f2" stroke="#c62828" stroke-width="2"/>
+              <path d="M26 26 Q45 20 62 27 T94 25" stroke="#999" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <path d="M26 40 Q40 46 58 40 T86 39" stroke="#999" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <path d="M26 54 Q42 48 60 55 T90 52" stroke="#999" stroke-width="3" fill="none" stroke-linecap="round"/>
+            </g>
+            <circle cx="94" cy="70" r="11" fill="#c62828"/>
+            <path d="M90 66l8 8M98 66l-8 8" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+          </svg>
+          <p style="font-size:12.5px; color:#c62828; font-weight:700; margin:2px 0 0;">دھندلی، ترچھی، اندھیرے میں</p>
+        </div>
       </div>
       <div id="rxPreviewArea" style="display:none; margin-top:15px;">
         <img id="rxPreviewImg" src="" alt="" style="width:100%; max-height:300px; object-fit:contain; border-radius:10px; border:1px solid #ddd; background:#f7f7f7;">
@@ -862,6 +1222,7 @@ window.FP_CONFIG = {
       el('rxPreviewImg').src = r.dataUrl;
       el('rxPreviewArea').style.display = 'block';
       el('rxUploadZone').style.display = 'none';
+      if(el('rxSampleHint')) el('rxSampleHint').style.display = 'none';
       el('rxSizeInfo').textContent = 'تصویر ' + kb(r.before) + ' سے ' + kb(r.after) + ' کر دی گئی — تیزی کے لیے';
       rxAnalyze();            // auto-start, no extra click
     }).catch(function(){
@@ -874,6 +1235,7 @@ window.FP_CONFIG = {
     rxImageBase64 = null;
     el('rxPreviewArea').style.display = 'none';
     el('rxUploadZone').style.display = 'block';
+    if(el('rxSampleHint')) el('rxSampleHint').style.display = 'flex';
     el('rxFileInput').value = '';
     el('rxCameraInput').value = '';
     show('rxResults', false);
@@ -2644,6 +3006,8 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
         <button type="button" class="lb-btn-mini" onclick="lbLogout()">لاگ آؤٹ</button>
       </div>
 
+      <div id="lbReminder"></div>
+
       <!-- NEW ENTRY -->
       <div class="lb-card">
         <h3 class="lb-h3">➕ آج کی نئی انٹری</h3>
@@ -2699,7 +3063,7 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
         <input type="number" id="lbWeight" class="lb-input" inputmode="decimal" placeholder="مثلاً: 72">
 
         <label class="lb-label">نوٹ — اختیاری</label>
-        <input type="text" id="lbNote" class="lb-input" placeholder="مثلاً: دوا لی، سر میں درد تھا">
+        <input type="text" id="lbNote" class="lb-input" dir="ltr" style="text-align:left;" placeholder="مثلاً: دوا لی، سر میں درد تھا">
 
         <div id="lbEntryMsg" class="lb-msg"></div>
         <button type="button" class="lb-btn lb-btn-green lb-btn-big" onclick="lbAddEntry()">✔ محفوظ کریں</button>
@@ -3385,9 +3749,30 @@ window.lbLogin = function(){
   /* ---------------- RENDER ---------------- */
   function render(){
     var all = entries();
+    renderReminder(all);
     renderSummary(all);
     renderCharts(all);
     renderHistory(all);
+  }
+
+  /* Nudge people who use the log book regularly but haven't logged today yet.
+     Says nothing on someone's very first day (no history to compare against),
+     so it never feels like nagging a brand-new user. */
+  function renderReminder(all){
+    var box = el('lbReminder');
+    if(!box) return;
+    if(!all.length){ box.innerHTML = ''; return; }
+
+    var t = todayISO();
+    var loggedToday = all.some(function(e){ return e.date === t; });
+    if(loggedToday){ box.innerHTML = ''; return; }
+
+    box.innerHTML =
+      '<div class="lb-note" style="background:#FFF8E1;border:1px solid #FFE082;color:#6D4C41;' +
+      'display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">' +
+      '<span>⏰ آج کی ریڈنگ ابھی درج نہیں ہوئی۔</span>' +
+      '<button type="button" class="lb-btn-mini" onclick="document.getElementById(\'lbSugar\').focus()" ' +
+      'style="background:#fff;">ابھی لکھیں ↑</button></div>';
   }
 
   function renderSummary(all){
@@ -3698,19 +4083,19 @@ window.lbLogin = function(){
         </div>
 
         <label class="cs-label">آپ کا مسئلہ کیا ہے؟ <span class="cs-req">ضروری</span></label>
-        <textarea id="csProblem" class="cs-input cs-area" placeholder="تفصیل سے لکھیں — کیا تکلیف ہے، کہاں ہے، کیسی ہے۔ جتنا کھل کر لکھیں گے، جواب اتنا بہتر ملے گا۔"></textarea>
+        <textarea id="csProblem" class="cs-input cs-area" dir="ltr" style="text-align:left;" placeholder="تفصیل سے لکھیں — کیا تکلیف ہے، کہاں ہے، کیسی ہے۔ جتنا کھل کر لکھیں گے، جواب اتنا بہتر ملے گا۔"></textarea>
 
         <label class="cs-label">کتنے دن سے ہے؟</label>
-        <input type="text" id="csDuration" class="cs-input" placeholder="مثلاً: 3 دن سے / ایک ہفتے سے">
+        <input type="text" id="csDuration" class="cs-input" dir="ltr" style="text-align:left;" placeholder="مثلاً: 3 دن سے / ایک ہفتے سے">
 
         <label class="cs-label">کوئی پرانی بیماری؟</label>
-        <input type="text" id="csConditions" class="cs-input" placeholder="مثلاً: شوگر، بلڈ پریشر، دل کا مرض">
+        <input type="text" id="csConditions" class="cs-input" dir="ltr" style="text-align:left;" placeholder="مثلاً: شوگر، بلڈ پریشر، دل کا مرض">
 
         <label class="cs-label">اس وقت کون سی دوائیں چل رہی ہیں؟</label>
-        <input type="text" id="csMeds" class="cs-input" placeholder="مثلاً: Glucophage 500, Tenormin 50">
+        <input type="text" id="csMeds" class="cs-input" dir="ltr" style="text-align:left;" placeholder="مثلاً: Glucophage 500, Tenormin 50">
 
         <label class="cs-label">کسی دوا سے الرجی؟</label>
-        <input type="text" id="csAllergy" class="cs-input" placeholder="مثلاً: Penicillin — یا 'کوئی نہیں'">
+        <input type="text" id="csAllergy" class="cs-input" dir="ltr" style="text-align:left;" placeholder="مثلاً: Penicillin — یا 'کوئی نہیں'">
 
         <label class="cs-check">
           <input type="checkbox" id="csOptIn">
@@ -3962,7 +4347,7 @@ window.lbLogin = function(){
     }
 
     html += '<label class="cs-label">مزید کچھ پوچھنا ہے؟</label>' +
-            '<textarea id="csFollow" class="cs-input cs-area" style="min-height:90px;" placeholder="یہاں لکھیں..."></textarea>' +
+            '<textarea id="csFollow" class="cs-input cs-area" dir="ltr" style="min-height:90px;text-align:left;" placeholder="یہاں لکھیں..."></textarea>' +
             '<button type="button" class="cs-btn cs-btn-outline" onclick="csFollowUp()">بھیجیں</button>' +
             '<div id="csFollowMsg" class="cs-msg"></div></div>';
 

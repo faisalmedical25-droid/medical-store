@@ -6,11 +6,30 @@ window.FP_CONFIG = {
   API: "https://faizal-backend.faisalmedical25.workers.dev",
   WHATSAPP: "923218861265"
 };
+/* Referral capture: if someone arrives via a friend's share link
+   (?ref=CODE), remember it so signup/consult forms can pass it to the
+   backend later — this is what makes the referral program work even if
+   the visitor browses for a while before actually signing up. */
+(function(){
+  try{
+    var m = location.search.match(/[?&]ref=([A-Za-z0-9]+)/);
+    if(m && m[1]) localStorage.setItem('fp_ref_code', m[1].toUpperCase());
+  }catch(e){}
+})();
 </script>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Faizal Pharmacy – Medical Store Lahore | Pharmacy Near Me, Home Delivery</title>
 <meta name="google-site-verification" content="IAsigZi1ZH3SX1xHEWivXjqy12W2_HxnK0HCOjBZuCY" />
+
+<!-- ===== PWA: installable app ===== -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1F3D33">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Faizal Pharmacy">
 
 <!-- Google Analytics (GA4) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-C9DMQ0K94B"></script>
@@ -47,8 +66,17 @@ window.FP_CONFIG = {
     "addressRegion": "Punjab",
     "addressCountry": "PK"
   },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 31.456234,
+    "longitude": 74.350365
+  },
   "openingHours": "Mo-Su 08:00-01:00",
-  "areaServed": "Lahore",
+  "areaServed": {
+    "@type": "GeoCircle",
+    "geoMidpoint": { "@type": "GeoCoordinates", "latitude": 31.456234, "longitude": 74.350365 },
+    "geoRadius": "5000"
+  },
   "priceRange": "$$",
   "makesOffer": [
     {
@@ -62,6 +90,67 @@ window.FP_CONFIG = {
     {
       "@type": "Offer",
       "itemOffered": { "@type": "Service", "name": "Free health log book for daily diabetes and blood pressure record" }
+    }
+  ]
+}
+</script>
+
+<!-- FAQ schema: real, common "pharmacy near me" style questions.
+     Google can show these directly as rich results in search — free
+     extra visibility with no ads, and it matches how people actually
+     search on their phones ("pharmacy near me", "medicine delivery Lahore"). -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Kya Faizal Pharmacy ghar tak dawa deliver karta hai?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ji haan, Faizal Pharmacy Lahore ke Ferozpur Road aur aas-paas ke ilaqon mein gharon tak dawa deliver karta hai. WhatsApp par nuskha ya dawaion ki list bhejein, hum usi din qeemat aur delivery time confirm kar dete hain."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Faizal Pharmacy kahan waqe hai?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Faizal Pharmacy Main Ferozpur Road par, Lahore General Hospital ke bilkul samne, Gate No. 2 ke qareeb waqe hai."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Kya website par nuskha (prescription) parhwaya ja sakta hai?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ji haan, Faizal Pharmacy ki website par mafeed AI Prescription Reader tool hai — nuskhay ki tasveer bhejein aur AI foran dawaiyon ke naam aur qeematein bata deta hai, dukan mein bina aaye."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Faizal Pharmacy kis waqt khula rehta hai?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Faizal Pharmacy roz subah 8 baje se raat 1 baje tak khula rehta hai, saatoon din."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Kya sugar aur blood pressure ka record online rakha ja sakta hai?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ji haan, website par mafeed Health Log Book tool maujood hai jahan aap rozana apni sugar aur blood pressure ki reading likh sakte hain, aur zaroorat par doctor ko dikhane ke liye report bhi bana sakte hain."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Kya kisi masle par pharmacist se online mashwara mil sakta hai?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ji haan, 'Farmacist Se Poochein' tool se aap apna sawal likh kar bhej sakte hain, hamara pharmacist dekh kar jawab deta hai."
+      }
     }
   ]
 }
@@ -738,6 +827,102 @@ window.FP_CONFIG = {
   }
   updateStatus();
   setInterval(updateStatus, 60000);
+})();
+</script>
+
+<!-- ============================================== -->
+<!-- PWA install banner -->
+<!-- ============================================== -->
+<div id="pwaInstallBar" dir="rtl" style="display:none;">
+  <span class="pwa-txt">📲 Faizal Pharmacy کو اپنے فون میں ایپ کی طرح انسٹال کریں — تیز اور آسان</span>
+  <button type="button" id="pwaInstallBtn" class="pwa-btn">انسٹال کریں</button>
+  <button type="button" id="pwaInstallClose" class="pwa-close" aria-label="بند کریں">✕</button>
+</div>
+
+<style>
+  #pwaInstallBar{
+    display:flex; align-items:center; gap:10px; justify-content:center; flex-wrap:wrap;
+    background:var(--green-deep); color:var(--cream);
+    padding:9px 16px; font-size:0.85rem; text-align:center;
+  }
+  #pwaInstallBar .pwa-txt{ flex:1 1 auto; min-width:200px; }
+  .pwa-btn{
+    background:var(--brass); color:var(--green-deep-2); border:none;
+    padding:6px 16px; border-radius:16px; font-weight:700; font-size:0.82rem;
+    font-family:inherit; cursor:pointer; white-space:nowrap;
+  }
+  .pwa-close{
+    background:none; border:none; color:var(--cream); opacity:0.7;
+    font-size:1rem; cursor:pointer; padding:2px 6px;
+  }
+  .pwa-close:hover{ opacity:1; }
+</style>
+
+<script>
+(function(){
+  "use strict";
+  var bar = document.getElementById('pwaInstallBar');
+  var btn = document.getElementById('pwaInstallBtn');
+  var closeBtn = document.getElementById('pwaInstallClose');
+  var deferredPrompt = null;
+  var DISMISS_KEY = 'fp_pwa_dismissed_at';
+  var DISMISS_DAYS = 14;
+
+  function isStandalone(){
+    return window.matchMedia('(display-mode: standalone)').matches ||
+           window.navigator.standalone === true;
+  }
+  function recentlyDismissed(){
+    try{
+      var t = localStorage.getItem(DISMISS_KEY);
+      if(!t) return false;
+      return (Date.now() - Number(t)) < DISMISS_DAYS * 86400000;
+    }catch(e){ return false; }
+  }
+  function dismiss(){
+    try{ localStorage.setItem(DISMISS_KEY, String(Date.now())); }catch(e){}
+    bar.style.display = 'none';
+  }
+
+  if(isStandalone() || recentlyDismissed()) return;
+
+  var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();
+    deferredPrompt = e;
+    bar.style.display = 'flex';
+  });
+
+  if(isIOS){
+    // iOS Safari has no programmatic install prompt — show the manual steps instead.
+    bar.style.display = 'flex';
+    document.querySelector('#pwaInstallBar .pwa-txt').textContent =
+      '📲 ایپ کی طرح استعمال کے لیے: نیچے Share بٹن دبائیں → "Add to Home Screen"';
+    btn.style.display = 'none';
+  }
+
+  btn.addEventListener('click', function(){
+    if(!deferredPrompt) return;
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.finally(function(){
+      deferredPrompt = null;
+      bar.style.display = 'none';
+      try{ if(window.gtag) gtag('event','pwa_install_prompt_result'); }catch(e){}
+    });
+  });
+  closeBtn.addEventListener('click', dismiss);
+
+  window.addEventListener('appinstalled', function(){
+    bar.style.display = 'none';
+    try{ if(window.gtag) gtag('event','pwa_installed'); }catch(e){}
+  });
+
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('/sw.js').catch(function(){ /* fine, site still works normally */ });
+    });
+  }
 })();
 </script>
 
@@ -2859,6 +3044,16 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
       <div class="sk-ww-google-reviews" data-embed-id="25711206"></div>
       <script src="https://widgets.sociablekit.com/google-reviews/widget.js" defer></script>
     </div>
+    <div style="text-align:center; margin-top:28px;">
+      <a class="btn btn-primary" target="_blank" rel="noopener"
+         href="https://www.google.com/maps/search/?api=1&query=faisal+medical+store+gul+colony+main+ferozpur+road+lahore+opposite+lahore+general+hospital+gate+%232"
+         style="display:inline-flex; align-items:center; gap:8px;">
+        ⭐ گوگل پر ہمیں ریٹ کریں
+      </a>
+      <p style="font-size:0.82rem; color:var(--ink-soft); margin-top:8px;">
+        آپ کا ایک ریویو نئے کسٹمرز کو ہمیں ڈھونڈنے میں مدد دیتا ہے
+      </p>
+    </div>
   </div>
 </section>
 
@@ -2920,6 +3115,48 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
     </div>
   </div>
 </section>
+
+<!-- ============================================== -->
+<!-- LOCAL SEO: nearby areas we deliver to -->
+<!-- ============================================== -->
+<section id="areas-section" dir="rtl" style="background:#fff; padding:40px 0;">
+  <div class="wrap" style="max-width:900px; margin:0 auto; padding:0 20px;">
+    <h2 style="font-size:1.3rem; color:var(--green-deep); text-align:center; margin-bottom:10px;">
+      لاہور کے ان علاقوں میں مفت گھر ڈیلیوری
+    </h2>
+    <p style="text-align:center; color:var(--ink-soft); font-size:0.95rem; margin-bottom:20px;">
+      Faizal Pharmacy، گل کالونی، مین فیروزپور روڈ (لاہور جنرل ہسپتال کے سامنے) سے ان قریبی علاقوں میں ڈیلیوری کرتا ہے:
+    </p>
+    <div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">
+      <!-- ⚠️ MALIK KE LIYE: yeh list verify kar lein — jo ilaqe aap waqai
+           deliver karte hain unhi ko rehne dein, baqi hata dein ya nayi
+           add karein. Har chip ek <span> hai, copy-paste kar ke naya
+           bana sakte hain. Har naam wahi likhein jo log Google par
+           search karte hain (jaise "دوا گل کالونی" nahi "دوا Gul Colony"
+           bhi chalega, dono theek hain). -->
+      <span class="area-chip">گل کالونی</span>
+      <span class="area-chip">اسماعیل نگر</span>
+      <span class="area-chip">چونگی امر سدھو</span>
+      <span class="area-chip">کوٹ لکھپت</span>
+      <span class="area-chip">اعوان ٹاؤن</span>
+      <span class="area-chip">گرین ٹاؤن</span>
+      <span class="area-chip">سمن آباد</span>
+      <span class="area-chip">وحدت کالونی</span>
+      <span class="area-chip">مصطفی ٹاؤن</span>
+      <span class="area-chip">ماڈل ٹاؤن ایکسٹینشن</span>
+    </div>
+    <p style="text-align:center; color:var(--ink-soft); font-size:0.85rem; margin-top:18px;">
+      اپنا علاقہ اوپر نہیں دیکھ رہے؟ فکر نہ کریں — <a href="https://wa.me/923218861265" style="color:var(--green-deep); font-weight:700;">واٹس ایپ پر پوچھ لیں</a>، اکثر ڈیلیوری ممکن ہوتی ہے۔
+    </p>
+  </div>
+</section>
+
+<style>
+  .area-chip{
+    background:var(--cream); border:1px solid var(--line); color:var(--ink);
+    padding:8px 16px; border-radius:18px; font-size:0.88rem; font-weight:600;
+  }
+</style>
 
 <footer>
   <div class="wrap">
@@ -3007,6 +3244,19 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
       </div>
 
       <div id="lbReminder"></div>
+
+      <!-- REFERRAL -->
+      <div class="lb-card" id="lbReferralCard" style="background:linear-gradient(135deg,#1F3D33,#16302A); color:#F2ECDF; border:none;">
+        <h3 class="lb-h3" style="color:#F2ECDF;">🎁 دوست کو بتائیں، دونوں انعام پائیں</h3>
+        <p style="font-size:15px; line-height:1.9; margin:0 0 14px; color:#E6E0D0;">
+          اپنا ذاتی لنک قریبی دوستوں یا پڑوسیوں کو بھیجیں۔ ان کے پہلے آرڈر پر آپ کو <b>10% ڈسکاؤنٹ</b> ملے گا،
+          اور انہیں <b>خوش آمدید ڈسکاؤنٹ</b> ملے گا۔
+        </p>
+        <div id="lbRefLinkBox" style="background:rgba(255,255,255,0.1); border-radius:10px; padding:12px 14px; font-size:14px; margin-bottom:12px; word-break:break-all; direction:ltr; text-align:left;">
+          لنک تیار ہو رہا ہے...
+        </div>
+        <button type="button" class="lb-btn" style="background:#B8862E; color:#16302A;" onclick="lbShareReferral()">🔗 دوست کو بھیجیں</button>
+      </div>
 
       <!-- NEW ENTRY -->
       <div class="lb-card">
@@ -3388,7 +3638,8 @@ var PRODUCTS = [["FACE MASK (ALL)",10.0],["SODAMINT TAB ( NAWAB ) (1000)",1.0],[
       name: name,
       phone: phone,
       pin: pin,
-      marketing_opt_in: optIn
+      marketing_opt_in: optIn,
+      ref: (function(){ try{ return localStorage.getItem('fp_ref_code') || ''; }catch(e){ return ''; } })()
     })
     .then(function(){
       users[phone] = {
@@ -3634,7 +3885,40 @@ window.lbLogin = function(){
     el('lbUserName').textContent = (users[session] && users[session].name) || '';
     resetForm();
     render();
+    lbLoadReferral();
   }
+
+  /* ---------------- REFERRAL ---------------- */
+  var lbRefUrl = null;
+  function lbLoadReferral(){
+    var box = el('lbRefLinkBox');
+    if(!box) return;
+    if(!API || !sessionPin){
+      box.textContent = 'یہ فیچر انٹرنیٹ سے جڑنے پر کام کرتا ہے۔';
+      return;
+    }
+    api('/api/referral/mine', { phone: session, pin: sessionPin })
+      .then(function(d){
+        if(d && d.url){
+          lbRefUrl = d.url;
+          box.textContent = d.url;
+        } else {
+          box.textContent = 'ابھی دستیاب نہیں — تھوڑی دیر بعد کوشش کریں۔';
+        }
+      })
+      .catch(function(){ box.textContent = 'ابھی دستیاب نہیں — تھوڑی دیر بعد کوشش کریں۔'; });
+  }
+  window.lbShareReferral = function(){
+    if(!lbRefUrl) return;
+    var name = (users[session] && users[session].name) || '';
+    var text = (name ? name + ' ki taraf se: ' : '') +
+      'Faizal Pharmacy — asli dawaiyan, mufat ghar delivery, AI nuskha reader. Yeh link se order karein: ' + lbRefUrl;
+    if(navigator.share){
+      navigator.share({ title:'Faizal Pharmacy', text:text }).catch(function(){});
+    } else {
+      window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+    }
+  };
 
   /* ---------------- ENTRY ---------------- */
   function todayISO(){
@@ -4254,7 +4538,8 @@ window.lbLogin = function(){
         existing_conditions: (el('csConditions').value||'').trim(),
         current_meds: (el('csMeds').value||'').trim(),
         allergies: (el('csAllergy').value||'').trim(),
-        marketing_opt_in: el('csOptIn').checked ? 1 : 0
+        marketing_opt_in: el('csOptIn').checked ? 1 : 0,
+        ref: (function(){ try{ return localStorage.getItem('fp_ref_code') || ''; }catch(e){ return ''; } })()
       })
     })
     .then(function(r){ return r.json().then(function(d){ return {ok:r.ok, d:d}; }); })

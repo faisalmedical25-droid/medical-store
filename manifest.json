@@ -1,0 +1,40 @@
+{
+  "name": "Faizal Pharmacy — لاہور",
+  "short_name": "Faizal Pharmacy",
+  "description": "اصلی ادویات، مفت گھر بیٹھے ڈیلیوری، AI نسخہ ریڈر اور مفت ہیلتھ ٹولز۔",
+  "start_url": "/?pwa=1",
+  "id": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#F2ECDF",
+  "theme_color": "#1F3D33",
+  "lang": "ur-PK",
+  "dir": "rtl",
+  "categories": ["health", "medical", "shopping"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "AI نسخہ ریڈر",
+      "short_name": "نسخہ ریڈر",
+      "url": "/?pwa=1#prescription-reader-section",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "ہیلتھ لاگ بک",
+      "short_name": "لاگ بک",
+      "url": "/?pwa=1#logbook-section",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "فارماسسٹ سے پوچھیں",
+      "short_name": "فارماسسٹ",
+      "url": "/?pwa=1#consult-section",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

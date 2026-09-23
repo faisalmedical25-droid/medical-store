@@ -4834,5 +4834,150 @@ window.lbLogin = function(){
   else boot();
 })();
 </script>
+  <!-- ===== iOS PWA INSTALL POPUP - START ===== -->
+<style>
+#fp-ios-install {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  background: rgba(0,0,0,.55);
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+#fp-ios-install .fp-ios-box {
+  width: 100%;
+  max-width: 360px;
+  background: #fff;
+  color: #1f2937;
+  border-radius: 20px;
+  padding: 25px 20px 20px;
+  text-align: center;
+  box-shadow: 0 15px 50px rgba(0,0,0,.3);
+}
+
+#fp-ios-install .fp-ios-icon {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 12px;
+  border-radius: 16px;
+  object-fit: cover;
+}
+
+#fp-ios-install h2 {
+  margin: 5px 0 10px;
+  font-size: 22px;
+}
+
+#fp-ios-install p {
+  margin: 8px 0;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+#fp-ios-install .fp-ios-steps {
+  background: #f3f6f5;
+  border-radius: 12px;
+  padding: 12px;
+  margin: 16px 0;
+  text-align: left;
+}
+
+#fp-ios-install button {
+  width: 100%;
+  border: 0;
+  border-radius: 12px;
+  padding: 13px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#fp-ios-install .fp-ios-ok {
+  background: #1F3D33;
+  color: white;
+  font-weight: bold;
+}
+
+#fp-ios-install .fp-ios-later {
+  margin-top: 8px;
+  background: transparent;
+  color: #666;
+}
+</style>
+
+<div id="fp-ios-install">
+  <div class="fp-ios-box">
+
+    <img
+      class="fp-ios-icon"
+      src="/icons/apple-touch-icon.png"
+      alt="Faisal Pharmacy"
+    >
+
+    <h2>Install Faisal Pharmacy</h2>
+
+    <p>
+      Add Faisal Pharmacy to your iPhone for quick and easy access.
+    </p>
+
+    <div class="fp-ios-steps">
+      <p><strong>1.</strong> Tap the Share button <strong>↑</strong> in Safari.</p>
+      <p><strong>2.</strong> Select <strong>Add to Home Screen</strong>.</p>
+      <p><strong>3.</strong> Tap <strong>Add</strong>.</p>
+    </div>
+
+    <button class="fp-ios-ok" onclick="fpCloseIOSInstall()">
+      Got it
+    </button>
+
+    <button class="fp-ios-later" onclick="fpHideIOSInstall()">
+      Not now
+    </button>
+
+  </div>
+</div>
+
+<script>
+(function () {
+  var ua = window.navigator.userAgent;
+
+  var isIOS =
+    /iPad|iPhone|iPod/.test(ua) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+  var isStandalone =
+    window.navigator.standalone === true ||
+    window.matchMedia("(display-mode: standalone)").matches;
+
+  if (!isIOS || isStandalone) return;
+
+  var dismissed = localStorage.getItem("fp_ios_install_dismissed");
+
+  if (dismissed) return;
+
+  window.setTimeout(function () {
+    var popup = document.getElementById("fp-ios-install");
+    if (popup) {
+      popup.style.display = "flex";
+    }
+  }, 1500);
+})();
+
+function fpCloseIOSInstall() {
+  var popup = document.getElementById("fp-ios-install");
+  if (popup) popup.style.display = "none";
+}
+
+function fpHideIOSInstall() {
+  var popup = document.getElementById("fp-ios-install");
+  if (popup) popup.style.display = "none";
+
+  localStorage.setItem("fp_ios_install_dismissed", "yes");
+}
+</script>
+<!-- ===== iOS PWA INSTALL POPUP - END ===== -->
 </body>
 </html>

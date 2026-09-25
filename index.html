@@ -4939,24 +4939,35 @@ window.lbLogin = function(){
 
 <script>
 (function () {
-  var ua = window.navigator.userAgent;
+  const ua = navigator.userAgent;
 
-  var isIOS =
+  const isIOS =
     /iPad|iPhone|iPod/.test(ua) ||
     (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
-  var isStandalone =
-    window.navigator.standalone === true ||
+  const isSafari =
+    isIOS &&
+    /Safari/i.test(ua) &&
+    !/CriOS|FxiOS|EdgiOS|OPiOS/i.test(ua);
+
+  const isStandalone =
+    navigator.standalone === true ||
     window.matchMedia("(display-mode: standalone)").matches;
 
-  if (!isIOS || isStandalone) return;
+  if (!isIOS || !isSafari || isStandalone) return;
 
-  var dismissed = localStorage.getItem("fp_ios_install_dismissed");
+  let dismissed = false;
+
+  try {
+    dismissed =
+      localStorage.getItem("fp_ios_install_dismissed") === "yes";
+  } catch (e) {}
 
   if (dismissed) return;
 
-  window.setTimeout(function () {
-    var popup = document.getElementById("fp-ios-install");
+  setTimeout(function () {
+    const popup = document.getElementById("fp-ios-install");
+
     if (popup) {
       popup.style.display = "flex";
     }
@@ -4964,15 +4975,17 @@ window.lbLogin = function(){
 })();
 
 function fpCloseIOSInstall() {
-  var popup = document.getElementById("fp-ios-install");
+  const popup = document.getElementById("fp-ios-install");
   if (popup) popup.style.display = "none";
 }
 
 function fpHideIOSInstall() {
-  var popup = document.getElementById("fp-ios-install");
+  const popup = document.getElementById("fp-ios-install");
   if (popup) popup.style.display = "none";
 
-  localStorage.setItem("fp_ios_install_dismissed", "yes");
+  try {
+    localStorage.setItem("fp_ios_install_dismissed", "yes");
+  } catch (e) {}
 }
 </script>
 <!-- ===== iOS PWA INSTALL POPUP - END ===== -->

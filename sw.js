@@ -10,7 +10,7 @@
      since they're reading/writing real customer data.
 */
 
-const CACHE_NAME = 'faizal-pharmacy-v1';
+const CACHE_NAME = 'faizal-pharmacy-v2';
 const APP_SHELL = [
   '/',
   '/manifest.json',
@@ -54,8 +54,10 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(req)
         .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put('/', copy));
+          if (res.ok) {
+            const copy = res.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put('/', copy));
+          }
           return res;
         })
         .catch(() =>
@@ -70,11 +72,15 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Static assets (icons, manifest) — cache-first
+  // Static assets (icons, manifest, images) — cache-first, but never cache
+  // a failed (404/500) response — otherwise a temporarily-missing file
+  // would stay "broken" forever, even after it's fixed on the server.
   event.respondWith(
     caches.match(req).then((cached) => cached || fetch(req).then((res) => {
-      const copy = res.clone();
-      caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
+      if (res.ok) {
+        const copy = res.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
+      }
       return res;
     }).catch(() => cached))
   );

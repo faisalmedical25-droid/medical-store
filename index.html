@@ -4702,11 +4702,13 @@ window.medEnableNotifications = function(){
       medRenderNotifBox();
     }).catch(function(err){
       console.error('Medicine push setup failed:', err);
+      alert('Push setup error: ' + (err && err.message ? err.message : String(err)));
       medRenderNotifBox();
     });
 
   }).catch(function(err){
     console.error('Notification permission failed:', err);
+    alert('Notification error: ' + (err && err.message ? err.message : String(err)));
     medRenderNotifBox();
   });
 };

@@ -85,3 +85,45 @@ self.addEventListener('fetch', (event) => {
     }).catch(() => cached))
   );
 });
+
+/* ================= Medicine Reminder — Web Push (additive) =================
+   Handles incoming push messages sent by the Worker's cron job, and what
+   happens when the user taps a notification. Nothing above this line was
+   changed. */
+
+self.addEventListener('push', (event) => {
+  let data = {};
+  try { data = event.data ? event.data.json() : {}; } catch (e) { /* ignore malformed payload */ }
+
+  const title = data.title || '💊 Faizal Pharmacy';
+  const options = {
+    body: data.body || '',
+    icon: '/icons/icon-192.png',
+    badge: '/icons/icon-192.png',
+    tag: data.tag || 'med-reminder',
+    data: { url: data.url || 'https://lahoremedicalstore.com/?pwa=1#logbook-section' },
+    // A dose reminder repeats a few times a day — renotify so a second
+    // reminder for the same medicine isn't silently swallowed by the tag.
+    renotify: true,
+  };
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const targetUrl = (event.notification.data && event.notification.data.url)
+    || 'https://lahoremedicalstore.com/?pwa=1#logbook-section';
+
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientsArr) => {
+      for (const c of clientsArr) {
+        // Reuse an already-open tab/PWA window instead of spawning a new one.
+        if (c.url.startsWith(self.location.origin) && 'focus' in c) {
+          c.navigate(targetUrl).catch(() => {});
+          return c.focus();
+        }
+      }
+      return self.clients.openWindow(targetUrl);
+    })
+  );
+});

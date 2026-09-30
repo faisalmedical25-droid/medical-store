@@ -4450,21 +4450,30 @@ window.lbLogin = function(){
   .med-summary-chip b{ display:block; font-size:18px; color:#1F3D33; }
   .med-item{ background:#fafcfb; border:1px solid #eef2f0; border-radius:12px; padding:13px; margin-bottom:10px; }
   .med-item.low{ border-color:#FFB74D; background:#FFF8E1; }
-  .med-item-name{ font-weight:700; font-size:16px; margin-bottom:2px; }
-  .med-item-times{ color:#6b7b73; font-size:13px; margin-bottom:6px; }
-  .med-stock-bar{ background:#e3e7e5; border-radius:6px; height:8px; overflow:hidden; margin:6px 0; }
-  .med-stock-bar-fill{ background:#2E7D32; height:100%; }
-  .med-item.low .med-stock-bar-fill{ background:#F57C00; }
-  .med-actions{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
-  .med-btn{ border:1px solid #cfd8d4; background:#fff; border-radius:8px; padding:6px 12px; font-size:13px; cursor:pointer; }
-  .med-btn.primary{ background:#2E7D32; color:#fff; border-color:#2E7D32; }
+  .med-item-name{ font-weight:700; font-size:17px; margin-bottom:2px; }
+  .med-item-times{ color:#6b7b73; font-size:14px; margin-bottom:6px; }
+  .med-actions{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  /* Accessibility: ~44px touch targets, 16px+ text — older users need this. */
+  .med-btn{ border:1px solid #cfd8d4; background:#fff; border-radius:10px; padding:11px 16px;
+    font-size:15px; cursor:pointer; min-height:44px; }
+  .med-btn.primary{ background:#2E7D32; color:#fff; border-color:#2E7D32; font-weight:700; }
   .med-btn.warn{ background:#c62828; color:#fff; border-color:#c62828; }
-  .med-form label{ display:block; font-size:13px; color:#4a5750; margin:10px 0 4px; }
-  .med-form input, .med-form select{ width:100%; box-sizing:border-box; padding:9px 10px; border:1px solid #cfd8d4; border-radius:8px; font-size:15px; }
+  .med-btn.small{ padding:8px 12px; font-size:13px; min-height:38px; }
+  .med-form label{ display:block; font-size:14px; color:#4a5750; margin:12px 0 5px; font-weight:600; }
+  .med-form input, .med-form select{ width:100%; box-sizing:border-box; padding:12px 12px; border:1px solid #cfd8d4;
+    border-radius:10px; font-size:16px; min-height:44px; }
   .med-time-row{ display:flex; gap:6px; margin-bottom:6px; align-items:center; }
   .med-time-row input{ flex:1; }
   .med-notif-box{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
-    background:#F2ECDF; border-radius:10px; padding:10px 12px; margin-bottom:14px; font-size:13px; }
+    border-radius:10px; padding:12px 14px; margin-bottom:14px; font-size:14px; }
+  /* Status is never color-only — every state also has an icon + text label. */
+  .med-notif-box.ready{ background:#E8F5E9; border:1px solid #A5D6A7; }
+  .med-notif-box.setup{ background:#FFF8E1; border:1px solid #FFE082; }
+  .med-notif-box.blocked{ background:#FFEBEE; border:1px solid #EF9A9A; }
+  .med-notif-box.install{ background:#E3F2FD; border:1px solid #90CAF9; }
+  .med-notif-box.unsupported{ background:#F5F5F5; border:1px solid #ddd; }
+  .med-empty{ text-align:center; padding:24px 12px; }
+  .med-empty-steps{ text-align:right; max-width:280px; margin:10px auto; font-size:14px; line-height:2; color:#4a5750; }
   .med-hidden{ display:none !important; }
 </style>
 <script>
@@ -4480,6 +4489,7 @@ window.lbLogin = function(){
   var medReminders = [];
   var medTodayEvents = [];
   var medEditingId = null;
+  var medDeferredInstallPrompt = null; // this module's OWN beforeinstallprompt capture
 
   try { medToken = localStorage.getItem(TOKEN_KEY); } catch(e){}
 
@@ -4488,6 +4498,20 @@ window.lbLogin = function(){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
   }); }
 
+  // Multiple listeners on beforeinstallprompt are fine — the existing
+  // site-wide install banner has its own, this is a second independent one
+  // just so the Dawai Assistant card can show its own install nudge without
+  // touching that unrelated script.
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();
+    medDeferredInstallPrompt = e;
+    medRenderNotifBox();
+  });
+  window.addEventListener('appinstalled', function(){
+    medDeferredInstallPrompt = null;
+    medRenderNotifBox();
+  });
+
   function medApi(path, payload){
     if(!API) return Promise.reject(new Error('offline'));
     var p = Object.assign({}, payload || {}, { token: medToken });
@@ -4495,7 +4519,6 @@ window.lbLogin = function(){
       method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(p)
     }).then(function(r){ return r.json(); }).then(function(d){
       if(d && d.error === 'auth'){
-        // token invalid/expired — drop it so the next action re-prompts for PIN
         medToken = null;
         try{ localStorage.removeItem(TOKEN_KEY); }catch(e){}
       }
@@ -4505,15 +4528,14 @@ window.lbLogin = function(){
   }
 
   /* ---- getting/keeping a session token ----
-     First time: needs phone+pin (same PIN the user just logged into the log
-     book with). After that, the token alone is enough forever — this is
-     exactly what lets a push-notification tap or a reopened PWA act without
-     the PIN being in memory (see analysis: sessionPin is never persisted). */
+     First time: needs phone+pin. After that, the token alone is enough —
+     this is what lets a push-notification tap or a reopened PWA act
+     without the PIN being in memory. Token now expires server-side after
+     30 days of inactivity (see worker.js) — resolved automatically, the
+     app just gets an 'auth' error and re-prompts for PIN if that happens. */
   function medEnsureToken(){
     if(medToken) return Promise.resolve(medToken);
-    if(!medPhone || !medPin){
-      return Promise.reject(new Error('need_pin'));
-    }
+    if(!medPhone || !medPin) return Promise.reject(new Error('need_pin'));
     if(!API) return Promise.reject(new Error('offline'));
     return fetch(API + '/api/medreminder/session', {
       method:'POST', headers:{'Content-Type':'application/json'},
@@ -4531,16 +4553,37 @@ window.lbLogin = function(){
     var box = el('medReminderSection');
     if(!box) return;
     medRenderShell();
-    medEnsureToken().then(medRefresh).catch(function(err){
-      if(String(err.message) === 'need_pin'){
-        medRenderPinPrompt();
-      } else {
-        el('medList').innerHTML = '<div class="med-safety">انٹرنیٹ سے رابطہ نہیں ہو سکا۔</div>';
-      }
+    medEnsureToken().then(function(){
+      return medRefresh();
+    }).then(function(){
+      // Auto-resync: if this browser already has a push subscription, make
+      // sure the backend still has it too — silently, no button press
+      // needed. This is what fixes "browser has a subscription but backend
+      // lost it" without ever bothering the user.
+      return medSilentResync();
+    }).catch(function(err){
+      if(String(err.message) === 'need_pin'){ medRenderPinPrompt(); }
+      else { el('medList').innerHTML = '<div class="med-safety">انٹرنیٹ سے رابطہ نہیں ہو سکا۔</div>'; }
     });
+
+    // Deep link: https://lahoremedicalstore.com/?tool=medicine-reminder
+    // opens the log book and scrolls straight to this section — meant for
+    // a QR code on pharmacy bags/receipts. Contains no personal data.
+    try{
+      var params = new URLSearchParams(window.location.search);
+      if(params.get('tool') === 'medicine-reminder'){
+        setTimeout(function(){
+          var sec = document.getElementById('logbook-section');
+          if(sec) sec.scrollIntoView({behavior:'smooth', block:'start'});
+        }, 300);
+      }
+    }catch(e){}
   };
 
   window.medOnLogout = function(){
+    // Real server-side revocation now, not just a local clear — an old
+    // token left valid on the backend forever was a real gap.
+    if(medToken){ medApi('/api/medreminder/logout', {}).catch(function(){}); }
     medToken = null; medPhone = null; medPin = null; medReminders = []; medTodayEvents = [];
     try{ localStorage.removeItem(TOKEN_KEY); }catch(e){}
     var box = el('medReminderSection');
@@ -4550,14 +4593,14 @@ window.lbLogin = function(){
   function medRenderShell(){
     el('medReminderSection').innerHTML =
       '<div class="med-card">' +
-        '<h3 class="lb-h3">💊 Medicine Reminder &amp; Stock</h3>' +
+        '<h3 class="lb-h3">💊 Dawai Assistant</h3>' +
         '<div class="med-safety">یہ فیچر صرف آپ کے خود محفوظ کیے ہوئے شیڈول اور مقدار کے مطابق ریمائنڈر اور سٹاک اندازہ دیتا ہے۔ ' +
           'دوا، خوراک یا وقت ڈاکٹر/فارماسسٹ کے مشورے کے بغیر تبدیل نہ کریں۔</div>' +
         '<div id="medPinPrompt"></div>' +
         '<div id="medNotifBox"></div>' +
         '<div id="medSummary" class="med-summary"></div>' +
         '<div id="medList"></div>' +
-        '<button type="button" class="med-btn primary" onclick="medShowAddForm()">+ نئی دوا شامل کریں</button>' +
+        '<button type="button" class="med-btn primary" onclick="medShowAddForm()">+ دوا شامل کریں</button>' +
         '<div id="medFormBox"></div>' +
       '</div>';
     medRenderNotifBox();
@@ -4569,7 +4612,7 @@ window.lbLogin = function(){
         'میڈیسن ریمائنڈر فعال کرنے کے لیے ایک بار اپنا PIN دوبارہ درج کریں:' +
         '<div style="display:flex;gap:8px;margin-top:8px;">' +
           '<input type="password" id="medPinInput" class="lb-input" inputmode="numeric" maxlength="4" placeholder="••••" dir="ltr" style="max-width:100px;">' +
-          '<button type="button" class="med-btn primary" onclick="medSubmitPin()">تصدیق کریں</button>' +
+          '<button type="button" class="med-btn primary small" onclick="medSubmitPin()">تصدیق کریں</button>' +
         '</div><div id="medPinMsg" style="color:#c62828;font-size:12px;margin-top:4px;"></div>' +
       '</div>';
   }
@@ -4580,40 +4623,115 @@ window.lbLogin = function(){
     medEnsureToken().then(function(){
       el('medPinPrompt').innerHTML = '';
       medRefresh();
+      medSilentResync();
     }).catch(function(){
       el('medPinMsg').textContent = 'PIN غلط ہے۔';
     });
   };
 
-  /* ---- notification permission: states exactly as specified —
-     Not enabled / Enabled / Blocked / Unsupported / Install PWA first.
-     Never requested automatically; only ever from the button below. ---- */
+  /* =====================================================================
+     NOTIFICATION READINESS — a real, backend-confirmed state machine.
+     Previously this only checked Notification.permission, so a customer
+     could see "enabled" while the backend had no subscription at all
+     (Problem 2/4's root cause). Now "ready" requires: permission granted
+     AND a local push subscription exists AND the backend confirms it has
+     that exact subscription registered.
+     ===================================================================== */
   function medIsIOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream; }
+  function medIsAndroid(){ return /android/i.test(navigator.userAgent); }
   function medIsStandalone(){
     return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
   }
-  function medNotifState(){
+
+  var medState = 'checking'; // checking | unsupported | install_pwa_first | blocked | not_enabled | setup_incomplete | ready
+  var medLastError = '';
+
+  function medComputeBaseState(){
     if(!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) return 'unsupported';
     if(medIsIOS() && !medIsStandalone()) return 'install_pwa_first';
     if(Notification.permission === 'denied') return 'blocked';
-    if(Notification.permission === 'granted') return 'enabled';
-    return 'not_enabled';
+    if(Notification.permission === 'default') return 'not_enabled';
+    return null; // permission is 'granted' — need the deeper (async) check below
   }
+
+  /* Runs on every medInit AND after every enable/test action. Silent —
+     never shows an error toast on its own, just updates the status card. */
+  function medSilentResync(){
+    var base = medComputeBaseState();
+    if(base){ medState = base; medRenderNotifBox(); return Promise.resolve(); }
+
+    if(!navigator.serviceWorker.getRegistration){ medState = 'unsupported'; medRenderNotifBox(); return Promise.resolve(); }
+
+    return navigator.serviceWorker.getRegistration().then(function(reg){
+      if(!reg) { medState = 'not_enabled'; medRenderNotifBox(); return; }
+      return reg.pushManager.getSubscription().then(function(sub){
+        if(!sub){ medState = 'not_enabled'; medRenderNotifBox(); return; }
+        // We have a local subscription — confirm (and silently re-upsert)
+        // with the backend so a lost D1 row self-heals with zero taps.
+        var json = sub.toJSON();
+        return medEnsureToken().then(function(){
+          return medApi('/api/medreminder/push/subscribe', {
+            endpoint: json.endpoint, keys: json.keys, user_agent: navigator.userAgent,
+          });
+        }).then(function(){
+          medState = 'ready';
+          medRenderNotifBox();
+        }).catch(function(err){
+          medState = 'setup_incomplete';
+          medLastError = String(err.message || err);
+          medRenderNotifBox();
+        });
+      });
+    }).catch(function(err){
+      medState = 'setup_incomplete';
+      medLastError = String(err.message || err);
+      medRenderNotifBox();
+    });
+  }
+
   function medRenderNotifBox(){
     var box = el('medNotifBox');
-    var state = medNotifState();
-    var label = {
-      unsupported: '🔕 اس براؤزر میں نوٹیفیکیشن سپورٹ نہیں ہے۔',
-      install_pwa_first: '📲 میڈیسن ریمائنڈرز کے لیے ایپ کو پہلے iPhone Home Screen پر add کریں۔',
-      blocked: '🔕 نوٹیفیکیشن بند ہیں — iPhone/Android کی سیٹنگز میں اجازت دیں۔',
-      not_enabled: '🔔 نوٹیفیکیشن ابھی آن نہیں ہیں۔',
-      enabled: '✅ نوٹیفیکیشن آن ہیں۔',
-    }[state];
-    var btn = state === 'not_enabled'
-      ? '<button type="button" class="med-btn primary" onclick="medEnableNotifications()">Notifications On Karein</button>' : '';
-    box.innerHTML = '<div class="med-notif-box"><span>'+label+'</span>'+btn+'</div>' +
-      (state === 'enabled' ? medPrivacySelectHtml() : '');
+    if(!box) return;
+
+    var cfg = {
+      unsupported:      { cls:'unsupported', icon:'⚠', text:'اس براؤزر میں نوٹیفیکیشن سپورٹ نہیں ہے۔' },
+      install_pwa_first:{ cls:'install',     icon:'📲', text:'ریمائنڈرز کے لیے پہلے ایپ کو iPhone Home Screen پر Add کریں۔' },
+      blocked:           { cls:'blocked',     icon:'🔴', text:'نوٹیفیکیشن بند ہیں — فون کی Settings میں اجازت دیں۔' },
+      not_enabled:       { cls:'setup',       icon:'🔔', text:'ریمائنڈر ابھی آن نہیں ہیں۔' },
+      setup_incomplete:  { cls:'setup',       icon:'🟡', text:'سیٹ اپ ادھورا ہے — دوبارہ کوشش کریں۔' },
+      ready:             { cls:'ready',       icon:'✅', text:'اس فون پر ریمائنڈر تیار ہیں۔' },
+      checking:          { cls:'setup',       icon:'…', text:'چیک ہو رہا ہے...' },
+    }[medState] || { cls:'setup', icon:'…', text:'' };
+
+    var actionBtn = '';
+    if(medState === 'not_enabled' || medState === 'setup_incomplete'){
+      actionBtn = '<button type="button" class="med-btn primary" onclick="medEnableNotifications()">🔔 Dawai Reminder On Karein</button>';
+    }
+    var testBtn = (medState === 'ready')
+      ? '<button type="button" class="med-btn small" onclick="medSendTest()">🧪 Test Reminder Bhejein</button>' : '';
+    var installBtn = '';
+    if(medIsAndroid() && !medIsStandalone() && medDeferredInstallPrompt){
+      installBtn = '<button type="button" class="med-btn small" onclick="medInstallApp()">📲 App Install Karein</button>';
+    }
+    var errLine = (medState === 'setup_incomplete' && medLastError)
+      ? '<div style="width:100%;font-size:12px;color:#c62828;margin-top:4px;">Wajah: '+esc(medLastError)+'</div>' : '';
+    var testResult = el('medTestResult') ? el('medTestResult').outerHTML : '<div id="medTestResult"></div>';
+
+    box.className = 'med-notif-box ' + cfg.cls;
+    box.innerHTML = '<span>'+cfg.icon+' '+cfg.text+'</span>' +
+      '<div class="med-actions" style="margin:0;">'+actionBtn+testBtn+installBtn+'</div>' + errLine +
+      (medState === 'ready' ? medPrivacySelectHtml() : '') + testResult;
   }
+
+  window.medInstallApp = function(){
+    if(!medDeferredInstallPrompt) return;
+    medDeferredInstallPrompt.prompt();
+    medDeferredInstallPrompt.userChoice.finally(function(){
+      medDeferredInstallPrompt = null;
+      medRenderNotifBox();
+    });
+  };
+
   function medPrivacySelectHtml(){
     var cur = (localStorage.getItem('fp_med_privacy_v1') || PRIVACY_KEY_DEFAULT);
     function opt(v,label){ return '<option value="'+v+'"'+(cur===v?' selected':'')+'>'+label+'</option>'; }
@@ -4627,13 +4745,11 @@ window.lbLogin = function(){
   }
   window.medSetPrivacy = function(v){
     try{ localStorage.setItem('fp_med_privacy_v1', v); }catch(e){}
-    // Applies to every active reminder — one setting for the whole feature,
-    // simplest thing that matches "same privacy preference applies to stock
-    // notifications" from the spec.
     medReminders.forEach(function(r){
       medApi('/api/medreminder/update', { id:r.id, notification_privacy:v }).catch(function(){});
     });
   };
+
   function urlBase64ToUint8Array(base64String){
     var padding = '='.repeat((4 - base64String.length % 4) % 4);
     var base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
@@ -4642,76 +4758,83 @@ window.lbLogin = function(){
     for(var i=0;i<rawData.length;i++) out[i] = rawData.charCodeAt(i);
     return out;
   }
-window.medEnableNotifications = function(){
 
-  if (!('Notification' in window) ||
-      !('serviceWorker' in navigator) ||
-      !('PushManager' in window)) {
-    alert('Is browser/device par PWA notifications available nahi hain. iPhone par app ko Home Screen par add karke dobara koshish karein.');
-    medRenderNotifBox();
-    return;
+  /* The actual Android fix: if a push subscription already exists in this
+     browser using a DIFFERENT VAPID key than the one currently configured
+     (e.g. keys were regenerated, or the DB was migrated), Chrome throws
+     InvalidStateError on subscribe() and every previous version of this
+     code silently swallowed that into a generic catch. Now: always clear
+     any existing subscription first, then subscribe fresh with the
+     current key — guarantees no stale-key conflict, ever. */
+  function medSubscribePush(reg, publicKeyB64){
+    return reg.pushManager.getSubscription().then(function(existing){
+      if(existing){
+        return existing.unsubscribe().catch(function(){}).then(doSubscribe);
+      }
+      return doSubscribe();
+      function doSubscribe(){
+        return reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(publicKeyB64),
+        });
+      }
+    });
   }
 
-  Notification.requestPermission().then(function(perm){
+  window.medEnableNotifications = function(){
+    // Explicit user tap → request permission now (never on page load).
+    medLastError = '';
+    Notification.requestPermission().then(function(perm){
+      if(perm !== 'granted'){ medState = (perm === 'denied' ? 'blocked' : 'not_enabled'); medRenderNotifBox(); return; }
 
-    if (perm !== 'granted') {
-      medRenderNotifBox();
-      return;
-    }
+      navigator.serviceWorker.register('/sw.js').catch(function(){}); // idempotent if already registered
 
-    navigator.serviceWorker.ready.then(function(reg){
-
-      return fetch(API + '/api/medreminder/vapid-public-key')
-        .then(function(r){
-          if (!r.ok) throw new Error('vapid_fetch_failed');
-          return r.json();
-        })
-        .then(function(d){
-
-          if (!d.publicKey) {
-            throw new Error('no_vapid_key');
-          }
-
-          return reg.pushManager.getSubscription().then(function(existing){
-
-            if (existing) return existing;
-
-            return reg.pushManager.subscribe({
-              userVisibleOnly: true,
-              applicationServerKey: urlBase64ToUint8Array(d.publicKey)
-            });
-
+      navigator.serviceWorker.ready.then(function(reg){
+        return fetch(API + '/api/medreminder/vapid-public-key').then(function(r){ return r.json(); })
+          .then(function(d){
+            if(!d.publicKey) throw new Error('VAPID key backend se nahi mili');
+            return medSubscribePush(reg, d.publicKey);
+          });
+      }).then(function(sub){
+        var json = sub.toJSON();
+        return medEnsureToken().then(function(){
+          return medApi('/api/medreminder/push/subscribe', {
+            endpoint: json.endpoint, keys: json.keys, user_agent: navigator.userAgent,
           });
         });
-
-    }).then(function(sub){
-
-      var json = sub.toJSON();
-
-      return medEnsureToken().then(function(){
-
-        return medApi('/api/medreminder/push/subscribe', {
-          endpoint: json.endpoint,
-          keys: json.keys,
-          user_agent: navigator.userAgent
-        });
-
+      }).then(function(){
+        medState = 'ready';
+        medRenderNotifBox();
+      }).catch(function(err){
+        medState = 'setup_incomplete';
+        medLastError = String(err.message || err);
+        medRenderNotifBox();
       });
-
-    }).then(function(){
-      medRenderNotifBox();
-    }).catch(function(err){
-      console.error('Medicine push setup failed:', err);
-      alert('Push setup error: ' + (err && err.message ? err.message : String(err)));
-      medRenderNotifBox();
     });
+  };
 
-  }).catch(function(err){
-    console.error('Notification permission failed:', err);
-    alert('Notification error: ' + (err && err.message ? err.message : String(err)));
-    medRenderNotifBox();
-  });
-};
+  window.medSendTest = function(){
+    var resultBox = el('medTestResult');
+    if(resultBox) resultBox.innerHTML = '<div style="font-size:12px;color:#6b7b73;">بھیجا جا رہا ہے...</div>';
+    navigator.serviceWorker.getRegistration().then(function(reg){
+      return reg.pushManager.getSubscription();
+    }).then(function(sub){
+      if(!sub) throw new Error('no_local_subscription');
+      return medApi('/api/medreminder/push/test', { endpoint: sub.endpoint });
+    }).then(function(d){
+      var rb = el('medTestResult');
+      if(!rb) return;
+      rb.innerHTML = d.delivered
+        ? '<div style="font-size:13px;color:#2E7D32;font-weight:700;margin-top:4px;">✅ Is phone par reminders ready hain</div>'
+        : '<div style="font-size:13px;color:#c62828;margin-top:4px;">Test notification nahi pohanchi — thori dair baad dobara try karein.</div>';
+    }).catch(function(err){
+      var rb = el('medTestResult');
+      var msg = String(err.message) === 'rate_limited'
+        ? 'Bohat dafa test kar liya — thori dair baad try karein.'
+        : 'Test bhejne mein masla hua: ' + err.message;
+      if(rb) rb.innerHTML = '<div style="font-size:13px;color:#c62828;margin-top:4px;">'+esc(msg)+'</div>';
+    });
+  };
 
   /* ---- dashboard ---- */
   function medRefresh(){
@@ -4719,8 +4842,6 @@ window.medEnableNotifications = function(){
       medReminders = d.reminders || [];
       medTodayEvents = d.today_events || [];
       medRender();
-    }).catch(function(err){
-      if(String(err.message) === 'need_pin' || String(err.message) === 'auth'){ medRenderPinPrompt(); }
     });
   }
   function medEventFor(reminderId, time){
@@ -4731,21 +4852,27 @@ window.medEnableNotifications = function(){
   }
   function medRender(){
     var active = medReminders.filter(function(r){ return r.active; });
+
+    if(!medReminders.length){
+      el('medSummary').innerHTML = '';
+      el('medList').innerHTML =
+        '<div class="med-empty">' +
+          '<div style="font-size:15px;font-weight:700;margin-bottom:6px;">💊 اپنی دوا کا ریمائنڈر لگائیں</div>' +
+          '<div class="med-empty-steps">1. دوا کا نام<br>2. وقت<br>3. Reminder On</div>' +
+        '</div>';
+      return;
+    }
+
     var low = active.filter(function(r){ return r.low_stock; }).length;
     var takenToday = medTodayEvents.filter(function(e){ return e.status === 'taken'; }).length;
     var todayCount = 0;
     active.forEach(function(r){ todayCount += r.times.length; });
 
     el('medSummary').innerHTML =
-      '<div class="med-summary-chip"><b>'+active.length+'</b>Active medicines</div>' +
+      '<div class="med-summary-chip"><b>'+active.length+'</b>Active</div>' +
       '<div class="med-summary-chip"><b>'+low+'</b>Low stock</div>' +
-      '<div class="med-summary-chip"><b>'+todayCount+'</b>Today reminders</div>' +
-      '<div class="med-summary-chip"><b>'+takenToday+'</b>Taken today</div>';
-
-    if(!medReminders.length){
-      el('medList').innerHTML = '<div class="lb-empty">ابھی کوئی دوا شامل نہیں کی گئی۔</div>';
-      return;
-    }
+      '<div class="med-summary-chip"><b>'+todayCount+'</b>Aaj</div>' +
+      '<div class="med-summary-chip"><b>'+takenToday+'</b>Le li</div>';
 
     el('medList').innerHTML = medReminders.map(medItemHtml).join('');
   }
@@ -4753,31 +4880,24 @@ window.medEnableNotifications = function(){
     var unit = r.stock_unit === 'other' ? (r.custom_unit || '') : (r.stock_unit || '');
     var stockLine = '';
     if(r.stock_tracking_enabled){
-      var pct = null;
-      // A meaningful denominator only exists if we know the daily usage —
-      // otherwise we simply don't draw a percentage bar at all.
-      if(r.daily_usage && r.days_remaining != null){
-        var refDays = Math.max(r.days_remaining, 1);
-        pct = Math.max(4, Math.min(100, Math.round((r.days_remaining/Math.max(refDays,1))*100)));
-      }
       stockLine =
         '<div>Stock: '+esc(r.stock_quantity)+' '+esc(unit)+'</div>' +
-        (r.days_remaining != null ? '<div>Estimated remaining: '+r.days_remaining+' din'+
-          (r.estimated_finish_date ? ' — taqreeban '+esc(r.estimated_finish_date)+' tak' : '')+'</div>' : '') +
-        (r.low_stock ? '<div style="color:#E65100;font-weight:700;">⚠ Stock low — refill ki zaroorat ho sakti hai</div>' : '');
+        (r.days_remaining != null ? '<div>Taqreeban '+r.days_remaining+' din baaqi'+
+          (r.estimated_finish_date ? ' — '+esc(r.estimated_finish_date)+' tak' : '')+'</div>' : '') +
+        (r.low_stock ? '<div style="color:#E65100;font-weight:700;">⚠ Stock kam reh gaya hai</div>' : '');
     }
     var timesHtml = r.times.map(function(t){
       var ev = medEventFor(r.id, t);
       var status = ev ? ev.status : 'pending';
-      var statusLabel = {pending:'Pending', taken:'Taken', skipped:'Skipped', snoozed:'Snoozed'}[status] || status;
+      var statusLabel = {pending:'⏰ Aani hai', taken:'✅ Le Li', skipped:'✕ Skip', snoozed:'⏰ Baad mein'}[status] || status;
       var actions = '';
       if(status !== 'taken'){
         actions =
-          '<button type="button" class="med-btn primary" onclick="medMark(\''+r.id+'\',\''+t+'\',\'taken\')">TAKEN</button>' +
-          '<button type="button" class="med-btn" onclick="medSnoozeMenu(\''+r.id+'\',\''+t+'\')">SNOOZE</button>' +
-          '<button type="button" class="med-btn" onclick="medMark(\''+r.id+'\',\''+t+'\',\'skipped\')">SKIP</button>';
+          '<button type="button" class="med-btn primary small" onclick="medMark(\''+r.id+'\',\''+t+'\',\'taken\')">✅ Le Li</button>' +
+          '<button type="button" class="med-btn small" onclick="medSnoozeMenu(\''+r.id+'\',\''+t+'\')">⏰ Baad Mein Yaad Dilayein</button>' +
+          '<button type="button" class="med-btn small" onclick="medMark(\''+r.id+'\',\''+t+'\',\'skipped\')">✕ Skip</button>';
       }
-      return '<div style="margin:4px 0;">'+esc(t)+' — '+statusLabel+'<div class="med-actions">'+actions+'</div></div>';
+      return '<div style="margin:6px 0;">'+esc(t)+' — '+statusLabel+'<div class="med-actions">'+actions+'</div></div>';
     }).join('');
 
     return '<div class="med-item'+(r.low_stock?' low':'')+'">' +
@@ -4786,18 +4906,16 @@ window.medEnableNotifications = function(){
       timesHtml +
       stockLine +
       '<div class="med-actions">' +
-        '<button type="button" class="med-btn" onclick="medShowAddForm(\''+r.id+'\')">EDIT</button>' +
-        '<button type="button" class="med-btn" onclick="medPause(\''+r.id+'\','+(r.active?'false':'true')+')">'+(r.active?'PAUSE':'RESUME')+'</button>' +
-        (r.stock_tracking_enabled ? '<button type="button" class="med-btn" onclick="medStockAddPrompt(\''+r.id+'\')">Stock Add Karein</button>' : '') +
-        (r.low_stock ? '<a class="med-btn" style="text-decoration:none;" target="_blank" href="'+medRefillWaLink(r)+'">Faizal Pharmacy se availability poochein</a>' : '') +
-        '<button type="button" class="med-btn warn" onclick="medDelete(\''+r.id+'\')">DELETE</button>' +
+        '<button type="button" class="med-btn small" onclick="medShowAddForm(\''+r.id+'\')">Edit</button>' +
+        '<button type="button" class="med-btn small" onclick="medPause(\''+r.id+'\','+(r.active?'false':'true')+')">'+(r.active?'Pause':'Resume')+'</button>' +
+        (r.stock_tracking_enabled ? '<button type="button" class="med-btn small" onclick="medStockAddPrompt(\''+r.id+'\')">📦 Stock Add Karein</button>' : '') +
+        (r.stock_tracking_enabled ? '<button type="button" class="med-btn small" onclick="medStockCorrectPrompt(\''+r.id+'\')">📦 Stock Correct Karein</button>' : '') +
+        (r.low_stock ? '<a class="med-btn small" style="text-decoration:none;" target="_blank" href="'+medRefillWaLink()+'">Faizal Pharmacy se availability poochein</a>' : '') +
+        '<button type="button" class="med-btn warn small" onclick="medDelete(\''+r.id+'\')">Delete</button>' +
       '</div>' +
     '</div>';
   }
-  function medRefillWaLink(r){
-    // Shown to the user first — WhatsApp only opens if THEY tap it. Nothing
-    // is ever sent automatically, and the message doesn't leak the exact
-    // medicine name (the pharmacy will ask directly if needed).
+  function medRefillWaLink(){
     var msg = 'Assalam-o-Alaikum, mujhe apni ek dawai ke stock/availability ke baare mein poochna tha.';
     return 'https://wa.me/923218861265?text='+encodeURIComponent(msg);
   }
@@ -4810,9 +4928,9 @@ window.medEnableNotifications = function(){
     }).then(medRefresh).catch(function(){ alert('Update nahi ho saka, internet check karein.'); });
   };
   window.medSnoozeMenu = function(reminderId, time){
-    var choice = prompt('Kitni der ke liye snooze karein? 10, 30, ya 60 (minutes)', '10');
+    var choice = prompt('Kitni der ke liye? 10, 30, ya 60 (minutes)', '10');
     var n = Number(choice);
-    if(![10,30,60].includes(n)) return;
+    if([10,30,60].indexOf(n) === -1) return;
     medMark(reminderId, time, 'snoozed', n);
   };
   window.medPause = function(id, active){
@@ -4830,6 +4948,25 @@ window.medEnableNotifications = function(){
       .catch(function(){ alert('Add nahi ho saka.'); });
   };
 
+  /* ---- Stock Correct Karein — a SEPARATE, honest flow (Problem 5 fix).
+     The Edit form below never shows current stock as an editable field —
+     that silently did nothing before, which looked broken. This is the
+     only place current stock can be corrected, and it always goes through
+     the ledger-safe /stock/set endpoint with an explicit confirmation. ---- */
+  window.medStockCorrectPrompt = function(id){
+    var r = medReminders.filter(function(x){ return x.id === id; })[0];
+    if(!r) return;
+    var unit = r.stock_unit === 'other' ? (r.custom_unit || '') : (r.stock_unit || '');
+    var input = prompt('Current stock: '+r.stock_quantity+' '+unit+'\n\nNaya asal stock darj karein:', r.stock_quantity);
+    if(input == null) return;
+    var qty = Number(input);
+    if(!(qty >= 0)){ alert('Sahi quantity likhein.'); return; }
+    if(!confirm('Stock '+r.stock_quantity+' se '+qty+' ho jayega. Confirm karein?')) return;
+    var note = prompt('Wajah (optional):', 'Actual strip count') || '';
+    medApi('/api/medreminder/stock/set', { id: id, quantity: qty, note: note }).then(medRefresh)
+      .catch(function(){ alert('Correct nahi ho saka.'); });
+  };
+
   /* ---- add / edit form ---- */
   window.medShowAddForm = function(editId){
     medEditingId = editId || null;
@@ -4839,7 +4976,7 @@ window.medEnableNotifications = function(){
     function timeRowsHtml(){
       return times.map(function(t,i){
         return '<div class="med-time-row"><input type="time" class="med-time-input" value="'+esc(t)+'" dir="ltr">' +
-          (times.length>1 ? '<button type="button" class="med-btn" onclick="medRemoveTimeRow('+i+')">✕</button>' : '') +
+          (times.length>1 ? '<button type="button" class="med-btn small" onclick="medRemoveTimeRow('+i+')">✕</button>' : '') +
           '</div>';
       }).join('');
     }
@@ -4852,19 +4989,23 @@ window.medEnableNotifications = function(){
 
     el('medFormBox').innerHTML =
       '<div class="med-form med-card" style="margin-top:12px;">' +
-        '<label>Medicine ka naam</label><input id="medFName" value="'+esc(existing?existing.medicine_name:'')+'">' +
+        (existing ? '<div class="med-safety" style="background:#F2ECDF;border-color:#e3e7e5;color:#4a5750;">موجودہ سٹاک صرف "Stock Correct Karein" بٹن سے بدلی جا سکتی ہے۔</div>' : '') +
+        '<label>💊 Dawa ka naam</label><input id="medFName" value="'+esc(existing?existing.medicine_name:'')+'">' +
         '<label>Instruction / dose (jo aap khud likhein)</label><input id="medFInstruction" value="'+esc(existing?existing.instruction:'')+'" placeholder="مثلاً: 1 tablet">' +
-        '<label>Reminder times</label><div id="medTimesBox">'+timeRowsHtml()+'</div>' +
-        '<button type="button" class="med-btn" onclick="medAddTimeRow()">+ ek aur waqt</button>' +
+        '<label>⏰ Waqt</label><div id="medTimesBox">'+timeRowsHtml()+'</div>' +
+        '<button type="button" class="med-btn small" onclick="medAddTimeRow()">+ ek aur waqt</button>' +
         '<label>Start date</label><input type="date" id="medFStart" value="'+esc(existing?existing.start_date:todayStr)+'" dir="ltr">' +
         '<label>End date (optional)</label><input type="date" id="medFEnd" value="'+esc(existing?existing.end_date||'':'')+'" dir="ltr">' +
+        '<label>Manual refill date (optional)</label><input type="date" id="medFRefillDate" value="'+esc(existing?existing.manual_refill_date||'':'')+'" dir="ltr">' +
         '<label>Note (optional)</label><input id="medFNote" value="'+esc(existing?existing.note||'':'')+'">' +
         '<label style="display:flex;align-items:center;gap:8px;margin-top:14px;">' +
-          '<input type="checkbox" id="medFStockOn" '+(stockOn?'checked':'')+' onchange="medToggleStockFields()" style="width:18px;height:18px;">' +
-          'Stock/Refill tracker chalayen' +
+          '<input type="checkbox" id="medFStockOn" '+(stockOn?'checked':'')+' onchange="medToggleStockFields()" style="width:20px;height:20px;">' +
+          '📦 Stock / Refill bhi track karein' +
         '</label>' +
         '<div id="medStockFields" style="'+(stockOn?'':'display:none;')+'">' +
-          '<label>Quantity currently available</label><input type="number" id="medFStockQty" value="'+esc(existing?existing.stock_quantity??'':'')+'" dir="ltr">' +
+          (existing && existing.stock_tracking_enabled
+            ? '' // editing an existing tracked medicine: quantity changes only via Stock Correct/Add, not here
+            : '<label>Quantity abhi kitni hai</label><input type="number" id="medFStockQty" value="" dir="ltr">') +
           '<label>Unit</label><select id="medFStockUnit" onchange="medToggleCustomUnit()">' +
             ['tablet','capsule','ml','sachet','puff','unit','other'].map(function(u){
               return '<option value="'+u+'"'+((existing&&existing.stock_unit===u)?' selected':'')+'>'+u+'</option>';
@@ -4873,23 +5014,22 @@ window.medEnableNotifications = function(){
           '<div id="medCustomUnitBox" style="'+((existing&&existing.stock_unit==='other')?'':'display:none;')+'">' +
             '<label>Custom unit</label><input id="medFCustomUnit" value="'+esc(existing?existing.custom_unit||'':'')+'">' +
           '</div>' +
-          '<label>Amount per intake</label><input type="number" step="0.5" id="medFAmountPerIntake" value="'+esc(existing?existing.amount_per_intake??'':'')+'" dir="ltr">' +
-          '<label>Planned intakes per day</label><input type="number" step="1" id="medFIntakesPerDay" value="'+esc(existing?existing.planned_intakes_per_day??'':'')+'" dir="ltr">' +
+          '<label>Ek khuraak mein kitni</label><input type="number" step="0.5" id="medFAmountPerIntake" value="'+esc(existing?existing.amount_per_intake??'':'')+'" dir="ltr">' +
+          '<label>Din mein kitni dafa</label><input type="number" step="1" id="medFIntakesPerDay" value="'+esc(existing?existing.planned_intakes_per_day??'':'')+'" dir="ltr">' +
           '<label style="display:flex;align-items:center;gap:8px;">' +
-            '<input type="checkbox" id="medFAutoDeduct" '+((existing&&existing.auto_deduct_on_taken)?'checked':'')+' style="width:18px;height:18px;">' +
-            'Taken mark karne par stock automatically kam karein' +
+            '<input type="checkbox" id="medFAutoDeduct" '+((existing&&existing.auto_deduct_on_taken)?'checked':'')+' style="width:20px;height:20px;">' +
+            '"Le Li" dabane par stock khud kam karein' +
           '</label>' +
           '<label style="display:flex;align-items:center;gap:8px;">' +
-            '<input type="checkbox" id="medFLowStockOn" '+((existing&&existing.low_stock_enabled)?'checked':'')+' style="width:18px;height:18px;">' +
+            '<input type="checkbox" id="medFLowStockOn" '+((existing&&existing.low_stock_enabled)?'checked':'')+' style="width:20px;height:20px;">' +
             'Low Stock Reminder' +
           '</label>' +
-          '<label>Notify when approximately (days remain)</label>' +
+          '<label>Kitne din baaqi rehne par batayein</label>' +
           '<select id="medFLowStockDays">' +
             [1,2,3,5,7].map(function(d){
               return '<option value="'+d+'"'+((existing?existing.low_stock_days:3)==d?' selected':'')+'>'+d+' din</option>';
             }).join('') +
           '</select>' +
-          '<label>Manual refill date (optional)</label><input type="date" id="medFRefillDate" value="'+esc(existing?existing.manual_refill_date||'':'')+'" dir="ltr">' +
         '</div>' +
         '<div class="med-actions" style="margin-top:14px;">' +
           '<button type="button" class="med-btn primary" onclick="medSaveForm()">Save Karein</button>' +
@@ -4907,10 +5047,11 @@ window.medEnableNotifications = function(){
 
   window.medSaveForm = function(){
     var name = (el('medFName').value || '').trim();
-    if(!name){ el('medFormMsg').textContent = 'Medicine ka naam likhein.'; return; }
+    if(!name){ el('medFormMsg').textContent = 'Dawa ka naam likhein.'; return; }
     var times = Array.prototype.map.call(document.querySelectorAll('.med-time-input'), function(i){ return i.value; }).filter(Boolean);
-    if(!times.length){ el('medFormMsg').textContent = 'Kam az kam ek reminder time chahiye.'; return; }
+    if(!times.length){ el('medFormMsg').textContent = 'Kam az kam ek waqt chahiye.'; return; }
     var stockOn = el('medFStockOn').checked;
+    var isNewStockEntry = !!el('medFStockQty'); // only present for brand-new stock tracking, not when editing an already-tracked medicine
 
     var payload = {
       medicine_name: name,
@@ -4919,15 +5060,21 @@ window.medEnableNotifications = function(){
       start_date: el('medFStart').value,
       end_date: el('medFEnd').value || null,
       note: el('medFNote').value || '',
+      // Refill date is independent of stock tracking now (Problem 6 fix) —
+      // always read straight from its own field.
+      manual_refill_date: el('medFRefillDate').value || null,
       stock_tracking_enabled: stockOn,
       notification_privacy: localStorage.getItem('fp_med_privacy_v1') || PRIVACY_KEY_DEFAULT,
     };
     if(stockOn){
-      var qty = el('medFStockQty').value, api = el('medFAmountPerIntake').value, ipd = el('medFIntakesPerDay').value;
-      if(qty === '' || Number(qty) < 0){ el('medFormMsg').textContent = 'Stock quantity theek nahi.'; return; }
-      if(!(Number(api) > 0)){ el('medFormMsg').textContent = 'Amount per intake 0 se zyada hona chahiye.'; return; }
-      if(!(Number(ipd) > 0)){ el('medFormMsg').textContent = 'Planned intakes per day 0 se zyada hona chahiye.'; return; }
-      payload.stock_quantity = Number(qty);
+      var api = el('medFAmountPerIntake').value, ipd = el('medFIntakesPerDay').value;
+      if(!(Number(api) > 0)){ el('medFormMsg').textContent = 'Ek khuraak mein 0 se zyada hona chahiye.'; return; }
+      if(!(Number(ipd) > 0)){ el('medFormMsg').textContent = 'Din mein kitni dafa 0 se zyada hona chahiye.'; return; }
+      if(isNewStockEntry){
+        var qty = el('medFStockQty').value;
+        if(qty === '' || Number(qty) < 0){ el('medFormMsg').textContent = 'Stock quantity theek nahi.'; return; }
+        payload.stock_quantity = Number(qty);
+      }
       payload.stock_unit = el('medFStockUnit').value;
       payload.custom_unit = el('medFCustomUnit') ? el('medFCustomUnit').value : '';
       payload.amount_per_intake = Number(api);
@@ -4935,7 +5082,6 @@ window.medEnableNotifications = function(){
       payload.auto_deduct_on_taken = el('medFAutoDeduct').checked;
       payload.low_stock_enabled = el('medFLowStockOn').checked;
       payload.low_stock_days = Number(el('medFLowStockDays').value);
-      payload.manual_refill_date = el('medFRefillDate').value || null;
     }
 
     var endpoint = medEditingId ? '/api/medreminder/update' : '/api/medreminder/create';

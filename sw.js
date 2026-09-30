@@ -10,7 +10,7 @@
      since they're reading/writing real customer data.
 */
 
-const CACHE_NAME = 'faizal-pharmacy-v2';
+const CACHE_NAME = 'faizal-pharmacy-v3';
 const APP_SHELL = [
   '/',
   '/manifest.json',

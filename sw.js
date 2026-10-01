@@ -95,7 +95,7 @@ self.addEventListener('push', (event) => {
   let data = {};
   try { data = event.data ? event.data.json() : {}; } catch (e) { /* ignore malformed payload */ }
 
-  const title = data.title || '💊 Faizal Pharmacy';
+ const title = data.title || '💊 Faisal Medical Store';
   const options = {
     body: data.body || '',
     icon: '/icons/icon-192.png',

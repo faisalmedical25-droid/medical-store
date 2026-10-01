@@ -800,7 +800,7 @@ window.FP_CONFIG = {
 
 <header>
   <div class="nav">
-    <div class="brand" style="direction:ltr; unicode-bidi:embed;">Faizal <span>Pharmacy</span></div>
+    <div class="brand" style="direction:ltr; unicode-bidi:embed;">Faisal <span>Medical Store</span></div>
     <span id="shopStatusBadge" class="shop-status" dir="rtl"></span>
     <nav class="nav-links">
       <a href="#retail">خردہ فروخت</a>
@@ -5625,14 +5625,43 @@ window.lbLogin = function(){
 (function(){
   "use strict";
   // If an image 404s (e.g. the /images/ or /icons/ folder wasn't uploaded
-  // correctly to the server), don't show an ugly broken-image icon —
-  // hide it gracefully and log the exact missing path to the console so
-  // it's easy to check (F12 → Console) which file is missing.
+  // correctly to the server), don't show an ugly broken-image icon — hide
+  // it gracefully, log it, and also show a plain on-page message so this
+  // is visible WITHOUT needing F12/DevTools.
+  var failed = [];
+  var bannerShown = false;
+
+  function showBanner(){
+    if(bannerShown) return;
+    bannerShown = true;
+    var missingFolders = {};
+    failed.forEach(function(src){
+      var m = src.match(/\/(images|icons)\//);
+      if(m) missingFolders[m[1]] = true;
+    });
+    var folderList = Object.keys(missingFolders).join(', ') || 'kuch';
+    var div = document.createElement('div');
+    div.setAttribute('dir', 'rtl');
+    div.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#B71C1C;color:#fff;'
+      + 'padding:10px 14px;font-size:13px;text-align:center;font-family:sans-serif;';
+    div.innerHTML = '⚠️ '+failed.length+' تصویریں لوڈ نہیں ہو رہیں — "'+folderList+'" فولڈر سرور پر صحیح جگہ اپ لوڈ نہیں ہوا لگتا۔'
+      + ' <button type="button" style="margin-right:10px;background:#fff;color:#B71C1C;border:none;'
+      + 'border-radius:6px;padding:4px 10px;cursor:pointer;">بند کریں</button>';
+    div.querySelector('button').onclick = function(){ div.remove(); };
+    document.body.insertBefore(div, document.body.firstChild);
+  }
+
   document.addEventListener('error', function(e){
     var t = e.target;
     if(t && t.tagName === 'IMG'){
       console.warn('[Faizal Pharmacy] Image failed to load — check this file was uploaded:', t.src);
       t.style.visibility = 'hidden';
+      failed.push(t.src);
+      // Wait a moment so several images failing together produce ONE
+      // banner, not a flash of several — most pages have a batch of
+      // images fail together if a whole folder is missing.
+      clearTimeout(window.__fpImgBannerTimer);
+      window.__fpImgBannerTimer = setTimeout(showBanner, 800);
     }
   }, true);
 })();

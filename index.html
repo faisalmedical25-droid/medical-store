@@ -5654,6 +5654,7 @@ window.lbLogin = function(){
   document.addEventListener('error', function(e){
     var t = e.target;
  if(t && t.tagName === 'IMG' && t.getAttribute('src')){
+   if (new URL(t.src, window.location.href).origin !== window.location.origin) return;
       console.warn('[Faizal Pharmacy] Image failed to load — check this file was uploaded:', t.src);
       t.style.visibility = 'hidden';
       failed.push(t.src);

@@ -1111,6 +1111,12 @@ window.FP_CONFIG = {
         <span class="qt-label">دوا تلاش کریں</span>
       </button>
 
+      <button type="button" class="qt-card qt-c6" data-qt="7"
+        onclick="if(window.openTool) openTool('optics-section','👓 چشمہ / Optics')">
+        <span class="qt-icon-circle"><span class="qt-icon">👓</span></span>
+        <span class="qt-label">چشمہ / Optics</span>
+      </button>
+
     </div>
   </div>
 </section>
@@ -1411,7 +1417,7 @@ window.FP_CONFIG = {
         </div>
       </div>
       <div id="rxPreviewArea" style="display:none; margin-top:15px;">
-     <img id="rxPreviewImg" alt="Prescription preview" style="width:100%; max-height:300px; object-fit:contain; border-radius:10px; border:1px solid #ddd; background:#f7f7f7;">
+        <img id="rxPreviewImg" src="" alt="" style="width:100%; max-height:300px; object-fit:contain; border-radius:10px; border:1px solid #ddd; background:#f7f7f7;">
         <div style="display:flex; gap:10px; margin-top:12px;">
           <button type="button" onclick="rxAnalyze();" id="rxAnalyzeBtn" style="flex:1; padding:14px; border:none; border-radius:10px; background:linear-gradient(135deg,#4CAF50,#2E7D32); color:#fff; font-size:16px; font-weight:700; cursor:pointer; min-height:50px;">
             🔍 دوبارہ پڑھیں
@@ -2836,6 +2842,156 @@ window.FP_CONFIG = {
 </script>
 <!-- ============================================== -->
 <!-- UPGRADED MEDICINE FINDER & SPECIAL REQUEST END -->
+
+<!-- ============================================== -->
+<!-- OPTICS / GLASSES - START -->
+<!-- ============================================== -->
+<section id="optics-section" class="tool-panel" dir="rtl" style="padding:35px 0; background:#fff; font-family:'Segoe UI', Tahoma, sans-serif;">
+  <div class="wrap" style="max-width:520px; margin:0 auto; padding:0 20px;">
+    <h2 style="text-align:center; color:var(--green-deep); margin-bottom:6px;">👓 چشمہ (Glasses) چاہیے؟</h2>
+    <p style="text-align:center; color:var(--ink-soft); font-size:0.9rem; margin-bottom:20px;">
+      اپنی تفصیل بھیجیں — ہمارا optics specialist یہیں آپ سے بات کرے گا۔
+    </p>
+
+    <div id="opticsForm">
+      <label class="lb-label">نام</label>
+      <input id="opticsName" class="lb-input" placeholder="اپنا نام لکھیں">
+
+      <label class="lb-label" style="margin-top:10px;">فون نمبر (اختیاری)</label>
+      <input id="opticsPhone" class="lb-input" inputmode="numeric" placeholder="03001234567" dir="ltr" style="text-align:left;">
+
+      <label class="lb-label" style="margin-top:10px;">کیا چاہیے؟</label>
+      <select id="opticsNeed" class="lb-input">
+        <option value="نظر کا چشمہ (prescription glasses)">نظر کا چشمہ (prescription glasses)</option>
+        <option value="دھوپ کا چشمہ (sunglasses)">دھوپ کا چشمہ (sunglasses)</option>
+        <option value="کانٹیکٹ لینز">کانٹیکٹ لینز</option>
+        <option value="فریم ٹوٹ گیا / مرمت">فریم ٹوٹ گیا / مرمت</option>
+        <option value="آنکھوں کا ٹیسٹ">آنکھوں کا ٹیسٹ</option>
+        <option value="پتا نہیں، مشورہ چاہیے">پتا نہیں، مشورہ چاہیے</option>
+      </select>
+
+      <button type="button" class="med-btn primary" style="width:100%; margin-top:18px;" onclick="opticsSubmit()">
+        💬 بات چیت شروع کریں
+      </button>
+      <div id="opticsMsg" style="color:#c62828; font-size:13px; margin-top:8px; text-align:center;"></div>
+      <p style="text-align:center; color:var(--ink-soft); font-size:0.78rem; margin-top:14px;">
+        اگر سیدھا فون/WhatsApp پر بات کرنی ہو، ہمیں یہاں رابطہ کریں: <a href="https://wa.me/923218861265" style="color:var(--green-deep);">0321-8861265</a>
+      </p>
+    </div>
+
+    <div id="opticsChat" style="display:none;">
+      <div id="opticsChatStatus" style="text-align:center; font-size:0.85rem; color:var(--ink-soft); margin-bottom:10px;"></div>
+      <div id="opticsMsgs" style="height:320px; overflow-y:auto; background:#fafcfb; border:1px solid #eef2f0; border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:8px;"></div>
+      <div style="display:flex; gap:8px; margin-top:10px;">
+        <input id="opticsChatInput" class="lb-input" placeholder="Message likhein..." style="flex:1;">
+        <button type="button" class="med-btn primary" style="min-width:auto; padding:0 18px;" onclick="opticsChatSend()">بھیجیں</button>
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+  .optics-msg{ max-width:78%; padding:9px 13px; border-radius:14px; font-size:14px; line-height:1.6; }
+  .optics-msg.customer{ background:#2E7D32; color:#fff; align-self:flex-start; }
+  .optics-msg.staff, .optics-msg.owner{ background:#fff; border:1px solid #e3e7e5; align-self:flex-end; }
+</style>
+<script>
+(function(){
+  "use strict";
+  function el(id){ return document.getElementById(id); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  }); }
+  var API = (window.FP_CONFIG && window.FP_CONFIG.API) || '';
+  var LSKEY = 'fp_optics_chat_v1';
+  var pollTimer = null;
+
+  function getChatSession(){
+    try{ return JSON.parse(localStorage.getItem(LSKEY) || 'null'); }catch(e){ return null; }
+  }
+  function setChatSession(s){
+    try{ localStorage.setItem(LSKEY, JSON.stringify(s)); }catch(e){}
+  }
+
+  function renderMessages(messages){
+    var box = el('opticsMsgs');
+    var wasAtBottom = (box.scrollTop + box.clientHeight) >= (box.scrollHeight - 20);
+    box.innerHTML = messages.map(function(m){
+      var who = m.sender === 'customer' ? 'customer' : (m.sender === 'owner' ? 'owner' : 'staff');
+      return '<div class="optics-msg '+who+'">'+esc(m.body)+'</div>';
+    }).join('') || '<div style="color:#999; text-align:center; font-size:13px;">Abhi tak koi message nahi — optics specialist thodi hi der mein jawab dega.</div>';
+    if(wasAtBottom) box.scrollTop = box.scrollHeight;
+  }
+
+  function startPolling(session){
+    function poll(){
+      fetch(API + '/api/optics/chat/list', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ lead_id: session.lead_id, customer_token: session.customer_token })
+      }).then(function(r){ return r.json(); }).then(function(d){
+        if(d.error) return;
+        renderMessages(d.messages || []);
+        el('opticsChatStatus').textContent = 'Status: ' + (d.status || 'new');
+      }).catch(function(){});
+    }
+    poll();
+    if(pollTimer) clearInterval(pollTimer);
+    pollTimer = setInterval(poll, 4000);
+  }
+
+  function showChat(session){
+    el('opticsForm').style.display = 'none';
+    el('opticsChat').style.display = 'block';
+    startPolling(session);
+  }
+
+  window.opticsSubmit = function(){
+    var name = (el('opticsName').value || '').trim();
+    var phone = (el('opticsPhone').value || '').trim();
+    var details = el('opticsNeed').value;
+    var msg = el('opticsMsg');
+    if(!name){ msg.textContent = 'اپنا نام لکھیں۔'; return; }
+    if(!API){ msg.textContent = 'انٹرنیٹ سے رابطہ نہیں ہو سکا۔'; return; }
+    msg.textContent = '';
+    fetch(API + '/api/optics/lead', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ name: name, phone: phone, details: details })
+    }).then(function(r){ return r.json(); }).then(function(d){
+      if(d.error){ msg.textContent = d.error; return; }
+      var session = { lead_id: d.lead_id, customer_token: d.customer_token };
+      setChatSession(session);
+      showChat(session);
+    }).catch(function(){
+      msg.textContent = 'Kuch ghalat ho gaya, dobara try karein.';
+    });
+  };
+
+  window.opticsChatSend = function(){
+    var session = getChatSession();
+    if(!session) return;
+    var inp = el('opticsChatInput');
+    var text = inp.value.trim();
+    if(!text) return;
+    inp.value = '';
+    fetch(API + '/api/optics/chat/send', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ lead_id: session.lead_id, customer_token: session.customer_token, body: text })
+    }).then(function(){
+      startPolling(session); // immediate refresh
+    }).catch(function(){});
+  };
+  el('opticsChatInput') && el('opticsChatInput').addEventListener('keydown', function(e){
+    if(e.key === 'Enter') window.opticsChatSend();
+  });
+
+  // Returning visitor: resume an existing chat automatically instead of
+  // showing the form again.
+  var existing = getChatSession();
+  if(existing) showChat(existing);
+})();
+</script>
+<!-- ============================================== -->
+<!-- OPTICS / GLASSES - END -->
+<!-- ============================================== -->
 <!-- ============================================== -->
   
 <script>
@@ -5485,6 +5641,9 @@ window.lbLogin = function(){
     <button type="button" class="ft-item" data-tool="estimate" data-title="💊 بل کیلکولیٹر">
       <span class="ft-em">💊</span><span>بل کیلکولیٹر</span>
     </button>
+    <button type="button" class="ft-item" data-tool="optics-section" data-title="👓 چشمہ / Optics">
+      <span class="ft-em">👓</span><span>چشمہ / Optics</span>
+    </button>
     <button type="button" class="ft-item" data-tool="da-section" data-title="📍 ڈیلیوری چیک کریں">
       <span class="ft-em">📍</span><span>ڈیلیوری چیک کریں</span>
     </button>
@@ -5589,7 +5748,8 @@ window.lbLogin = function(){
       'da-section':'📍 ڈیلیوری چیک کریں',
       'prescription-reader-section':'📸 AI نسخہ ریڈر',
       'logbook-section':'📋 ہیلتھ لاگ بک',
-      'consult-section':'💬 فارماسسٹ سے پوچھیں'
+      'consult-section':'💬 فارماسسٹ سے پوچھیں',
+      'optics-section':'👓 چشمہ / Optics'
     };
     if(map[id]){ e.preventDefault(); openTool(id, map[id]); }
   });
@@ -5628,14 +5788,24 @@ window.lbLogin = function(){
   // correctly to the server), don't show an ugly broken-image icon — hide
   // it gracefully, log it, and also show a plain on-page message so this
   // is visible WITHOUT needing F12/DevTools.
-  var failed = [];
+  //
+  // IMPORTANT: a single failed image load is NOT proof the file is
+  // missing from the server — on a mobile data connection a request can
+  // transiently fail and succeed instantly on retry. That was almost
+  // certainly why this banner appeared "kabhi kabhi" (sometimes) even
+  // though the folder upload itself was fine: one real network hiccup
+  // was being mistaken for a missing folder. Fix: retry each failed image
+  // twice (1s, then 2.5s later) before ever concluding it's really gone,
+  // and only count/report images that are STILL broken after both retries.
+  var confirmedFailed = [];
   var bannerShown = false;
+  var retryState = {}; // src -> attempt count
 
   function showBanner(){
-    if(bannerShown) return;
+    if(bannerShown || !confirmedFailed.length) return;
     bannerShown = true;
     var missingFolders = {};
-    failed.forEach(function(src){
+    confirmedFailed.forEach(function(src){
       var m = src.match(/\/(images|icons)\//);
       if(m) missingFolders[m[1]] = true;
     });
@@ -5644,7 +5814,7 @@ window.lbLogin = function(){
     div.setAttribute('dir', 'rtl');
     div.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#B71C1C;color:#fff;'
       + 'padding:10px 14px;font-size:13px;text-align:center;font-family:sans-serif;';
-    div.innerHTML = '⚠️ '+failed.length+' تصویریں لوڈ نہیں ہو رہیں — "'+folderList+'" فولڈر سرور پر صحیح جگہ اپ لوڈ نہیں ہوا لگتا۔'
+    div.innerHTML = '⚠️ '+confirmedFailed.length+' تصویریں بار بار کوشش کے باوجود لوڈ نہیں ہو رہیں — "'+folderList+'" فولڈر سرور پر صحیح جگہ اپ لوڈ نہیں ہوا لگتا۔'
       + ' <button type="button" style="margin-right:10px;background:#fff;color:#B71C1C;border:none;'
       + 'border-radius:6px;padding:4px 10px;cursor:pointer;">بند کریں</button>';
     div.querySelector('button').onclick = function(){ div.remove(); };
@@ -5653,16 +5823,39 @@ window.lbLogin = function(){
 
   document.addEventListener('error', function(e){
     var t = e.target;
- if(t && t.tagName === 'IMG' && t.getAttribute('src')){
-   if (new URL(t.src, window.location.href).origin !== window.location.origin) return;
-      console.warn('[Faizal Pharmacy] Image failed to load — check this file was uploaded:', t.src);
-      t.style.visibility = 'hidden';
-      failed.push(t.src);
-      // Wait a moment so several images failing together produce ONE
-      // banner, not a flash of several — most pages have a batch of
-      // images fail together if a whole folder is missing.
-      clearTimeout(window.__fpImgBannerTimer);
-      window.__fpImgBannerTimer = setTimeout(showBanner, 800);
+    if(!t || t.tagName !== 'IMG') return;
+    var baseSrc = t.src.split('?')[0];
+    var attempt = (retryState[baseSrc] || 0) + 1;
+    retryState[baseSrc] = attempt;
+
+    if(attempt <= 2){
+      // Retry with a cache-busting query param so a stale cached 404
+      // (CDN or browser HTTP cache) can't keep returning the same
+      // failure forever — this also helps if the REAL cause was an
+      // edge-cache propagation delay rather than a missing file.
+      var delay = attempt === 1 ? 1000 : 2500;
+      setTimeout(function(){
+        t.src = baseSrc + '?retry=' + Date.now();
+      }, delay);
+      return;
+    }
+
+    // Genuinely failed twice in a row — now it's safe to treat as real.
+    console.warn('[Faizal Pharmacy] Image failed to load after retries — check this file was uploaded:', baseSrc);
+    t.style.visibility = 'hidden';
+    confirmedFailed.push(baseSrc);
+    clearTimeout(window.__fpImgBannerTimer);
+    window.__fpImgBannerTimer = setTimeout(showBanner, 800);
+  }, true);
+
+  document.addEventListener('load', function(e){
+    // A retried image that succeeds clears its own retry count, so a
+    // LATER unrelated failure of the same image still gets its own
+    // fresh two retries instead of being judged on an old attempt tally.
+    var t = e.target;
+    if(t && t.tagName === 'IMG'){
+      var baseSrc = t.src.split('?')[0];
+      delete retryState[baseSrc];
     }
   }, true);
 })();

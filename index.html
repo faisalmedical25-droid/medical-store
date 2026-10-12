@@ -2924,7 +2924,7 @@ window.FP_CONFIG = {
 
   function startPolling(session){
     function poll(){
-      fetch(API + '/api/optics/chat/list', {
+     fetch('https://optics-test.faisalmedical25.workers.dev/api/optics/chat/list', {
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ lead_id: session.lead_id, customer_token: session.customer_token })
       }).then(function(r){ return r.json(); }).then(function(d){
@@ -2952,7 +2952,7 @@ window.FP_CONFIG = {
     if(!name){ msg.textContent = 'اپنا نام لکھیں۔'; return; }
     if(!API){ msg.textContent = 'انٹرنیٹ سے رابطہ نہیں ہو سکا۔'; return; }
     msg.textContent = '';
-    fetch(API + '/api/optics/lead', {
+  fetch('https://optics-test.faisalmedical25.workers.dev/api/optics/lead', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ name: name, phone: phone, details: details })
     }).then(function(r){ return r.json(); }).then(function(d){
@@ -2972,7 +2972,7 @@ window.FP_CONFIG = {
     var text = inp.value.trim();
     if(!text) return;
     inp.value = '';
-    fetch(API + '/api/optics/chat/send', {
+   fetch('https://optics-test.faisalmedical25.workers.dev/api/optics/chat/send', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ lead_id: session.lead_id, customer_token: session.customer_token, body: text })
     }).then(function(){

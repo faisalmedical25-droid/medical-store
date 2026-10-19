@@ -1110,7 +1110,11 @@ window.FP_CONFIG = {
         <span class="qt-icon-circle"><span class="qt-icon">🔍</span></span>
         <span class="qt-label">دوا تلاش کریں</span>
       </button>
-
+      <button type="button" class="qt-card qt-c6" data-qt="7"
+        onclick="if(window.openTool) openTool('optics-section','👓 چشمہ / Optics')">
+        <span class="qt-icon-circle"><span class="qt-icon">👓</span></span>
+        <span class="qt-label">چشمہ / Optics</span>
+      </button>
     </div>
   </div>
 </section>
@@ -2837,7 +2841,155 @@ window.FP_CONFIG = {
 <!-- ============================================== -->
 <!-- UPGRADED MEDICINE FINDER & SPECIAL REQUEST END -->
 <!-- ============================================== -->
-  
+ 
+<!-- OPTICS / GLASSES - START -->
+<!-- ============================================== -->
+<section id="optics-section" class="tool-panel" dir="rtl" style="padding:35px 0; background:#fff; font-family:'Segoe UI', Tahoma, sans-serif;">
+  <div class="wrap" style="max-width:520px; margin:0 auto; padding:0 20px;">
+    <h2 style="text-align:center; color:var(--green-deep); margin-bottom:6px;">👓 چشمہ (Glasses) چاہیے؟</h2>
+    <p style="text-align:center; color:var(--ink-soft); font-size:0.9rem; margin-bottom:20px;">
+      اپنی تفصیل بھیجیں — ہمارا optics specialist یہیں آپ سے بات کرے گا۔
+    </p>
+
+    <div id="opticsForm">
+      <label class="lb-label">نام</label>
+      <input id="opticsName" class="lb-input" placeholder="اپنا نام لکھیں">
+
+      <label class="lb-label" style="margin-top:10px;">فون نمبر (اختیاری)</label>
+      <input id="opticsPhone" class="lb-input" inputmode="numeric" placeholder="03001234567" dir="ltr" style="text-align:left;">
+
+      <label class="lb-label" style="margin-top:10px;">کیا چاہیے؟</label>
+      <select id="opticsNeed" class="lb-input">
+        <option value="نظر کا چشمہ (prescription glasses)">نظر کا چشمہ (prescription glasses)</option>
+        <option value="دھوپ کا چشمہ (sunglasses)">دھوپ کا چشمہ (sunglasses)</option>
+        <option value="کانٹیکٹ لینز">کانٹیکٹ لینز</option>
+        <option value="فریم ٹوٹ گیا / مرمت">فریم ٹوٹ گیا / مرمت</option>
+        <option value="آنکھوں کا ٹیسٹ">آنکھوں کا ٹیسٹ</option>
+        <option value="پتا نہیں، مشورہ چاہیے">پتا نہیں، مشورہ چاہیے</option>
+      </select>
+
+      <button type="button" class="med-btn primary" style="width:100%; margin-top:18px;" onclick="opticsSubmit()">
+        💬 بات چیت شروع کریں
+      </button>
+      <div id="opticsMsg" style="color:#c62828; font-size:13px; margin-top:8px; text-align:center;"></div>
+      <p style="text-align:center; color:var(--ink-soft); font-size:0.78rem; margin-top:14px;">
+        اگر سیدھا فون/WhatsApp پر بات کرنی ہو، ہمیں یہاں رابطہ کریں: <a href="https://wa.me/923218861265" style="color:var(--green-deep);">0321-8861265</a>
+      </p>
+    </div>
+
+    <div id="opticsChat" style="display:none;">
+      <div id="opticsChatStatus" style="text-align:center; font-size:0.85rem; color:var(--ink-soft); margin-bottom:10px;"></div>
+      <div id="opticsMsgs" style="height:320px; overflow-y:auto; background:#fafcfb; border:1px solid #eef2f0; border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:8px;"></div>
+      <div style="display:flex; gap:8px; margin-top:10px;">
+        <input id="opticsChatInput" class="lb-input" placeholder="Message likhein..." style="flex:1;">
+        <button type="button" class="med-btn primary" style="min-width:auto; padding:0 18px;" onclick="opticsChatSend()">بھیجیں</button>
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+  .optics-msg{ max-width:78%; padding:9px 13px; border-radius:14px; font-size:14px; line-height:1.6; }
+  .optics-msg.customer{ background:#2E7D32; color:#fff; align-self:flex-start; }
+  .optics-msg.staff, .optics-msg.owner{ background:#fff; border:1px solid #e3e7e5; align-self:flex-end; }
+</style>
+<script>
+(function(){
+  "use strict";
+  function el(id){ return document.getElementById(id); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  }); }
+  var API = (window.FP_CONFIG && window.FP_CONFIG.API) || '';
+  var LSKEY = 'fp_optics_chat_v1';
+  var pollTimer = null;
+
+  function getChatSession(){
+    try{ return JSON.parse(localStorage.getItem(LSKEY) || 'null'); }catch(e){ return null; }
+  }
+  function setChatSession(s){
+    try{ localStorage.setItem(LSKEY, JSON.stringify(s)); }catch(e){}
+  }
+
+  function renderMessages(messages){
+    var box = el('opticsMsgs');
+    var wasAtBottom = (box.scrollTop + box.clientHeight) >= (box.scrollHeight - 20);
+    box.innerHTML = messages.map(function(m){
+      var who = m.sender === 'customer' ? 'customer' : (m.sender === 'owner' ? 'owner' : 'staff');
+      return '<div class="optics-msg '+who+'">'+esc(m.body)+'</div>';
+    }).join('') || '<div style="color:#999; text-align:center; font-size:13px;">Abhi tak koi message nahi — optics specialist thodi hi der mein jawab dega.</div>';
+    if(wasAtBottom) box.scrollTop = box.scrollHeight;
+  }
+
+  function startPolling(session){
+    function poll(){
+     fetch('https://optics-live.faisalmedical25.workers.dev/api/optics/chat/list', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ lead_id: session.lead_id, customer_token: session.customer_token })
+      }).then(function(r){ return r.json(); }).then(function(d){
+        if(d.error) return;
+        renderMessages(d.messages || []);
+        el('opticsChatStatus').textContent = 'Status: ' + (d.status || 'new');
+      }).catch(function(){});
+    }
+    poll();
+    if(pollTimer) clearInterval(pollTimer);
+    pollTimer = setInterval(poll, 4000);
+  }
+
+  function showChat(session){
+    el('opticsForm').style.display = 'none';
+    el('opticsChat').style.display = 'block';
+    startPolling(session);
+  }
+
+  window.opticsSubmit = function(){
+    var name = (el('opticsName').value || '').trim();
+    var phone = (el('opticsPhone').value || '').trim();
+    var details = el('opticsNeed').value;
+    var msg = el('opticsMsg');
+    if(!name){ msg.textContent = 'اپنا نام لکھیں۔'; return; }
+    if(!API){ msg.textContent = 'انٹرنیٹ سے رابطہ نہیں ہو سکا۔'; return; }
+    msg.textContent = '';
+  fetch('https://optics-live.faisalmedical25.workers.dev/api/optics/lead', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ name: name, phone: phone, details: details })
+    }).then(function(r){ return r.json(); }).then(function(d){
+      if(d.error){ msg.textContent = d.error; return; }
+      var session = { lead_id: d.lead_id, customer_token: d.customer_token };
+      setChatSession(session);
+      showChat(session);
+    }).catch(function(){
+      msg.textContent = 'Kuch ghalat ho gaya, dobara try karein.';
+    });
+  };
+
+  window.opticsChatSend = function(){
+    var session = getChatSession();
+    if(!session) return;
+    var inp = el('opticsChatInput');
+    var text = inp.value.trim();
+    if(!text) return;
+    inp.value = '';
+   fetch('https://optics-live.faisalmedical25.workers.dev/api/optics/chat/send', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ lead_id: session.lead_id, customer_token: session.customer_token, body: text })
+    }).then(function(){
+      startPolling(session); // immediate refresh
+    }).catch(function(){});
+  };
+  el('opticsChatInput') && el('opticsChatInput').addEventListener('keydown', function(e){
+    if(e.key === 'Enter') window.opticsChatSend();
+  });
+
+  // Returning visitor: resume an existing chat automatically instead of
+  // showing the form again.
+  var existing = getChatSession();
+  if(existing) showChat(existing);
+})();
+</script>
+<!-- ============================================== -->
+<!-- OPTICS / GLASSES - END -->
+
 <script>
 var PRODUCTS = [];
 /* Price list now lives on the backend (was 70KB sitting in plain page-source
